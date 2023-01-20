@@ -1,4 +1,4 @@
-package com.example.agora.Util
+package com.example.agora.util
 
 class EmailValidator {
     companion object {

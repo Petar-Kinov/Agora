@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Agora" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.Agora" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/eggshell</item>
         <item name="colorPrimaryVariant">@color/dark_blue</item>
@@ -12,5 +12,6 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:autofilledHighlight">@android:color/transparent</item>
     </style>
 </resources>

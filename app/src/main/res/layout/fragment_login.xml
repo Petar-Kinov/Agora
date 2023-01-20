@@ -14,7 +14,7 @@
     tools:context=".fragments.LoginFragment">
 
     <EditText
-        android:id="@+id/username"
+        android:id="@+id/usernameET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/passwordET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -37,22 +37,21 @@
         android:imeOptions="actionDone"
         android:inputType="textPassword"
         android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="@+id/username"
-        app:layout_constraintStart_toStartOf="@+id/username"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        app:layout_constraintEnd_toEndOf="@+id/usernameET"
+        app:layout_constraintStart_toStartOf="@+id/usernameET"
+        app:layout_constraintTop_toBottomOf="@+id/usernameET" />
 
     <Button
-        android:id="@+id/signinBtn"
+        android:id="@+id/signInBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginTop="25dp"
         android:backgroundTint="@color/light_blue"
-        android:enabled="false"
         android:text="@string/action_sign_in"
         android:textColor="#000000"
-        app:layout_constraintEnd_toEndOf="@+id/username"
-        app:layout_constraintStart_toStartOf="@+id/password"
+        app:layout_constraintEnd_toEndOf="@+id/usernameET"
+        app:layout_constraintStart_toStartOf="@+id/passwordET"
         app:layout_constraintTop_toBottomOf="@+id/chip" />
 
     <ProgressBar
@@ -66,8 +65,8 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="64dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/password"
-        app:layout_constraintStart_toStartOf="@+id/password"
+        app:layout_constraintEnd_toEndOf="@+id/passwordET"
+        app:layout_constraintStart_toStartOf="@+id/passwordET"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.3" />
 
@@ -77,11 +76,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:backgroundTint="@color/light_blue"
-        android:text="REGISTER"
+        android:text="@string/register"
         android:textColor="#000000"
-        app:layout_constraintEnd_toEndOf="@+id/signinBtn"
-        app:layout_constraintStart_toStartOf="@+id/signinBtn"
-        app:layout_constraintTop_toBottomOf="@+id/signinBtn" />
+        app:layout_constraintEnd_toEndOf="@+id/signInBtn"
+        app:layout_constraintStart_toStartOf="@+id/signInBtn"
+        app:layout_constraintTop_toBottomOf="@+id/signInBtn" />
 
     <CheckBox
         android:id="@+id/chip"
@@ -89,8 +88,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="Keep me Logged in"
-        app:layout_constraintStart_toStartOf="@+id/password"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintStart_toStartOf="@+id/passwordET"
+        app:layout_constraintTop_toBottomOf="@+id/passwordET" />
 
     <TextView
         android:id="@+id/textView2"

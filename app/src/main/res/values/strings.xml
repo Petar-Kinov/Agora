@@ -16,4 +16,5 @@
     <string name="email_adress">Email Adress</string>
     <string name="password">Password</string>
     <string name="verify_password">Verify Password</string>
+    <string name="register">REGISTER</string>
 </resources>
