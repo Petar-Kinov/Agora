@@ -12,16 +12,21 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import com.example.agora.R
 import com.example.agora.util.EmailValidator
 import com.example.agora.databinding.FragmentRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 private const val TAG = "RegisterFragment"
 class RegisterFragment : Fragment() {
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
+    private lateinit var fireStoreDB : FirebaseFirestore
 
     private lateinit var firstNameET : EditText
     private lateinit var lastNameET : EditText
@@ -47,6 +52,8 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        fireStoreDB = Firebase.firestore
 
         firstNameET = binding.editTextTextPersonName
         lastNameET = binding.editTextTextPersonName2
@@ -83,12 +90,24 @@ class RegisterFragment : Fragment() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
-                    val user = auth.currentUser
-                    if (user != null) {
-                        Toast.makeText(requireContext(), "Registered user with email ${user.email}.",Toast.LENGTH_LONG).show()
-                //                    updateUI(user)
+                    val user = hashMapOf(
+                        "firstName" to firstNameET.text.toString(),
+                        "lastName" to lastNameET.text.toString()
+                    )
 
+                    auth.currentUser?.let {
+                        fireStoreDB.collection("users").document(it.uid)
+                            .set(user)
+                            .addOnSuccessListener { documentReference ->
+                                Log.d(TAG, "DocumentSnapshot added")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w(TAG, "Error adding document", e)
+                            }
                     }
+
+                    val action = RegisterFragmentDirections.actionRegisterFragmentToHomePage()
+                    findNavController().navigate(action)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)

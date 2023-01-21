@@ -52,7 +52,7 @@
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="@+id/usernameET"
         app:layout_constraintStart_toStartOf="@+id/passwordET"
-        app:layout_constraintTop_toBottomOf="@+id/chip" />
+        app:layout_constraintTop_toBottomOf="@+id/keepLoggedInChip" />
 
     <ProgressBar
         android:id="@+id/loading"
@@ -83,11 +83,11 @@
         app:layout_constraintTop_toBottomOf="@+id/signInBtn" />
 
     <CheckBox
-        android:id="@+id/chip"
+        android:id="@+id/keepLoggedInChip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Keep me Logged in"
+        android:text="@string/keep_me_logged_in"
         app:layout_constraintStart_toStartOf="@+id/passwordET"
         app:layout_constraintTop_toBottomOf="@+id/passwordET" />
 
@@ -96,7 +96,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Welcome"
+        android:text="@string/welcome"
         android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -5,7 +5,7 @@
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">SIGN IN</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome!"</string>
+    <string name="welcome">Welcome!</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
@@ -13,8 +13,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
-    <string name="email_adress">Email Adress</string>
+    <string name="email_address">Email Address</string>
     <string name="password">Password</string>
     <string name="verify_password">Verify Password</string>
     <string name="register">REGISTER</string>
+    <string name="welcome_msg">"Hello, %1$s!"</string>
+    <string name="keep_me_logged_in">Keep me Logged in</string>
 </resources>
