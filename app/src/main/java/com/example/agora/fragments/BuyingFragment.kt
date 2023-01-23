@@ -25,7 +25,6 @@ class BuyFragment : Fragment() {
     private var _binding : FragmentBuyingBinding? = null
     private val binding get() = _binding!!
 
-
     private lateinit var viewModel: ItemsViewModel
     private lateinit var auth: FirebaseAuth
     private lateinit var firebaseDB: FirebaseFirestore

@@ -1,7 +1,7 @@
 package com.example.agora.use_case
 
-import com.example.agora.repository.ItemRepositoryDao
+import com.example.agora.repository.ItemRepository
 
-class GetItems (private val repositoryDao: ItemRepositoryDao) {
-    operator fun invoke() = repositoryDao.getSellItems()
+class GetItems (private val repositoryDao: ItemRepository) {
+    operator fun invoke() = repositoryDao.getItems()
 }

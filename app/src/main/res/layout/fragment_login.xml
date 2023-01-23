@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:layout="@layout/fragment_login"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/fragment_vertical_margin"
+    android:backgroundTint="@color/light_blue"
     android:paddingLeft="@dimen/fragment_horizontal_margin"
-    android:paddingRight="@dimen/fragment_horizontal_margin"
     android:paddingTop="@dimen/fragment_vertical_margin"
-    tools:context=".fragments.LoginFragment">
+    android:paddingRight="@dimen/fragment_horizontal_margin"
+    android:paddingBottom="@dimen/fragment_vertical_margin"
+    tools:context=".fragments.LoginFragment"
+    tools:layout="@layout/fragment_login">
 
     <EditText
         android:id="@+id/usernameET"
@@ -56,7 +56,6 @@
 
     <ProgressBar
         android:id="@+id/loading"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -64,6 +63,7 @@
         android:layout_marginTop="64dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="64dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/passwordET"
         app:layout_constraintStart_toStartOf="@+id/passwordET"
@@ -101,4 +101,36 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/peshoBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:backgroundTint="@color/light_blue"
+        android:text="pesho"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registerBtn" />
+
+    <Button
+        android:id="@+id/ivanBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="@color/light_blue"
+        android:text="ivan"
+        app:layout_constraintEnd_toEndOf="@+id/peshoBtn"
+        app:layout_constraintStart_toStartOf="@+id/peshoBtn"
+        app:layout_constraintTop_toBottomOf="@+id/peshoBtn" />
+
+    <Button
+        android:id="@+id/svetlioBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="@color/light_blue"
+        android:text="Svetlio"
+        app:layout_constraintEnd_toEndOf="@+id/ivanBtn"
+        app:layout_constraintStart_toStartOf="@+id/ivanBtn"
+        app:layout_constraintTop_toBottomOf="@+id/ivanBtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

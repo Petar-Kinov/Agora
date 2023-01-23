@@ -9,11 +9,13 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.agora.R
 import com.example.agora.adapters.ViewPagerAdapter
 import com.example.agora.databinding.FragmentHomePageBinding
+import com.example.agora.viewModel.ItemsViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,66 +32,16 @@ class HomePage : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firebaseDB: FirebaseFirestore
     private lateinit var listener: FirebaseAuth.AuthStateListener
-    private lateinit var binding: FragmentHomePageBinding
-
-    //    private val binding get() = _binding!!
+    private var _binding: FragmentHomePageBinding? = null
+    private val binding get() = _binding!!
     private lateinit var viewPager: ViewPager2
-
-//    private lateinit var sharedPref: SharedPreferences
-//    private lateinit var editor: SharedPreferences.Editor
-
-
-    private lateinit var firstName: String
-    private lateinit var lastName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
         firebaseDB = Firebase.firestore
 
-        listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            // Get signedIn user
-            val user = firebaseAuth.currentUser
 
-            //if user is signed in, we call a helper method to save the user details to Firebase
-            if (user != null) {
-                val name = user.displayName
-
-                runBlocking {
-                    launch {
-                        binding.welcomeMsg.text = getString(R.string.welcome_msg, "${user.displayName}")
-                    }
-                }
-
-
-
-                // User is signed in
-                // you could place other firebase code
-                //logic to save the user details to Firebase
-//                val userRef = firebaseDB.collection("users")
-//                userRef.document(user.uid).get().addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        val document = task.result
-//                        if (document.exists()) {
-//                            firstName = document.get("firstName") as String
-//                            lastName = document.get("lastName") as String
-//                            binding.welcomeMsg.text =
-//                                getString(R.string.welcome_msg, "$firstName $lastName")
-//                        }
-//                    } else {
-//                        Log.d(TAG, "onViewCreated: Could not get document")
-//                    }
-//                }
-            } else {
-                // User is signed out
-                Log.d(TAG, "onAuthStateChanged:signed_out")
-                val action = HomePageDirections.actionHomePageToLoginFragment()
-                findNavController().navigate(action)
-
-            }
-        }
-
-        auth.addAuthStateListener(listener)
     }
 
     override fun onCreateView(
@@ -97,14 +49,44 @@ class HomePage : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        binding = FragmentHomePageBinding.inflate(inflater, container, false)
+        _binding = FragmentHomePageBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            // Get signedIn user
+            val user = firebaseAuth.currentUser
+            //if user is signed in, we call a helper method to save the user details to Firebase
+            if (user != null) {
+                runBlocking {
+                    launch {
+                        binding.welcomeMsg.text = getString(R.string.welcome_msg, "${user.displayName}")
+                    }
+                }
+            } else {
+                // User is signed out
+                Log.d(TAG, "onAuthStateChanged:signed_out")
+                val action = HomePageDirections.actionHomePageToLoginFragment()
+                findNavController().navigate(action)
+            }
+        }
+        auth.addAuthStateListener(listener)
 
+
+        //  once are logged in onBackPress does not send you back to login screen
     val callback: OnBackPressedCallback =
         object : OnBackPressedCallback(true /* enabled by default */) {
             override fun handleOnBackPressed() {
                 // Handle the back button event
+                val fragmentManager = requireActivity().supportFragmentManager
+                val navHostFragment = fragmentManager.findFragmentById(R.id.nav_host_fragment)
+
+                if (navHostFragment != null) {
+                    if (navHostFragment.childFragmentManager.fragments.get(0) is HomePage) {
+                        // do nothing
+                    } else {
+                        fragmentManager.popBackStack()
+                    }
+                }
             }
         }
     requireActivity().onBackPressedDispatcher.addCallback(requireActivity(), callback)
@@ -128,9 +110,7 @@ class HomePage : Fragment() {
             } else {
                 tab.text = getString(R.string.my_items)
             }
-
         }.attach()
-
 
         binding.popupMenuBtn.setOnClickListener {
             val popupMenu = PopupMenu(requireContext(), it)
@@ -148,11 +128,10 @@ class HomePage : Fragment() {
                         "You clicked ${item.title}",
                         Toast.LENGTH_LONG
                     ).show()
-                    R.id.settings -> Toast.makeText(
-                        requireContext(),
-                        "You clicked ${item.title}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    R.id.settings -> {
+                        val action = HomePageDirections.actionHomePageToSettingsFragment()
+                        findNavController().navigate(action)
+                    }
                     R.id.logout -> logOut()
                 }
                 true
@@ -163,10 +142,11 @@ class HomePage : Fragment() {
 
     private fun logOut() {
         FirebaseAuth.getInstance().signOut()
+        requireActivity().viewModelStore.clear();
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-//        _binding = null
+        _binding = null
     }
 }

@@ -102,8 +102,10 @@ class LoginFragment : Fragment() {
 //                            findNavController().navigate(action)
 //                            val user = auth.currentUser
 //                            user?.let { }
+                            val navController = findNavController()
+//                            navController.popBackStack()
                             val action = LoginFragmentDirections.actionLoginFragmentToHomePage()
-                            findNavController().navigate(action)
+                            navController.navigate(action)
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.exception)
@@ -115,7 +117,78 @@ class LoginFragment : Fragment() {
                     }
             }
         }
+
+        binding.peshoBtn.setOnClickListener {
+            auth.signInWithEmailAndPassword("petar.kinov@gmail.com", "qwerty")
+                .addOnCompleteListener(requireActivity()) { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+//                            val action = LoginFragmentDirections.actionLoginFragmentToHomePage()
+//                            findNavController().navigate(action)
+//                            val user = auth.currentUser
+//                            user?.let { }
+                        val action = LoginFragmentDirections.actionLoginFragmentToHomePage()
+                        findNavController().navigate(action)
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithEmail:failure", task.exception)
+                        Toast.makeText(
+                            requireContext(), "Authentication failed.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+        }
+
+        binding.ivanBtn.setOnClickListener {
+            auth.signInWithEmailAndPassword("i.ivanov@gmail.com", "qwerty")
+                .addOnCompleteListener(requireActivity()) { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+//                            val action = LoginFragmentDirections.actionLoginFragmentToHomePage()
+//                            findNavController().navigate(action)
+//                            val user = auth.currentUser
+//                            user?.let { }
+                        val action = LoginFragmentDirections.actionLoginFragmentToHomePage()
+                        findNavController().navigate(action)
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithEmail:failure", task.exception)
+                        Toast.makeText(
+                            requireContext(), "Authentication failed.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+        }
+
+        binding.svetlioBtn.setOnClickListener {
+            auth.signInWithEmailAndPassword("s.lambev@gmail.com", "qwerty")
+                .addOnCompleteListener(requireActivity()) { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+//                            val action = LoginFragmentDirections.actionLoginFragmentToHomePage()
+//                            findNavController().navigate(action)
+//                            val user = auth.currentUser
+//                            user?.let { }
+                        val action = LoginFragmentDirections.actionLoginFragmentToHomePage()
+                        findNavController().navigate(action)
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithEmail:failure", task.exception)
+                        Toast.makeText(
+                            requireContext(), "Authentication failed.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+        }
+
+
     }
+
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()

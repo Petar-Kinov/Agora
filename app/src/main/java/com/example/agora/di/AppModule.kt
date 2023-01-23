@@ -1,7 +1,7 @@
 package com.example.agora.di
 
+import com.example.agora.repository.ItemRepositoryImpl
 import com.example.agora.repository.ItemRepository
-import com.example.agora.repository.ItemRepositoryDao
 import com.example.agora.use_case.GetItems
 import com.example.agora.use_case.SellItem
 import com.example.agora.use_case.UseCases
@@ -22,12 +22,12 @@ object AppModule {
         Firebase.firestore.collection("items")
 
     @Provides
-    fun provideItemRepository(itemRef: CollectionReference): ItemRepositoryDao =
-        ItemRepository(itemRef)
+    fun provideItemRepository(itemRef: CollectionReference): ItemRepository =
+        ItemRepositoryImpl(itemRef)
 
     @Provides
     fun provideUseCases(
-        repo: ItemRepositoryDao
+        repo: ItemRepository
     ) = UseCases(
         getItems = GetItems(repo),
         sellItem = SellItem(repo)

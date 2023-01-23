@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.Item
 import com.example.agora.model.Response
-import com.example.agora.repository.ItemRepositoryDao
+import com.example.agora.repository.ItemRepository
 import com.example.agora.use_case.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

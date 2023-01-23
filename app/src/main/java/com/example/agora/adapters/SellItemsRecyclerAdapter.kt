@@ -24,9 +24,7 @@ class SellItemsRecyclerAdapter : ListAdapter<Item,SellItemsRecyclerAdapter.MyVie
             seller = binding.sellerNmaeTV
         }
         fun onBind(item : Item) {
-
         }
-
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = SellingRowItemBinding.inflate(LayoutInflater.from(parent.context), parent , false)

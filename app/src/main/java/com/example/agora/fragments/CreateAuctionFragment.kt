@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.agora.databinding.FragmentCreateAuctionBinding
@@ -55,36 +56,15 @@ class CreateAuctionFragment : DialogFragment() {
             val title = binding.titleET.text.toString()
             val description = binding.descriptionET.text.toString()
             val price = binding.priceET.text.toString()
-//            if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()){
-//            val itemToSell = SellItem(
-//                name = binding.titleET.toString(),
-//                description = binding.descriptionET.toString(),
-//                price = binding.priceET.text.toString().toDouble()
-//            )
-//            val itemToSellHashMap = hashMapOf(
-//                "seller" to (auth.currentUser?.displayName),
-//                "title" to title,
-//                "description" to description,
-//                "price" to price
-//            )
-            val item = Item(seller = auth.currentUser?.displayName!!, title = title, description = description, price = price )
-
-            viewModel.sellItem(item)
-
-//            auth.currentUser?.let {
-//                firebaseDB.collection("items")
-//                    .add(itemToSellHashMap)
-//                    .addOnSuccessListener { documentReference ->
-//                        Log.d(TAG, "DocumentSnapshot added")
-//                    }
-//                    .addOnFailureListener { e ->
-//                        Log.w(TAG, "Error adding document", e)
-//                    }
-//            }
-//            } else {
-//                Toast.makeText(requireContext(),"Please fill in all the fields",Toast.LENGTH_LONG).show()
-//            }
-            dismiss()
+            
+            if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()){
+                val item = Item(seller = auth.currentUser?.displayName!!, title = title, description = description, price = price )
+                viewModel.sellItem(item)
+                dismiss()
+            } else {
+                Toast.makeText(requireContext(), "Please fill in all the fields", Toast.LENGTH_SHORT).show()
+            }
+            
         }
     }
 }

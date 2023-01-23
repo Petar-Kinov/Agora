@@ -24,4 +24,5 @@
     <string name="my_items">My Items</string>
     <string name="auctions">Auctions</string>
     <string name="create_new">Create New</string>
+    <string name="delete_account">Delete Account</string>
 </resources>

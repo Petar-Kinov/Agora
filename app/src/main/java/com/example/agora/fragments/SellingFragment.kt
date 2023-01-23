@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.adapters.SellItemsRecyclerAdapter
 import com.example.agora.databinding.FragmentSellingBinding
+import com.example.agora.model.Item
 import com.example.agora.viewModel.ItemsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -38,6 +39,7 @@ class SellFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         firebaseDB = Firebase.firestore
+
         viewModel = ViewModelProvider(requireActivity())[ItemsViewModel::class.java]
 
         listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
@@ -76,9 +78,14 @@ class SellFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getItems()
         viewModel.items.observe(viewLifecycleOwner) {
-                recyclerAdapter.submitList(it)
+            val myItemsList = mutableListOf<Item>()
+            for (item in it){
+                if (item.seller.equals(auth.currentUser!!.displayName)) {
+                    myItemsList.add(item)
+                }
+            }
+                recyclerAdapter.submitList(myItemsList)
         }
 
 //        val docRef = auth.currentUser?.let { firebaseDB.collection("users").document(it.uid) }
