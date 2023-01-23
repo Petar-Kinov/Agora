@@ -9,13 +9,11 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.agora.R
 import com.example.agora.adapters.ViewPagerAdapter
 import com.example.agora.databinding.FragmentHomePageBinding
-import com.example.agora.viewModel.ItemsViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -72,7 +70,7 @@ class HomePage : Fragment() {
         auth.addAuthStateListener(listener)
 
 
-        //  once are logged in onBackPress does not send you back to login screen
+        // once are logged in onBackPress does not send you back to login screen
     val callback: OnBackPressedCallback =
         object : OnBackPressedCallback(true /* enabled by default */) {
             override fun handleOnBackPressed() {
@@ -142,7 +140,7 @@ class HomePage : Fragment() {
 
     private fun logOut() {
         FirebaseAuth.getInstance().signOut()
-        requireActivity().viewModelStore.clear();
+        requireActivity().viewModelStore.clear()
     }
 
     override fun onDestroyView() {
