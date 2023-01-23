@@ -1,7 +1,6 @@
 package com.example.agora.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.example.agora.model.Item
 
 
 class CreateAuctionFragment : DialogFragment() {
@@ -61,23 +61,26 @@ class CreateAuctionFragment : DialogFragment() {
 //                description = binding.descriptionET.toString(),
 //                price = binding.priceET.text.toString().toDouble()
 //            )
-            val itemToSellHashMap = hashMapOf(
-                "sellerId" to (auth.currentUser?.uid ?: -1),
-                "title" to title,
-                "description" to description,
-                "price" to price
-            )
+//            val itemToSellHashMap = hashMapOf(
+//                "seller" to (auth.currentUser?.displayName),
+//                "title" to title,
+//                "description" to description,
+//                "price" to price
+//            )
+            val item = Item(seller = auth.currentUser?.displayName!!, title = title, description = description, price = price )
 
-            auth.currentUser?.let {
-                firebaseDB.collection("items")
-                    .add(itemToSellHashMap)
-                    .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "DocumentSnapshot added")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error adding document", e)
-                    }
-            }
+            viewModel.sellItem(item)
+
+//            auth.currentUser?.let {
+//                firebaseDB.collection("items")
+//                    .add(itemToSellHashMap)
+//                    .addOnSuccessListener { documentReference ->
+//                        Log.d(TAG, "DocumentSnapshot added")
+//                    }
+//                    .addOnFailureListener { e ->
+//                        Log.w(TAG, "Error adding document", e)
+//                    }
+//            }
 //            } else {
 //                Toast.makeText(requireContext(),"Please fill in all the fields",Toast.LENGTH_LONG).show()
 //            }

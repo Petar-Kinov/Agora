@@ -16,10 +16,15 @@ import androidx.navigation.fragment.findNavController
 import com.example.agora.R
 import com.example.agora.util.EmailValidator
 import com.example.agora.databinding.FragmentRegisterBinding
+import com.google.api.LogDescriptor
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 
 private const val TAG = "RegisterFragment"
 
@@ -92,6 +97,24 @@ class RegisterFragment : Fragment() {
                     )
 
                     auth.currentUser?.let {
+
+                        // when registering display name is set after you are logged in
+                        // and the welcome msg name is set to null
+                        //so we wait for the user.displayName to be set first
+                        runBlocking {
+                            launch {
+                                val profileUpdates = userProfileChangeRequest {
+                                    displayName = "${binding.editTextTextPersonName.text.toString()} ${binding.editTextTextPersonName2.text.toString()}"
+                                }
+                                it.updateProfile(profileUpdates).addOnCompleteListener {
+                                    if (it.isSuccessful){
+                                        Log.d(TAG, "signUp: Display name is  ${profileUpdates.displayName}")
+                                    }
+                                }.await()
+                            }
+                        }
+
+
                         fireStoreDB.collection("users").document(it.uid)
                             .set(user)
                             .addOnSuccessListener { documentReference ->
@@ -112,6 +135,7 @@ class RegisterFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+
             }
     }
 

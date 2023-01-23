@@ -19,6 +19,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 private const val TAG = "HomePage"
@@ -51,23 +53,33 @@ class HomePage : Fragment() {
 
             //if user is signed in, we call a helper method to save the user details to Firebase
             if (user != null) {
+                val name = user.displayName
+
+                runBlocking {
+                    launch {
+                        binding.welcomeMsg.text = getString(R.string.welcome_msg, "${user.displayName}")
+                    }
+                }
+
+
+
                 // User is signed in
                 // you could place other firebase code
                 //logic to save the user details to Firebase
-                val userRef = firebaseDB.collection("users")
-                userRef.document(user.uid).get().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val document = task.result
-                        if (document.exists()) {
-                            firstName = document.get("firstName") as String
-                            lastName = document.get("lastName") as String
-                            binding.welcomeMsg.text =
-                                getString(R.string.welcome_msg, "$firstName $lastName")
-                        }
-                    } else {
-                        Log.d(TAG, "onViewCreated: Could not get document")
-                    }
-                }
+//                val userRef = firebaseDB.collection("users")
+//                userRef.document(user.uid).get().addOnCompleteListener { task ->
+//                    if (task.isSuccessful) {
+//                        val document = task.result
+//                        if (document.exists()) {
+//                            firstName = document.get("firstName") as String
+//                            lastName = document.get("lastName") as String
+//                            binding.welcomeMsg.text =
+//                                getString(R.string.welcome_msg, "$firstName $lastName")
+//                        }
+//                    } else {
+//                        Log.d(TAG, "onViewCreated: Could not get document")
+//                    }
+//                }
             } else {
                 // User is signed out
                 Log.d(TAG, "onAuthStateChanged:signed_out")

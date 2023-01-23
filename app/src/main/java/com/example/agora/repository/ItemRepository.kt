@@ -1,11 +1,13 @@
 package com.example.agora.repository
 
+import android.util.Log
 import com.example.agora.model.Item
 import com.example.agora.model.Response
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.gson.Gson
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
@@ -22,52 +24,15 @@ class ItemRepository @Inject constructor(private val itemRef : CollectionReferen
     }
 
 
-//    suspend fun getItemsToSell(): List<Item> {
-//        val auth = FirebaseAuth.getInstance()
-//        val firebaseDB = Firebase.firestore
-//        val itemsList: MutableList<Item> = ArrayList()
-//        val collection = auth.currentUser?.let {
-//            firebaseDB.collection("users").document(it.uid).collection("itemsToSell")
-//        }
-//        withContext(Dispatchers.IO) {
-//            async {
-//                collection?.get()?.addOnCompleteListener { result ->
-//                    if (result.isSuccessful) {
-//                        for (document in result.getResult()) {
-//                            val title = document.data.get("title") as String
-//                            val description = document.data.get("description") as String
-//                            val price = document.data.get("price") as Double
-//                            itemsList.add(
-//                                Item(
-//                                    name = title,
-//                                    description = description,
-//                                    price = price
-//                                )
-//                            )
-//                        }
-//                    }
-//                }
-//                    ?.addOnFailureListener { exception ->
-//                        Log.d(TAG, "Error getting documents: ", exception)
-//                    }
-//            }
-//        }.await()
-//
-//        return itemsList
-//    }
-
     override fun getSellItems() = callbackFlow {
         val auth = FirebaseAuth.getInstance()
-        val query = itemRef.whereEqualTo("sellerId" , auth.currentUser?.uid)
+        val query = itemRef.whereEqualTo("seller" , auth.currentUser?.displayName)
         mSnapshotListener = EventListener<QuerySnapshot> { snapshot , e->
             val itemResponse = if (snapshot != null) {
                 val itemList = mutableListOf<Item>()
-                for (documents in snapshot) {
-                    val  sellerId = documents.get("sellerId") as String
-                    val name = documents.get("title") as String
-                    val description = documents.get("description") as String
-                    val price = (documents.get("price") as String)
-                    val item = Item(sellerId,name,description,price)
+                for (document in snapshot) {
+                    val gson = Gson()
+                    val item = gson.fromJson(gson.toJson(document.data), Item::class.java)
                     itemList.add(item)
                 }
                 Response.Success(itemList)

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.agora.model.Item
 import com.example.agora.model.Response
 import com.example.agora.repository.ItemRepositoryDao
+import com.example.agora.use_case.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,7 +19,7 @@ import javax.inject.Inject
 //): ViewModel() {
 
 @HiltViewModel
-    class ItemsViewModel @Inject constructor (private val repositoryDao: ItemRepositoryDao): ViewModel() {
+    class ItemsViewModel @Inject constructor (private val useCases: UseCases): ViewModel() {
 
     companion object {
         private const val TAG = "ItemsViewModel"
@@ -30,7 +31,7 @@ import javax.inject.Inject
 
 //    private val firebaseRepo = ItemRepository()
     fun getItems() = viewModelScope.launch {
-        repositoryDao.getSellItems().collect {response ->
+        useCases.getItems.invoke().collect {response ->
             Log.d(TAG, "getItems: $response")
             when (response) {
                 is Response.Loading -> {
@@ -51,7 +52,7 @@ import javax.inject.Inject
 }
 
     fun sellItem(item: Item) = viewModelScope.launch {
-        repositoryDao.addItemToFireStore(item)
+        useCases.sellItem(item)
     }
 
 //    fun getSellItems(){

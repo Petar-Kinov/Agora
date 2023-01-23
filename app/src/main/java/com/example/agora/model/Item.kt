@@ -1,6 +1,13 @@
 package com.example.agora.model
 
-class Item(val sellerId : String, val name: String, val description : String, val price : String) {
+import com.google.gson.annotations.SerializedName
+
+class Item(
+    @SerializedName("seller") val seller: String,
+    @SerializedName("title") val title: String,
+    @SerializedName("description") val description: String,
+    @SerializedName("price") val price: String
+) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -8,7 +15,7 @@ class Item(val sellerId : String, val name: String, val description : String, va
 
         other as Item
 
-        if (name != other.name) return false
+        if (title != other.title) return false
         if (description != other.description) return false
         if (price != other.price) return false
 
@@ -16,7 +23,7 @@ class Item(val sellerId : String, val name: String, val description : String, va
     }
 
     override fun hashCode(): Int {
-        var result = name.hashCode()
+        var result = title.hashCode()
         result = 31 * result + description.hashCode()
         result = 31 * result + price.hashCode()
         return result
