@@ -19,4 +19,9 @@
     <string name="register">REGISTER</string>
     <string name="welcome_msg">"Hello, %1$s!"</string>
     <string name="keep_me_logged_in">Keep me Logged in</string>
+    <string name="buy">BUY</string>
+    <string name="sell">SELL</string>
+    <string name="my_items">My Items</string>
+    <string name="auctions">Auctions</string>
+    <string name="create_new">Create New</string>
 </resources>

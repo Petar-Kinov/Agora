@@ -7,6 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="brown_sugar">#B07156</color>
     <color name="fire_opal">#EE6352</color>
+    <color name="gunmatal">#2B303A</color>
+    <color name="middle_blue">#92DCE5</color>
+    <color name="inch_worm">#B0FE76</color>
+    <color name="light_green">#81E979</color>
+    <color name="apricot">#FFD1BA</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

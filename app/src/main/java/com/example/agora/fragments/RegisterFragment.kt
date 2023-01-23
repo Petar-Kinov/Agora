@@ -22,18 +22,19 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 private const val TAG = "RegisterFragment"
+
 class RegisterFragment : Fragment() {
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
-    private lateinit var fireStoreDB : FirebaseFirestore
+    private lateinit var fireStoreDB: FirebaseFirestore
 
-    private lateinit var firstNameET : EditText
-    private lateinit var lastNameET : EditText
-    private lateinit var emailET : EditText
-    private lateinit var passwordET : EditText
-    private lateinit var verifyPasswordET : EditText
-    private lateinit var signUpBtn : Button
+    private lateinit var firstNameET: EditText
+    private lateinit var lastNameET: EditText
+    private lateinit var emailET: EditText
+    private lateinit var passwordET: EditText
+    private lateinit var verifyPasswordET: EditText
+    private lateinit var signUpBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +44,7 @@ class RegisterFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -62,29 +63,24 @@ class RegisterFragment : Fragment() {
         verifyPasswordET = binding.editTextTextPassword2
         signUpBtn = binding.signUpBtn
 
-//        setCheckMarkIfNotEmpty(firstNameET)
-//        setCheckMarkIfNotEmpty(lastNameET)
-        setCheckMarkListener(firstNameET)
-        setCheckMarkListener(lastNameET)
-        setCheckMarkListener(emailET)
-        setCheckMarkListener(passwordET)
-        setCheckMarkListener(verifyPasswordET)
+        //set listeners to EditText fields to check if the input is valid
+        setCheckMarkListener(listOf(firstNameET, lastNameET, emailET, passwordET, verifyPasswordET))
 
         signUpBtn.setOnClickListener {
             if (firstNameET.compoundDrawables[2] != null &&
-            lastNameET.compoundDrawables[2] != null &&
-            emailET.compoundDrawables[2] != null &&
-            passwordET.compoundDrawables[2] != null &&
-            verifyPasswordET.compoundDrawables[2] != null) {
+                lastNameET.compoundDrawables[2] != null &&
+                emailET.compoundDrawables[2] != null &&
+                passwordET.compoundDrawables[2] != null &&
+                verifyPasswordET.compoundDrawables[2] != null
+            ) {
                 val email = emailET.text.toString()
                 val password = passwordET.text.toString()
-//                Toast.makeText(requireContext(),"Registered user ${firstNameET.text.toString()} ${lastNameET.text.toString()}",Toast.LENGTH_LONG).show()
-                signUp(email,password)
+                signUp(email, password)
             }
         }
     }
 
-    private fun signUp(email : String, password : String) {
+    private fun signUp(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
@@ -111,68 +107,55 @@ class RegisterFragment : Fragment() {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                    Toast.makeText(requireContext(), "Authentication failed.",
-                        Toast.LENGTH_SHORT).show()
-//                    updateUI(null)
+                    Toast.makeText(
+                        requireContext(), "Authentication failed.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
     }
 
-    private fun setCheckMarkListener(editTextView: TextView) {
-        editTextView.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                //ignore
-            }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                //ignore
-            }
-            override fun afterTextChanged(text: Editable) {
-//                if (text != null) {
+    private fun setCheckMarkListener(editTextViewList: List<TextView>) {
+        for (editTextView in editTextViewList) {
+            editTextView.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    //ignore
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    //ignore
+                }
+
+                override fun afterTextChanged(text: Editable) {
                     when (editTextView) {
-                        firstNameET,lastNameET -> if (text.isNotEmpty()) {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                                0,
-                                0,
-                                R.drawable.ic_baseline_check_24,
-                                0
+                        firstNameET, lastNameET -> if (text.isNotEmpty()) {
+                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_check_24, 0
                             )
                         } else {
                             editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
                         }
                         emailET -> if (EmailValidator.isEmailValid(text.toString())) {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                                0,
-                                0,
-                                R.drawable.ic_baseline_check_24,
-                                0
+                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_check_24, 0
                             )
                         } else {
                             editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
                         }
-                        passwordET ->  if (text.length >= 6) {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                                0,
-                                0,
-                                R.drawable.ic_baseline_check_24,
-                                0
+                        passwordET -> if (text.length >= 6) {
+                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_check_24, 0
                             )
                         } else {
                             editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
                         }
-                        verifyPasswordET ->  if (text.toString() == binding.editTextTextPassword.text.toString()) {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                                0,
-                                0,
-                                R.drawable.ic_baseline_check_24,
-                                0
+                        verifyPasswordET -> if (text.toString() == binding.editTextTextPassword.text.toString()) {
+                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_check_24, 0
                             )
                         } else {
                             editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
                         }
                     }
-//                }
-            }
-        })
+                }
+            })
+        }
     }
 
     override fun onDestroyView() {

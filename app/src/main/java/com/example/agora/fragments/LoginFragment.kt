@@ -1,8 +1,5 @@
 package com.example.agora.fragments
 
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,37 +10,44 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.agora.databinding.FragmentLoginBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 
 private const val TAG = "LoginFragment"
 private lateinit var auth: FirebaseAuth
-private lateinit var sharedPref: SharedPreferences
-private lateinit var editor: SharedPreferences.Editor
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
-    override fun onStart() {
-        super.onStart()
-        val currentUser = auth.currentUser
-        if(currentUser != null){
-            val action = LoginFragmentDirections.actionLoginFragmentToHomePage()
-            findNavController().navigate(action)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
-        sharedPref = this.requireActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-        editor = sharedPref.edit()
+//        authStateListener = AuthStateListener {
+//            val user = auth.currentUser
+//            if (user != null) {
+//                // User is signed in
+//                Log.d("AuthStateListener", "onAuthStateChanged:signed_in:" + user.uid)
+//                val action = LoginFragmentDirections.actionLoginFragmentToHomePage()
+//                findNavController().navigate(action)
+//            } else {
+//                // User is signed out
+//                Log.d("AuthStateListener", "onAuthStateChanged:signed_out")
+//            }
+//        }
+//        auth.addAuthStateListener(authStateListener)
     }
+
+//    override fun onStop() {
+//        super.onStop()
+//        auth.removeAuthStateListener(authStateListener)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -51,21 +55,30 @@ class LoginFragment : Fragment() {
     }
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d(TAG, "onViewCreated: shared pref is ${sharedPref.getBoolean("a",false)}")
 
-        binding.keepLoggedInChip.isChecked = sharedPref.getBoolean("a",false)
+//        binding.keepLoggedInChip.isChecked =
+//            sharedPref.getBoolean(getString(R.string.keep_me_logged_in), false)
 
-        binding.keepLoggedInChip.setOnClickListener {
-            editor.putBoolean("a",binding.keepLoggedInChip.isChecked).commit()
+//        binding.keepLoggedInChip.setOnClickListener {
+//            editor.putBoolean(
+//                getString(R.string.keep_me_logged_in),
+//                binding.keepLoggedInChip.isChecked
+//            ).commit()
 
-            Log.d(TAG, "onViewCreated: shared pref is ${sharedPref.getBoolean("a",false)}")
-        }
+//            Log.d(
+//                TAG,
+//                "onViewCreated: shared pref is ${
+//                    sharedPref.getBoolean(
+//                        getString(R.string.keep_me_logged_in),
+//                        false
+//                    )
+//                }"
+//            )
+//        }
 
-                    
 
         binding.registerBtn.setOnClickListener {
             val action = LoginFragmentDirections.actionLoginFragmentToRegisterFragment()
@@ -85,11 +98,12 @@ class LoginFragment : Fragment() {
                     .addOnCompleteListener(requireActivity()) { task ->
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
+//                            val action = LoginFragmentDirections.actionLoginFragmentToHomePage()
+//                            findNavController().navigate(action)
+//                            val user = auth.currentUser
+//                            user?.let { }
                             val action = LoginFragmentDirections.actionLoginFragmentToHomePage()
                             findNavController().navigate(action)
-                            val user = auth.currentUser
-                            user?.let {  }
-//                        updateUI(user)
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.exception)
@@ -97,7 +111,6 @@ class LoginFragment : Fragment() {
                                 requireContext(), "Authentication failed.",
                                 Toast.LENGTH_SHORT
                             ).show()
-//                        updateUI(null)
                         }
                     }
             }

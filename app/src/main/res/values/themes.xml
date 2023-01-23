@@ -1,6 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.Agora" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <item name="android:windowBackground">#EEEBD3</item>
+
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/eggshell</item>
         <item name="colorPrimaryVariant">@color/dark_blue</item>
