@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
-import com.example.agora.R
 import com.example.agora.databinding.FragmentSettingsBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -29,7 +28,7 @@ class SettingsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentSettingsBinding.inflate(inflater,container,false)
         val view = binding.root

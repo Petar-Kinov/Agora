@@ -25,7 +25,7 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
 
     override fun getItems() = callbackFlow {
         val auth = FirebaseAuth.getInstance()
-        val query = itemRef.whereEqualTo("seller" , auth.currentUser?.displayName)
+//        val query = itemRef.whereEqualTo("seller" , auth.currentUser?.displayName)
         mSnapshotListener = EventListener<QuerySnapshot> { snapshot , e->
             val itemResponse = if (snapshot != null) {
                 val itemList = mutableListOf<Item>()

@@ -81,7 +81,7 @@ class SellFragment : Fragment() {
         viewModel.items.observe(viewLifecycleOwner) {
             val myItemsList = mutableListOf<Item>()
             for (item in it){
-                if (item.seller.equals(auth.currentUser!!.displayName)) {
+                if (item.seller == auth.currentUser!!.displayName) {
                     myItemsList.add(item)
                 }
             }

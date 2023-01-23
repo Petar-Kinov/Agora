@@ -54,12 +54,12 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:text="Seller : "
-            app:layout_constraintBottom_toBottomOf="@+id/sellerNmaeTV"
-            app:layout_constraintEnd_toStartOf="@+id/sellerNmaeTV"
-            app:layout_constraintTop_toTopOf="@+id/sellerNmaeTV" />
+            app:layout_constraintBottom_toBottomOf="@+id/sellerNameTV"
+            app:layout_constraintEnd_toStartOf="@+id/sellerNameTV"
+            app:layout_constraintTop_toTopOf="@+id/sellerNameTV" />
 
         <TextView
-            android:id="@+id/sellerNmaeTV"
+            android:id="@+id/sellerNameTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"

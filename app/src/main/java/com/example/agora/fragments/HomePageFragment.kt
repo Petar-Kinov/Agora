@@ -39,7 +39,6 @@ class HomePage : Fragment() {
         auth = FirebaseAuth.getInstance()
         firebaseDB = Firebase.firestore
 
-
     }
 
     override fun onCreateView(

@@ -16,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.agora.R
 import com.example.agora.util.EmailValidator
 import com.example.agora.databinding.FragmentRegisterBinding
-import com.google.api.LogDescriptor
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
@@ -104,10 +103,10 @@ class RegisterFragment : Fragment() {
                         runBlocking {
                             launch {
                                 val profileUpdates = userProfileChangeRequest {
-                                    displayName = "${binding.editTextTextPersonName.text.toString()} ${binding.editTextTextPersonName2.text.toString()}"
+                                    displayName = "${binding.editTextTextPersonName.text} ${binding.editTextTextPersonName2.text}"
                                 }
-                                it.updateProfile(profileUpdates).addOnCompleteListener {
-                                    if (it.isSuccessful){
+                                it.updateProfile(profileUpdates).addOnCompleteListener { task ->
+                                    if (task.isSuccessful){
                                         Log.d(TAG, "signUp: Display name is  ${profileUpdates.displayName}")
                                     }
                                 }.await()
