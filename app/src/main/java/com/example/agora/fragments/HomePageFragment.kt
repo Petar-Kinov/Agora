@@ -1,5 +1,6 @@
 package com.example.agora.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -62,31 +63,13 @@ class HomePage : Fragment() {
             } else {
                 // User is signed out
                 Log.d(TAG, "onAuthStateChanged:signed_out")
-                val action = HomePageDirections.actionHomePageToLoginFragment()
-                findNavController().navigate(action)
+//                val action = HomePageDirections.actionHomePageToLoginFragment()
+//                findNavController().navigate(action)
+
+                findNavController().popBackStack(R.id.loginFragment, false)
             }
         }
         auth.addAuthStateListener(listener)
-
-
-        // once are logged in onBackPress does not send you back to login screen
-    val callback: OnBackPressedCallback =
-        object : OnBackPressedCallback(true /* enabled by default */) {
-            override fun handleOnBackPressed() {
-                // Handle the back button event
-                val fragmentManager = requireActivity().supportFragmentManager
-                val navHostFragment = fragmentManager.findFragmentById(R.id.nav_host_fragment)
-
-                if (navHostFragment != null) {
-                    if (navHostFragment.childFragmentManager.fragments.get(0) is HomePage) {
-                        // do nothing
-                    } else {
-                        fragmentManager.popBackStack()
-                    }
-                }
-            }
-        }
-    requireActivity().onBackPressedDispatcher.addCallback(requireActivity(), callback)
 
         return view
     }

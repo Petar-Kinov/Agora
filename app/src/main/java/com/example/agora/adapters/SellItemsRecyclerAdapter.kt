@@ -21,7 +21,7 @@ class SellItemsRecyclerAdapter : ListAdapter<Item,SellItemsRecyclerAdapter.MyVie
             name = binding.nameTV
             description = binding.descriptionTV
             price = binding.priceTV
-            seller = binding.sellerNmaeTV
+            seller = binding.sellerNameTV
         }
         fun onBind(item : Item) {
         }
