@@ -59,5 +59,7 @@ class MainActivity : AppCompatActivity() {
             } else if (navHostFragment.childFragmentManager.fragments[0] is LoginFragment)
                 this.finish()
         }
+        // else super.onBackPressed to cover all other options
+
     }
 }

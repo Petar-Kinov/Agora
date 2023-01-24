@@ -9,6 +9,7 @@ buildscript {
         hilt_navigation_compose_version = '1.0.0'
         firebase_bom_version = '31.1.1'
     }
+
     dependencies {
         classpath 'com.google.gms:google-services:4.3.14'
         def nav_version = "2.5.3"

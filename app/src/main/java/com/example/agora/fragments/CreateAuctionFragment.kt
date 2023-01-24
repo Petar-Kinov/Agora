@@ -1,20 +1,42 @@
 package com.example.agora.fragments
 
+import android.content.ContentResolver
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.agora.databinding.FragmentCreateAuctionBinding
+import com.example.agora.model.Item
 import com.example.agora.viewModel.ItemsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.example.agora.model.Item
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStream
 
 
 class CreateAuctionFragment : DialogFragment() {
@@ -24,14 +46,55 @@ class CreateAuctionFragment : DialogFragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firebaseDB: FirebaseFirestore
     private lateinit var viewModel: ItemsViewModel
+    private lateinit var storage: FirebaseStorage
+    private lateinit var storageRef: StorageReference
+    private lateinit var pickMediaActivityResultLauncher: ActivityResultLauncher<PickVisualMediaRequest>
+    private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Void?>
 
     private lateinit var sellBtn: Button
+    private lateinit var imageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
         firebaseDB = Firebase.firestore
         viewModel = ViewModelProvider(requireActivity())[ItemsViewModel::class.java]
+        storage = Firebase.storage
+        storageRef = storage.reference
+
+        // onCreate is the latest you can registerForActivityResult
+        pickMediaActivityResultLauncher =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                // Callback is invoked after the user selects a media item or closes the
+                // photo picker.
+                if (uri != null) {
+                    val imageRef = storageRef.child(getFileName(requireActivity().contentResolver,uri)!!)
+                    val somethingImageRef = storageRef.child("images/something.jpg")
+                    val bitmap = getThumbnail(uri, requireContext())
+                    uploadImage(bitmap!!,imageRef)
+                } else {
+                    Log.d("PhotoPicker", "No media selected")
+                }
+            }
+
+         cameraActivityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.TakePicturePreview()) { bitmap ->
+             if (bitmap != null) {
+                 //TODO set the storageReference to something
+                 uploadImage(bitmap,storageRef.child("123"))
+
+             } else {
+
+             }
+
+
+//        result: ActivityResult ->
+//            if (result.resultCode == Activity.RESULT_OK) {
+//                //  you will get result here in result.data
+//            }
+        }
+
+//        startForResult.launch(Intent(activity, CameraCaptureActivity::class.java))
     }
 
     companion object {
@@ -46,6 +109,7 @@ class CreateAuctionFragment : DialogFragment() {
         _binding = FragmentCreateAuctionBinding.inflate(inflater, container, false)
         val view = binding.root
         sellBtn = binding.createBtn
+        imageView = binding.itemIV
         return view
     }
 
@@ -56,15 +120,118 @@ class CreateAuctionFragment : DialogFragment() {
             val title = binding.titleET.text.toString()
             val description = binding.descriptionET.text.toString()
             val price = binding.priceET.text.toString()
-            
-            if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()){
-                val item = Item(seller = auth.currentUser?.displayName!!, title = title, description = description, price = price )
+
+            if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()) {
+                val item = Item(
+                    seller = auth.currentUser?.displayName!!,
+                    title = title,
+                    description = description,
+                    price = price
+                )
                 viewModel.sellItem(item)
                 dismiss()
             } else {
-                Toast.makeText(requireContext(), "Please fill in all the fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Please fill in all the fields",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-            
+        }
+
+        imageView.setOnClickListener {
+            pickMediaActivityResultLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+        binding.cameraBtn.setOnClickListener {
+            cameraActivityResultLauncher.launch()
         }
     }
+
+
+    private fun uploadImage(bitmap: Bitmap, imageRef : StorageReference) {
+        val baos = ByteArrayOutputStream()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (bitmap != null) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            }
+            val data = baos.toByteArray()
+            var uploadTask = imageRef.putBytes(data)
+            uploadTask.addOnFailureListener {
+                Log.d(TAG, "onViewCreated: Could not upload image")
+            }.addOnSuccessListener { taskSnapshot ->
+                Log.d(
+                    TAG,
+                    "onViewCreated: Successful upload of image ${taskSnapshot.metadata.toString()} "
+                )
+            }
+        }
+    }
+
+    @Throws(FileNotFoundException::class, IOException::class)
+    fun getThumbnail(uri: Uri, context: Context): Bitmap? {
+        var input: InputStream = context.contentResolver.openInputStream(uri)!!
+        val onlyBoundsOptions = BitmapFactory.Options()
+        onlyBoundsOptions.inJustDecodeBounds = true
+        onlyBoundsOptions.inDither = true //optional
+        onlyBoundsOptions.inPreferredConfig = Bitmap.Config.ARGB_8888 //optional
+        BitmapFactory.decodeStream(input, null, onlyBoundsOptions)
+        input.close()
+        if (onlyBoundsOptions.outWidth == -1 || onlyBoundsOptions.outHeight == -1) {
+            return null
+        }
+        val originalSize =
+            if (onlyBoundsOptions.outHeight > onlyBoundsOptions.outWidth) onlyBoundsOptions.outHeight else onlyBoundsOptions.outWidth
+        val ratio = if (originalSize > 350) originalSize / 350.00 else 1.0
+        val bitmapOptions = BitmapFactory.Options()
+        bitmapOptions.inSampleSize = getPowerOfTwoForSampleRatio(ratio)
+        bitmapOptions.inDither = true //optional
+        bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888 //
+        input = context.getContentResolver().openInputStream(uri)!!
+        val bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions)
+        input.close()
+        return bitmap
+    }
+
+    private fun getPowerOfTwoForSampleRatio(ratio: Double): Int {
+        val k = Integer.highestOneBit(Math.floor(ratio).toInt())
+        return if (k == 0) 1 else k
+    }
+
+//    @SuppressLint("Range")
+//    fun getFileName(uri: Uri): String? {
+//        var result: String? = null
+//        if (uri.scheme == "content") {
+//            val cursor: Cursor =
+//                requireActivity().contentResolver.query(uri, null, null, null, null)
+//            try {
+//                if (cursor != null && cursor.moveToFirst()) {
+//                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+//                }
+//            } finally {
+//                cursor.close()
+//            }
+//        }
+//        if (result == null) {
+//            result = uri.path
+//            val cut = result!!.lastIndexOf('/')
+//            if (cut != -1) {
+//                result = result.substring(cut + 1)
+//            }
+//        }
+//        return result
+//    }
+
+    private fun getFileName(resolver: ContentResolver, uri: Uri): String? {
+        val returnCursor = resolver.query(uri, null, null, null, null)!!
+        val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        returnCursor.moveToFirst()
+        val name = returnCursor.getString(nameIndex)
+        returnCursor.close()
+        return name
+    }
 }
+
+
+
+

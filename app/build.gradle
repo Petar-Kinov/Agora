@@ -85,6 +85,10 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-firestore-ktx'
 
+    // Add the dependency for the Cloud Storage library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-storage-ktx'
+
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-auth-ktx'
@@ -102,4 +106,6 @@ dependencies {
 
     //Gson
     implementation 'com.google.code.gson:gson:2.9.0'
+
+
 }
