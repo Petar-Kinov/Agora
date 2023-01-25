@@ -1,11 +1,10 @@
 package com.example.agora
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.navigation.NavController
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.agora.fragments.HomePage
 import com.example.agora.fragments.LoginFragment
@@ -20,7 +19,9 @@ private const val TAG = "MainActivity"
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var authStateListener : FirebaseAuth.AuthStateListener
     private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -37,8 +38,25 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(R.id.homePage)
         }
 
-
+        authStateListener = FirebaseAuth.AuthStateListener {
+            if (user != null) {
+                // User is signed in
+                Log.d("AuthStateListener", "onAuthStateChanged:signed_in:" + user.uid)
+                navController.navigate(R.id.homePage)
+            } else {
+                // User is signed out
+                Log.d("AuthStateListener", "onAuthStateChanged:signed_out")
+                navController.navigate(R.id.loginFragment)
+            }
+        }
+        auth.addAuthStateListener(authStateListener)
     }
+
+    override fun onStop() {
+        super.onStop()
+        auth.removeAuthStateListener(authStateListener)
+    }
+
 
     override fun onBackPressed() {
         val fragmentManager = supportFragmentManager

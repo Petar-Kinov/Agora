@@ -37,6 +37,7 @@ import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
+import java.time.LocalDateTime
 
 
 class CreateAuctionFragment : DialogFragment() {
@@ -51,8 +52,12 @@ class CreateAuctionFragment : DialogFragment() {
     private lateinit var pickMediaActivityResultLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Void?>
 
-    private lateinit var sellBtn: Button
+    private lateinit var createBtn: Button
     private lateinit var imageView: ImageView
+
+    private lateinit var bitmap: Bitmap
+    private lateinit var imageName : String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,8 +75,12 @@ class CreateAuctionFragment : DialogFragment() {
                 if (uri != null) {
                     val imageRef = storageRef.child(getFileName(requireActivity().contentResolver,uri)!!)
                     val somethingImageRef = storageRef.child("images/something.jpg")
-                    val bitmap = getThumbnail(uri, requireContext())
-                    uploadImage(bitmap!!,imageRef)
+
+                    // !! might be null
+                    bitmap = getThumbnail(uri, requireContext())!!
+                    binding.itemIV.setImageBitmap(bitmap)
+                    imageName = getFileName(requireActivity().contentResolver,uri)!!
+
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
@@ -81,7 +90,10 @@ class CreateAuctionFragment : DialogFragment() {
             ActivityResultContracts.TakePicturePreview()) { bitmap ->
              if (bitmap != null) {
                  //TODO set the storageReference to something
-                 uploadImage(bitmap,storageRef.child("123"))
+
+                 binding.itemIV.setImageBitmap(bitmap)
+                 this.bitmap = bitmap
+                 imageName = auth.currentUser!!.uid + LocalDateTime.now()
 
              } else {
 
@@ -108,7 +120,7 @@ class CreateAuctionFragment : DialogFragment() {
     ): View {
         _binding = FragmentCreateAuctionBinding.inflate(inflater, container, false)
         val view = binding.root
-        sellBtn = binding.createBtn
+        createBtn = binding.createBtn
         imageView = binding.itemIV
         return view
     }
@@ -116,19 +128,22 @@ class CreateAuctionFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        sellBtn.setOnClickListener {
+        createBtn.setOnClickListener {
             val title = binding.titleET.text.toString()
             val description = binding.descriptionET.text.toString()
             val price = binding.priceET.text.toString()
+//            val imageRef = imageView.tag.toString()
 
             if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()) {
                 val item = Item(
                     seller = auth.currentUser?.displayName!!,
                     title = title,
                     description = description,
-                    price = price
+                    price = price,
+                    imageRef = imageName
                 )
                 viewModel.sellItem(item)
+                uploadImage(bitmap,storageRef.child(imageName))
                 dismiss()
             } else {
                 Toast.makeText(

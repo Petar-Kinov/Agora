@@ -1,14 +1,11 @@
 package com.example.agora.fragments
 
-import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
@@ -20,9 +17,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-
 
 private const val TAG = "HomePage"
 
@@ -30,7 +24,6 @@ class HomePage : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var firebaseDB: FirebaseFirestore
-    private lateinit var listener: FirebaseAuth.AuthStateListener
     private var _binding: FragmentHomePageBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewPager: ViewPager2
@@ -39,7 +32,6 @@ class HomePage : Fragment() {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
         firebaseDB = Firebase.firestore
-
     }
 
     override fun onCreateView(
@@ -50,34 +42,11 @@ class HomePage : Fragment() {
         _binding = FragmentHomePageBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            // Get signedIn user
-            val user = firebaseAuth.currentUser
-            //if user is signed in, we call a helper method to save the user details to Firebase
-            if (user != null) {
-                runBlocking {
-                    launch {
-                        binding.welcomeMsg.text = getString(R.string.welcome_msg, "${user.displayName}")
-                    }
-                }
-            } else {
-                // User is signed out
-                Log.d(TAG, "onAuthStateChanged:signed_out")
-//                val action = HomePageDirections.actionHomePageToLoginFragment()
-//                findNavController().navigate(action)
-
-                findNavController().popBackStack(R.id.loginFragment, false)
-            }
-        }
-        auth.addAuthStateListener(listener)
-
+        val name = auth.currentUser?.displayName
+        binding.welcomeMsg.text = getString(R.string.welcome_msg, name)
         return view
     }
 
-    override fun onStop() {
-        super.onStop()
-        auth.removeAuthStateListener(listener)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
