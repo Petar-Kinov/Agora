@@ -7,7 +7,7 @@ class Item(
     @SerializedName("title") val title: String,
     @SerializedName("description") val description: String,
     @SerializedName("price") val price: String,
-    @SerializedName("imageRef") val imageRef: String
+    @SerializedName("downloadUrl") val downloadUrl: String
 ) {
 
     override fun equals(other: Any?): Boolean {

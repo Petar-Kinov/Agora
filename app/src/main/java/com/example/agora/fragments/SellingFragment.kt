@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.adapters.SellItemsRecyclerAdapter
 import com.example.agora.databinding.FragmentSellingBinding
 import com.example.agora.model.Item
+import com.example.agora.model.RecyclerItem
 import com.example.agora.viewModel.ItemsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

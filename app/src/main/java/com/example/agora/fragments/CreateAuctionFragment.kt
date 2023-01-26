@@ -140,10 +140,13 @@ class CreateAuctionFragment : DialogFragment() {
                     title = title,
                     description = description,
                     price = price,
-                    imageRef = imageName
+                    downloadUrl = imageName
                 )
-                viewModel.sellItem(item)
-                uploadImage(bitmap,storageRef.child(imageName))
+//                viewModel.sellItem(item)
+                uploadImage(seller = auth.currentUser?.displayName!!,
+                    title = title,
+                    description = description,
+                    price = price,bitmap,storageRef.child(imageName))
                 dismiss()
             } else {
                 Toast.makeText(
@@ -163,21 +166,26 @@ class CreateAuctionFragment : DialogFragment() {
     }
 
 
-    private fun uploadImage(bitmap: Bitmap, imageRef : StorageReference) {
+    private fun uploadImage(seller: String, title: String,description: String, price:String ,bitmap: Bitmap, imageRef : StorageReference) {
         val baos = ByteArrayOutputStream()
+        var  downloadUrl = ""
 
         lifecycleScope.launch(Dispatchers.IO) {
-            if (bitmap != null) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            }
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val data = baos.toByteArray()
-            var uploadTask = imageRef.putBytes(data)
+            val uploadTask = imageRef.putBytes(data)
             uploadTask.addOnFailureListener {
                 Log.d(TAG, "onViewCreated: Could not upload image")
             }.addOnSuccessListener { taskSnapshot ->
-                Log.d(
-                    TAG,
-                    "onViewCreated: Successful upload of image ${taskSnapshot.metadata.toString()} "
+                imageRef.downloadUrl.addOnCompleteListener {
+                    if (it.isSuccessful){
+                        downloadUrl = it.result.toString()
+                        val item = Item(seller,title,description,price,downloadUrl)
+                        viewModel.sellItem(item)
+
+                    }
+                }
+                Log.d(TAG, "onViewCreated: Successful upload of image ${taskSnapshot.metadata.toString()} "
                 )
             }
         }

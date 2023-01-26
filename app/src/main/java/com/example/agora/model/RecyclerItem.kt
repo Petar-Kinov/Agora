@@ -6,7 +6,7 @@ class RecyclerItem(val seller: String,
                    val title: String,
                    val description: String,
                    val price: String,
-                   val bitmap: Bitmap
+                   var bitmap: Bitmap?
                    ) {
 
     override fun equals(other: Any?): Boolean {
