@@ -7,12 +7,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.example.agora.databinding.SellingRowItemBinding
 import com.example.agora.model.Item
 
 class SellItemsRecyclerAdapter : ListAdapter<Item,SellItemsRecyclerAdapter.MyViewHolder> (ItemDiffCallBack()) {
 
-//    private lateinit var glide : RequestManager
+    private lateinit var glide : RequestManager
 
     inner class MyViewHolder(binding : SellingRowItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val titleTV : TextView
@@ -32,7 +34,7 @@ class SellItemsRecyclerAdapter : ListAdapter<Item,SellItemsRecyclerAdapter.MyVie
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-//        glide = Glide.with(parent.context)
+        glide = Glide.with(parent.context)
         val binding = SellingRowItemBinding.inflate(LayoutInflater.from(parent.context), parent , false)
         return MyViewHolder(binding)
     }
@@ -43,7 +45,7 @@ class SellItemsRecyclerAdapter : ListAdapter<Item,SellItemsRecyclerAdapter.MyVie
         holder.priceTV.text = getItem(position).price
         holder.sellerTV.text = getItem(position).seller
 //        holder.pictureTV.setImageBitmap(getItem(position).bitmap)
-//        glide.load(getItem(position).downloadUrl).into(holder.pictureIV)
+        glide.load(getItem(position).downloadUrl).into(holder.pictureIV)
 
 
     }

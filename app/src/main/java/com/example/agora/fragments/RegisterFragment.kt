@@ -31,7 +31,7 @@ class RegisterFragment : Fragment() {
     private lateinit var fireStoreDB: FirebaseFirestore
 
     private val viewModel: AuthViewModel by lazy {
-        AuthViewModel(AuthRepositoryImpl(FirebaseAuth.getInstance()))
+        AuthViewModel(AuthRepositoryImpl())
     }
 
     private lateinit var firstNameET: EditText

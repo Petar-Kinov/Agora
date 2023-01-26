@@ -20,7 +20,7 @@ class LoginFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: AuthViewModel by lazy {
-        AuthViewModel(AuthRepositoryImpl(FirebaseAuth.getInstance()))
+        AuthViewModel(AuthRepositoryImpl())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

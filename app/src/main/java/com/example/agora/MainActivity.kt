@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.example.agora.authentication.FirebaseHelper
 import com.example.agora.fragments.HomePage
 import com.example.agora.fragments.LoginFragment
 import com.example.agora.fragments.SettingsFragment
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        auth = FirebaseAuth.getInstance()
+        auth = FirebaseHelper.getInstance()
         val user = auth.currentUser
 
         val navHostFragment =
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         authStateListener = FirebaseAuth.AuthStateListener {
+            val user = auth.currentUser
             if (user != null) {
                 // User is signed in
                 Log.d("AuthStateListener", "onAuthStateChanged:signed_in:" + user.uid)

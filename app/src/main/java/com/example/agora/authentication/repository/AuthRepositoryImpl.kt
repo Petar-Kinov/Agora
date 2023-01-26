@@ -1,6 +1,7 @@
 package com.example.agora.authentication.repository
 
 import android.util.Log
+import com.example.agora.authentication.FirebaseHelper
 import com.example.agora.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
@@ -8,7 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
-class AuthRepositoryImpl (val auth : FirebaseAuth) : AuthRepository {
+class AuthRepositoryImpl () : AuthRepository {
 
     companion object {
         private const val TAG = "AuthRepositoryImpl"
@@ -16,6 +17,7 @@ class AuthRepositoryImpl (val auth : FirebaseAuth) : AuthRepository {
 
     override fun signUp(user: User): Boolean {
         var isSuccessful = false
+        val auth = FirebaseHelper.getInstance()
 
         auth.createUserWithEmailAndPassword(user.email, user.password)
             .addOnCompleteListener { task ->
@@ -29,9 +31,10 @@ class AuthRepositoryImpl (val auth : FirebaseAuth) : AuthRepository {
 //                    )
 
                     auth.currentUser?.let {
-                        // when registering display name is set after you are logged in
-                        // and the welcome msg name is set to null
-                        //so we wait for the user.displayName to be set first
+//                         when registering display name is set after you are logged in
+//                         and the welcome msg name is set to null
+//                        so we wait for the user.displayName to be set first
+
                         runBlocking {
                             launch {
                                 val profileUpdates = userProfileChangeRequest {
@@ -65,6 +68,7 @@ class AuthRepositoryImpl (val auth : FirebaseAuth) : AuthRepository {
 
     override fun logIn(email: String, password: String): Boolean {
         var isSuccessful = false
+        val auth = FirebaseHelper.getInstance()
         auth.signInWithEmailAndPassword(email, password)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
