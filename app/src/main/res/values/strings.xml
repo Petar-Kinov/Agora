@@ -25,4 +25,11 @@
     <string name="auctions">Auctions</string>
     <string name="create_new">Create New</string>
     <string name="delete_account">Delete Account</string>
+    <string name="name">Name</string>
+    <string name="description">description</string>
+    <string name="seller">Seller :</string>
+    <string name="placeholder_text">Placeholder text</string>
+    <string name="price">Price:</string>
+    <string name="title">Title:</string>
+    <string name="Description">Description:</string>
 </resources>

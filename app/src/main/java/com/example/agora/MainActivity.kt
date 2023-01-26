@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         authStateListener = FirebaseAuth.AuthStateListener {
+            // if user = auth.currentUser is outside of the listener it does not change its value on authStateChange
             val user = auth.currentUser
             if (user != null) {
                 // User is signed in
@@ -80,6 +81,5 @@ class MainActivity : AppCompatActivity() {
                 this.finish()
         }
         // else super.onBackPressed to cover all other options
-
     }
 }

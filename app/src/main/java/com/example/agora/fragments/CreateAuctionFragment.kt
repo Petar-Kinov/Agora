@@ -38,6 +38,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
 import java.time.LocalDateTime
+import kotlin.math.floor
 
 
 class CreateAuctionFragment : DialogFragment() {
@@ -54,10 +55,8 @@ class CreateAuctionFragment : DialogFragment() {
 
     private lateinit var createBtn: Button
     private lateinit var imageView: ImageView
-
     private lateinit var bitmap: Bitmap
     private lateinit var imageName : String
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,16 +66,12 @@ class CreateAuctionFragment : DialogFragment() {
         storage = Firebase.storage
         storageRef = storage.reference
 
-        // onCreate is the latest you can registerForActivityResult
         pickMediaActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 // Callback is invoked after the user selects a media item or closes the
                 // photo picker.
                 if (uri != null) {
-                    val imageRef = storageRef.child(getFileName(requireActivity().contentResolver,uri)!!)
-                    val somethingImageRef = storageRef.child("images/something.jpg")
-
-                    // !! might be null
+                    // !! might be null not sure
                     bitmap = getThumbnail(uri, requireContext())!!
                     binding.itemIV.setImageBitmap(bitmap)
                     imageName = getFileName(requireActivity().contentResolver,uri)!!
@@ -89,24 +84,13 @@ class CreateAuctionFragment : DialogFragment() {
          cameraActivityResultLauncher = registerForActivityResult(
             ActivityResultContracts.TakePicturePreview()) { bitmap ->
              if (bitmap != null) {
-                 //TODO set the storageReference to something
-
                  binding.itemIV.setImageBitmap(bitmap)
                  this.bitmap = bitmap
                  imageName = auth.currentUser!!.uid + LocalDateTime.now()
-
              } else {
-
+                 Log.d(TAG, "onCreate: bitmap is null ")
              }
-
-
-//        result: ActivityResult ->
-//            if (result.resultCode == Activity.RESULT_OK) {
-//                //  you will get result here in result.data
-//            }
         }
-
-//        startForResult.launch(Intent(activity, CameraCaptureActivity::class.java))
     }
 
     companion object {
@@ -135,14 +119,6 @@ class CreateAuctionFragment : DialogFragment() {
 //            val imageRef = imageView.tag.toString()
 
             if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()) {
-                val item = Item(
-                    seller = auth.currentUser?.displayName!!,
-                    title = title,
-                    description = description,
-                    price = price,
-                    downloadUrl = imageName
-                )
-//                viewModel.sellItem(item)
                 uploadImage(seller = auth.currentUser?.displayName!!,
                     title = title,
                     description = description,
@@ -165,10 +141,9 @@ class CreateAuctionFragment : DialogFragment() {
         }
     }
 
-
     private fun uploadImage(seller: String, title: String,description: String, price:String ,bitmap: Bitmap, imageRef : StorageReference) {
         val baos = ByteArrayOutputStream()
-        var  downloadUrl = ""
+        var  downloadUrl: String
 
         lifecycleScope.launch(Dispatchers.IO) {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
@@ -182,7 +157,6 @@ class CreateAuctionFragment : DialogFragment() {
                         downloadUrl = it.result.toString()
                         val item = Item(seller,title,description,price,downloadUrl)
                         viewModel.sellItem(item)
-
                     }
                 }
                 Log.d(TAG, "onViewCreated: Successful upload of image ${taskSnapshot.metadata.toString()} "
@@ -196,7 +170,6 @@ class CreateAuctionFragment : DialogFragment() {
         var input: InputStream = context.contentResolver.openInputStream(uri)!!
         val onlyBoundsOptions = BitmapFactory.Options()
         onlyBoundsOptions.inJustDecodeBounds = true
-        onlyBoundsOptions.inDither = true //optional
         onlyBoundsOptions.inPreferredConfig = Bitmap.Config.ARGB_8888 //optional
         BitmapFactory.decodeStream(input, null, onlyBoundsOptions)
         input.close()
@@ -208,42 +181,17 @@ class CreateAuctionFragment : DialogFragment() {
         val ratio = if (originalSize > 350) originalSize / 350.00 else 1.0
         val bitmapOptions = BitmapFactory.Options()
         bitmapOptions.inSampleSize = getPowerOfTwoForSampleRatio(ratio)
-        bitmapOptions.inDither = true //optional
         bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888 //
-        input = context.getContentResolver().openInputStream(uri)!!
+        input = context.contentResolver.openInputStream(uri)!!
         val bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions)
         input.close()
         return bitmap
     }
 
     private fun getPowerOfTwoForSampleRatio(ratio: Double): Int {
-        val k = Integer.highestOneBit(Math.floor(ratio).toInt())
+        val k = Integer.highestOneBit(floor(ratio).toInt())
         return if (k == 0) 1 else k
     }
-
-//    @SuppressLint("Range")
-//    fun getFileName(uri: Uri): String? {
-//        var result: String? = null
-//        if (uri.scheme == "content") {
-//            val cursor: Cursor =
-//                requireActivity().contentResolver.query(uri, null, null, null, null)
-//            try {
-//                if (cursor != null && cursor.moveToFirst()) {
-//                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-//                }
-//            } finally {
-//                cursor.close()
-//            }
-//        }
-//        if (result == null) {
-//            result = uri.path
-//            val cut = result!!.lastIndexOf('/')
-//            if (cut != -1) {
-//                result = result.substring(cut + 1)
-//            }
-//        }
-//        return result
-//    }
 
     private fun getFileName(resolver: ContentResolver, uri: Uri): String? {
         val returnCursor = resolver.query(uri, null, null, null, null)!!

@@ -16,7 +16,6 @@ class AuthViewModel(private val authRepositoryImpl: AuthRepositoryImpl): ViewMod
         authRepositoryImpl.logIn(email,password)
     }
 
-
     fun signup(user: User) = viewModelScope.launch {
         authRepositoryImpl.signUp(user)
     }

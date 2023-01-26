@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.adapters.SellItemsRecyclerAdapter
 import com.example.agora.databinding.FragmentSellingBinding
 import com.example.agora.model.Item
-import com.example.agora.model.RecyclerItem
 import com.example.agora.viewModel.ItemsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -88,17 +87,6 @@ class SellFragment : Fragment() {
             }
                 recyclerAdapter.submitList(myItemsList)
         }
-
-//        val docRef = auth.currentUser?.let { firebaseDB.collection("users").document(it.uid) }
-//        docRef?.get()?.addOnSuccessListener { document ->
-//            if (document != null) {
-//                Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-//            } else {
-//                Log.d(TAG, "No such document")
-//            }
-//        }?.addOnFailureListener { exception ->
-//            Log.d(TAG, "get failed with ", exception)
-//        }
 
         binding.sellBtn.setOnClickListener {
             CreateAuctionFragment().show(childFragmentManager, "some tag")

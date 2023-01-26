@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.agora.model.Item
-import com.example.agora.model.RecyclerItem
 import com.example.agora.model.Response
 import com.example.agora.use_case.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +21,6 @@ import javax.inject.Inject
 
     private val _items = MutableLiveData<List<Item>>()
     val items = _items as LiveData<List<Item>>
-
 
 //    private val firebaseRepo = ItemRepository()
     fun getItems() = viewModelScope.launch {
@@ -50,9 +48,4 @@ import javax.inject.Inject
         useCases.sellItem(item)
     }
 
-//    fun getSellItems(){
-//        viewModelScope.launch(Dispatchers.IO) {
-//            _items.postValue(firebaseRepo.getItemsToSell())
-//        }
-//    }
 }

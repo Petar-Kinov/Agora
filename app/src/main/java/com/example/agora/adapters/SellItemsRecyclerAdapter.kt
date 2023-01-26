@@ -44,12 +44,8 @@ class SellItemsRecyclerAdapter : ListAdapter<Item,SellItemsRecyclerAdapter.MyVie
         holder.descriptionTV.text = getItem(position).description
         holder.priceTV.text = getItem(position).price
         holder.sellerTV.text = getItem(position).seller
-//        holder.pictureTV.setImageBitmap(getItem(position).bitmap)
         glide.load(getItem(position).downloadUrl).into(holder.pictureIV)
-
-
     }
-
 
     private class ItemDiffCallBack : DiffUtil.ItemCallback<Item>() {
         override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean =

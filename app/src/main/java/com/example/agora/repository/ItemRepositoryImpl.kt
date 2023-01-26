@@ -1,17 +1,11 @@
 package com.example.agora.repository
 
-import android.R
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import com.example.agora.model.Item
 import com.example.agora.model.Response
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
-import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
@@ -45,22 +39,18 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
             }
             val registration = itemRef.addSnapshotListener(mSnapshotListener!!)
             awaitClose {
-                if (registration != null) {
-                        registration.remove()
-                    }
-
+                registration.remove()
             }
-
         }
 
-    private suspend fun getImageBitmap(imageName: String): Bitmap {
-        return withContext(Dispatchers.IO) {
-            val islandRef = Firebase.storage.reference.child(imageName)
-            val ONE_MEGABYTE: Long = 1024 * 1024
-            val result = islandRef.getBytes(ONE_MEGABYTE).await()
-            BitmapFactory.decodeByteArray(result, 0, result.size)
-        }
-    }
+//    private suspend fun getImageBitmap(imageName: String): Bitmap {
+//        return withContext(Dispatchers.IO) {
+//            val islandRef = Firebase.storage.reference.child(imageName)
+//            val ONE_MEGABYTE: Long = 1024 * 1024
+//            val result = islandRef.getBytes(ONE_MEGABYTE).await()
+//            BitmapFactory.decodeByteArray(result, 0, result.size)
+//        }
+//    }
 
     override suspend fun addItemToFireStore(item : Item): Response<Boolean> {
         return try {
@@ -74,5 +64,4 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
     override suspend fun deleteItemToFireStore(itemId: String): Response<Boolean> {
         TODO("Not yet implemented")
     }
-
 }
