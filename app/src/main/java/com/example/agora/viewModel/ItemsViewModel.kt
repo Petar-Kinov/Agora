@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-    class ItemsViewModel @Inject constructor (private val useCases: UseCases): ViewModel() {
+class ItemsViewModel @Inject constructor(private val useCases: UseCases) : ViewModel() {
 
     companion object {
         private const val TAG = "ItemsViewModel"
@@ -22,9 +22,9 @@ import javax.inject.Inject
     private val _items = MutableLiveData<List<Item>>()
     val items = _items as LiveData<List<Item>>
 
-//    private val firebaseRepo = ItemRepository()
+    //    private val firebaseRepo = ItemRepository()
     fun getItems() = viewModelScope.launch {
-        useCases.getItems.invoke().collect {response ->
+        useCases.getItems.invoke().collect { response ->
             Log.d(TAG, "getItems: $response")
             when (response) {
                 is Response.Loading -> {
@@ -42,7 +42,7 @@ import javax.inject.Inject
                 }
             }
         }
-}
+    }
 
     fun sellItem(item: Item) = viewModelScope.launch {
         useCases.sellItem(item)

@@ -52,7 +52,7 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
 //        }
 //    }
 
-    override suspend fun addItemToFireStore(item : Item): Response<Boolean> {
+    override suspend fun addItemToFireStore(item: Item): Response<Boolean> {
         return try {
             itemRef.add(item).await()
             Response.Success(true)

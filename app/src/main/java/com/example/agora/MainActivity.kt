@@ -10,9 +10,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.agora.authentication.FirebaseHelper
-import com.example.agora.fragments.HomePage
-import com.example.agora.fragments.SettingsFragment
-import com.example.agora.fragments.authFragments.LoginFragment
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,18 +22,17 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
     private lateinit var navController: NavController
-    private lateinit var activity : Activity
+    private lateinit var activity: Activity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        activity = this
-
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         auth = FirebaseHelper.getInstance()
         val user = auth.currentUser
+
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -66,16 +62,16 @@ class MainActivity : AppCompatActivity() {
             // Handle the back button event
             when (navController.currentDestination?.id) {
                 R.id.homePage -> {
-                    val builder = AlertDialog.Builder(activity)
+                    val builder = AlertDialog.Builder(this@MainActivity)
                     builder.setMessage("Are you sure you want to exit?")
                         .setCancelable(false)
-                        .setPositiveButton("Yes") { _, _ -> activity.finish() }
+                        .setPositiveButton("Yes") { _, _ -> this@MainActivity.finish() }
                         .setNegativeButton("No") { dialog, _ -> dialog.cancel() }
                     val alert = builder.create()
                     alert.show()
                 }
                 R.id.loginFragment -> {
-                    activity.finish()
+                    this@MainActivity.finish()
                 }
                 else -> {
                     navController.popBackStack()
@@ -83,6 +79,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
     override fun onStop() {
         super.onStop()

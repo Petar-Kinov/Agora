@@ -72,7 +72,7 @@ class SellFragment : Fragment() {
         val view = binding.root
 
         recyclerView = binding.recyclerView
-        recyclerView.layoutManager = GridLayoutManager(requireContext(),2)
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerView.adapter = recyclerAdapter
 
         return view
@@ -83,12 +83,12 @@ class SellFragment : Fragment() {
 
         viewModel.items.observe(viewLifecycleOwner) {
             val myItemsList = mutableListOf<Item>()
-            for (item in it){
+            for (item in it) {
                 if (item.seller == auth.currentUser!!.displayName) {
                     myItemsList.add(item)
                 }
             }
-                recyclerAdapter.submitList(myItemsList)
+            recyclerAdapter.submitList(myItemsList)
         }
 
         binding.sellBtn.setOnClickListener {

@@ -16,27 +16,28 @@ class SettingsFragment : Fragment() {
         private const val TAG = "SettingsFragment"
     }
 
-    private var _binding : FragmentSettingsBinding ?= null
+    private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var auth : FirebaseAuth
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
 
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentSettingsBinding.inflate(inflater,container,false)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         val view = binding.root
 
         binding.deleteAccBtn.setOnClickListener {
 
             auth.currentUser!!.delete().addOnCompleteListener { task ->
-                if (task.isSuccessful){
+                if (task.isSuccessful) {
                     Toast.makeText(requireContext(), "User Deleted", Toast.LENGTH_SHORT).show()
                     val action = SettingsFragmentDirections.actionSettingsFragmentToLoginFragment()
                     findNavController().navigate(action)

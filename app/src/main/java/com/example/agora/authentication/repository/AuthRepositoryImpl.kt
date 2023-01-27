@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
-class AuthRepositoryImpl  : AuthRepository {
+class AuthRepositoryImpl : AuthRepository {
 
     companion object {
         private const val TAG = "AuthRepositoryImpl"
@@ -35,8 +35,9 @@ class AuthRepositoryImpl  : AuthRepository {
                                     displayName = "${user.firstName} ${user.lastName}"
                                 }
                                 it.updateProfile(profileUpdates).addOnCompleteListener { task ->
-                                    if (task.isSuccessful){
-                                        Log.d(TAG, "signUp: Display name is  ${profileUpdates.displayName}")
+                                    if (task.isSuccessful) {
+                                        Log.d(TAG, "signUp: Display name is  ${profileUpdates.displayName}"
+                                        )
                                     }
                                 }.await()
                             }
@@ -54,16 +55,16 @@ class AuthRepositoryImpl  : AuthRepository {
         var isSuccessful = false
         val auth = FirebaseHelper.getInstance()
         auth.signInWithEmailAndPassword(email, password)
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                // Sign in success, update UI with the signed-in user's information
-                isSuccessful = true
-                Log.d(TAG, "logIn: successfully logged in with email $email")
-            } else {
-                // If sign in fails, display a message to the user.
-                Log.w(TAG, "signInWithEmail:failure", task.exception)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    isSuccessful = true
+                    Log.d(TAG, "logIn: successfully logged in with email $email")
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithEmail:failure", task.exception)
+                }
             }
-        }
         return isSuccessful
     }
 

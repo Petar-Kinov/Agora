@@ -56,7 +56,7 @@ class CreateAuctionFragment : DialogFragment() {
     private lateinit var createBtn: Button
     private lateinit var imageView: ImageView
     private lateinit var bitmap: Bitmap
-    private lateinit var imageName : String
+    private lateinit var imageName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,22 +74,23 @@ class CreateAuctionFragment : DialogFragment() {
                     // !! might be null not sure
                     bitmap = getThumbnail(uri, requireContext())!!
                     binding.itemIV.setImageBitmap(bitmap)
-                    imageName = getFileName(requireActivity().contentResolver,uri)!!
+                    imageName = getFileName(requireActivity().contentResolver, uri)!!
 
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
             }
 
-         cameraActivityResultLauncher = registerForActivityResult(
-            ActivityResultContracts.TakePicturePreview()) { bitmap ->
-             if (bitmap != null) {
-                 binding.itemIV.setImageBitmap(bitmap)
-                 this.bitmap = bitmap
-                 imageName = auth.currentUser!!.uid + LocalDateTime.now()
-             } else {
-                 Log.d(TAG, "onCreate: bitmap is null ")
-             }
+        cameraActivityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.TakePicturePreview()
+        ) { bitmap ->
+            if (bitmap != null) {
+                binding.itemIV.setImageBitmap(bitmap)
+                this.bitmap = bitmap
+                imageName = auth.currentUser!!.uid + LocalDateTime.now()
+            } else {
+                Log.d(TAG, "onCreate: bitmap is null ")
+            }
         }
     }
 
@@ -119,10 +120,12 @@ class CreateAuctionFragment : DialogFragment() {
 //            val imageRef = imageView.tag.toString()
 
             if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()) {
-                uploadImage(seller = auth.currentUser?.displayName!!,
+                uploadImage(
+                    seller = auth.currentUser?.displayName!!,
                     title = title,
                     description = description,
-                    price = price,bitmap,storageRef.child(imageName))
+                    price = price, bitmap, storageRef.child(imageName)
+                )
                 dismiss()
             } else {
                 Toast.makeText(
@@ -141,9 +144,16 @@ class CreateAuctionFragment : DialogFragment() {
         }
     }
 
-    private fun uploadImage(seller: String, title: String,description: String, price:String ,bitmap: Bitmap, imageRef : StorageReference) {
+    private fun uploadImage(
+        seller: String,
+        title: String,
+        description: String,
+        price: String,
+        bitmap: Bitmap,
+        imageRef: StorageReference
+    ) {
         val baos = ByteArrayOutputStream()
-        var  downloadUrl: String
+        var downloadUrl: String
 
         lifecycleScope.launch(Dispatchers.IO) {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
@@ -153,13 +163,15 @@ class CreateAuctionFragment : DialogFragment() {
                 Log.d(TAG, "onViewCreated: Could not upload image")
             }.addOnSuccessListener { taskSnapshot ->
                 imageRef.downloadUrl.addOnCompleteListener {
-                    if (it.isSuccessful){
+                    if (it.isSuccessful) {
                         downloadUrl = it.result.toString()
-                        val item = Item(seller,title,description,price,downloadUrl)
+                        val item = Item(seller, title, description, price, downloadUrl)
                         viewModel.sellItem(item)
                     }
                 }
-                Log.d(TAG, "onViewCreated: Successful upload of image ${taskSnapshot.metadata.toString()} "
+                Log.d(
+                    TAG,
+                    "onViewCreated: Successful upload of image ${taskSnapshot.metadata.toString()} "
                 )
             }
         }
