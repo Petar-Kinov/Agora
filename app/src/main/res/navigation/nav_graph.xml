@@ -7,18 +7,18 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.agora.fragments.LoginFragment"
+        android:name="com.example.agora.fragments.authFragments.LoginFragment"
         android:label="LoginFragment" >
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
         <action
             android:id="@+id/action_loginFragment_to_homePage"
-            app:destination="@id/homePage" />
+            app:destination="@id/homePage"/>
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.example.agora.fragments.RegisterFragment"
+        android:name="com.example.agora.fragments.authFragments.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
         <action
