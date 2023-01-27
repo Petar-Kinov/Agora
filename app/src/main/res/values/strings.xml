@@ -32,4 +32,10 @@
     <string name="price">Price:</string>
     <string name="title">Title:</string>
     <string name="Description">Description:</string>
+
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="signup_login_hint">Already have an account? Sign In</string>
+    <string name="login_signup_hint">Don\'t have an account? Sign Up</string>
+    <string name="don_t_have_an_account_sign_up_here">Don\'t have an account? <b>Sign Up here.</b></string>
 </resources>

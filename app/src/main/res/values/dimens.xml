@@ -2,4 +2,14 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
  <dimen name="fragment_horizontal_margin">16dp</dimen>
  <dimen name="fragment_vertical_margin">16dp</dimen>
+
+    <dimen name="headerTextSize">22sp</dimen>
+    <dimen name="newsMoreTextSize">12sp</dimen>
+    <dimen name="loginCardRadius">20dp</dimen>
+    <dimen name="loginViewsMargin">20dp</dimen>
+
+    <dimen name="signup_text_margin_top">10dp</dimen>
+    <dimen name="icon_dimentions">25dp</dimen>
+    <dimen name="icon_dimentions_20dp">20dp</dimen>
+
 </resources>

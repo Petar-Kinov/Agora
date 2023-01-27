@@ -1,8 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Agora" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Agora" parent="Theme.MaterialComponents.NoActionBar">
 
         <item name="android:windowBackground">#EEEBD3</item>
+        <item name="android:navigationBarColor">@color/black</item>
 
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/eggshell</item>

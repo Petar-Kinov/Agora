@@ -9,14 +9,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
-import com.example.agora.databinding.SellingRowItemBinding
+import com.example.agora.databinding.ItemCardBinding
 import com.example.agora.model.Item
 
-class SellItemsRecyclerAdapter : ListAdapter<Item,SellItemsRecyclerAdapter.MyViewHolder> (ItemDiffCallBack()) {
+class SellItemsRecyclerAdapter(private val onClickListener: (Item) -> Unit) : ListAdapter<Item,SellItemsRecyclerAdapter.MyViewHolder> (ItemDiffCallBack()) {
 
     private lateinit var glide : RequestManager
 
-    inner class MyViewHolder(binding : SellingRowItemBinding) : RecyclerView.ViewHolder(binding.root) {
+
+    inner class MyViewHolder(binding : ItemCardBinding, clickAtPosition: (Int) -> Unit) : RecyclerView.ViewHolder(binding.root) {
         val titleTV : TextView
         val descriptionTV : TextView
         val priceTV : TextView
@@ -29,14 +30,21 @@ class SellItemsRecyclerAdapter : ListAdapter<Item,SellItemsRecyclerAdapter.MyVie
             priceTV = binding.priceTV
             sellerTV = binding.sellerNameTV
             pictureIV = binding.pictureIV
+
+            itemView.setOnClickListener {
+                clickAtPosition(adapterPosition)
+            }
         }
+
         fun onBind(item : Item) {
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         glide = Glide.with(parent.context)
-        val binding = SellingRowItemBinding.inflate(LayoutInflater.from(parent.context), parent , false)
-        return MyViewHolder(binding)
+        val binding = ItemCardBinding.inflate(LayoutInflater.from(parent.context), parent , false)
+        return MyViewHolder(binding) {
+            onClickListener(getItem(it))
+        }
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -45,6 +53,10 @@ class SellItemsRecyclerAdapter : ListAdapter<Item,SellItemsRecyclerAdapter.MyVie
         holder.priceTV.text = getItem(position).price
         holder.sellerTV.text = getItem(position).seller
         glide.load(getItem(position).downloadUrl).into(holder.pictureIV)
+
+//        holder.itemView.setOnClickListener {
+//            onClickListener(getItem(position))
+//        }
     }
 
     private class ItemDiffCallBack : DiffUtil.ItemCallback<Item>() {
@@ -54,5 +66,9 @@ class SellItemsRecyclerAdapter : ListAdapter<Item,SellItemsRecyclerAdapter.MyVie
         override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean =
             oldItem == newItem
     }
+
+//    interface OnItemClickListener {
+//        fun onItemClicked(position: Int)
+//    }
 
 }

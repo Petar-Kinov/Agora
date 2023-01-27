@@ -4,12 +4,13 @@ import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.agora.authentication.FirebaseHelper
 import com.example.agora.fragments.HomePage
-import com.example.agora.fragments.LoginFragment
 import com.example.agora.fragments.SettingsFragment
+import com.example.agora.fragments.authFragments.LoginFragment
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,6 +27,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         auth = FirebaseHelper.getInstance()
         val user = auth.currentUser

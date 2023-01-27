@@ -1,4 +1,4 @@
-package com.example.agora.fragments
+package com.example.agora.fragments.authFragments
 
 import android.os.Bundle
 import android.text.Editable

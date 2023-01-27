@@ -5,8 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.adapters.SellItemsRecyclerAdapter
 import com.example.agora.databinding.FragmentBuyingBinding
@@ -30,7 +31,9 @@ class BuyFragment : Fragment() {
     private lateinit var firebaseDB: FirebaseFirestore
 
     private lateinit var recyclerView: RecyclerView
-    private val recyclerAdapter = SellItemsRecyclerAdapter()
+    private val recyclerAdapter = SellItemsRecyclerAdapter {
+        Toast.makeText(requireContext(), "${it.title} item clicked", Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +52,7 @@ class BuyFragment : Fragment() {
         val view = binding.root
 
         recyclerView = binding.recyclerView
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = GridLayoutManager(requireContext(),2)
         recyclerView.adapter = recyclerAdapter
 
         return view
@@ -68,4 +71,5 @@ class BuyFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

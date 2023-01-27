@@ -1,4 +1,4 @@
-package com.example.agora.fragments
+package com.example.agora.fragments.authFragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.agora.authentication.repository.AuthRepositoryImpl
 import com.example.agora.authentication.viewModel.AuthViewModel
 import com.example.agora.databinding.FragmentLoginBinding
+import com.example.agora.fragments.LoginFragmentDirections
 import com.google.firebase.auth.FirebaseAuth
 
 private const val TAG = "LoginFragment"
