@@ -36,6 +36,9 @@
         <action
             android:id="@+id/action_homePage_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_homePage_to_itemDetailsFragment"
+            app:destination="@id/itemDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -45,5 +48,14 @@
         <action
             android:id="@+id/action_settingsFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/itemDetailsFragment"
+        android:name="com.example.agora.fragments.ItemDetailsFragment"
+        android:label="fragment_item_details"
+        tools:layout="@layout/fragment_item_details">
+        <argument
+            android:name="Item"
+            app:argType="com.example.agora.model.Item" />
     </fragment>
 </navigation>

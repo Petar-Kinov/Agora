@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.adapters.SellItemsRecyclerAdapter
@@ -32,7 +33,8 @@ class BuyFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private val recyclerAdapter = SellItemsRecyclerAdapter {
-        Toast.makeText(requireContext(), "${it.title} item clicked", Toast.LENGTH_SHORT).show()
+        val action = HomePageDirections.actionHomePageToItemDetailsFragment(it)
+        findNavController().navigate(action)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

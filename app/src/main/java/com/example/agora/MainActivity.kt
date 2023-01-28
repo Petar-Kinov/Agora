@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity() {
         }
         auth.addAuthStateListener(authStateListener)
 
+
         this.onBackPressedDispatcher.addCallback(this) {
             // Handle the back button event
             when (navController.currentDestination?.id) {

@@ -1,5 +1,7 @@
 package com.example.agora.model
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 
 class Item(
@@ -8,7 +10,37 @@ class Item(
     @SerializedName("description") val description: String,
     @SerializedName("price") val price: String,
     @SerializedName("downloadUrl") val downloadUrl: String
-) {
+) : Parcelable {
+
+    constructor(parcel: Parcel) : this(
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: ""
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(seller)
+        parcel.writeString(title)
+        parcel.writeString(description)
+        parcel.writeString(price)
+        parcel.writeString(downloadUrl)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Item> {
+        override fun createFromParcel(parcel: Parcel): Item {
+            return Item(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Item?> {
+            return arrayOfNulls(size)
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.example.agora.GlideApp
 import com.example.agora.databinding.ItemCardBinding
 import com.example.agora.model.Item
 
 class SellItemsRecyclerAdapter(private val onClickListener: (Item) -> Unit) : ListAdapter<Item,SellItemsRecyclerAdapter.MyViewHolder> (ItemDiffCallBack()) {
 
-    private lateinit var glide : RequestManager
+    private lateinit var glideApp : RequestManager
 
 
     inner class MyViewHolder(binding : ItemCardBinding, clickAtPosition: (Int) -> Unit) : RecyclerView.ViewHolder(binding.root) {
@@ -40,7 +41,7 @@ class SellItemsRecyclerAdapter(private val onClickListener: (Item) -> Unit) : Li
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        glide = Glide.with(parent.context)
+        glideApp = GlideApp.with(parent.context)
         val binding = ItemCardBinding.inflate(LayoutInflater.from(parent.context), parent , false)
         return MyViewHolder(binding) {
             onClickListener(getItem(it))
@@ -52,7 +53,7 @@ class SellItemsRecyclerAdapter(private val onClickListener: (Item) -> Unit) : Li
         holder.descriptionTV.text = getItem(position).description
         holder.priceTV.text = getItem(position).price
         holder.sellerTV.text = getItem(position).seller
-        glide.load(getItem(position).downloadUrl).into(holder.pictureIV)
+        glideApp.load(getItem(position).downloadUrl).into(holder.pictureIV)
 
 //        holder.itemView.setOnClickListener {
 //            onClickListener(getItem(position))
