@@ -9,7 +9,7 @@ class Item(
     @SerializedName("title") val title: String,
     @SerializedName("description") val description: String,
     @SerializedName("price") val price: String,
-    @SerializedName("downloadUrl") val downloadUrl: String
+    @SerializedName("storageRef") val storageRef: String
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -25,7 +25,7 @@ class Item(
         parcel.writeString(title)
         parcel.writeString(description)
         parcel.writeString(price)
-        parcel.writeString(downloadUrl)
+        parcel.writeString(storageRef)
     }
 
     override fun describeContents(): Int {

@@ -17,7 +17,6 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -56,7 +55,12 @@ class CreateAuctionFragment : DialogFragment() {
     private lateinit var createBtn: Button
     private lateinit var imageView: ImageView
     private lateinit var bitmap: Bitmap
+    private lateinit var bitmapList: ArrayList<Bitmap>
     private lateinit var imageName: String
+    private var imageURIList = arrayListOf<String>()
+    private lateinit var storePathRef: String
+    private lateinit var imagesNames: ArrayList<String>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,33 +69,46 @@ class CreateAuctionFragment : DialogFragment() {
         viewModel = ViewModelProvider(requireActivity())[ItemsViewModel::class.java]
         storage = Firebase.storage
         storageRef = storage.reference
+        storePathRef = ""
+        bitmapList = arrayListOf()
+        imagesNames = arrayListOf()
 
         pickMediaActivityResultLauncher =
-            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(10)) { uriList ->
                 // Callback is invoked after the user selects a media item or closes the
                 // photo picker.
-                if (uri != null) {
-                    // !! might be null not sure
-                    bitmap = getThumbnail(uri, requireContext())!!
-                    binding.itemIV.setImageBitmap(bitmap)
-                    imageName = getFileName(requireActivity().contentResolver, uri)!!
+                if (uriList != null) {
+                    for (uri in uriList) {
+                        // !! might be null not sure
+                        bitmapList.add(getThumbnail(uri, requireContext())!!)
+                        imagesNames.add(getFileName(requireActivity().contentResolver, uri)!!)
+
+                        //TODO load bitmap list into recycler view
+//                        binding.itemIV.setImageBitmap(bitmap)
+
+                        storePathRef = auth.currentUser!!.uid + LocalDateTime.now()
+//                        imageName = getFileName(requireActivity().contentResolver, uri)!!
+                    }
+
 
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
             }
 
-        cameraActivityResultLauncher = registerForActivityResult(
-            ActivityResultContracts.TakePicturePreview()
-        ) { bitmap ->
-            if (bitmap != null) {
-                binding.itemIV.setImageBitmap(bitmap)
-                this.bitmap = bitmap
-                imageName = auth.currentUser!!.uid + LocalDateTime.now()
-            } else {
-                Log.d(TAG, "onCreate: bitmap is null ")
-            }
-        }
+        // TODO camera
+
+//        cameraActivityResultLauncher = registerForActivityResult(
+//            ActivityResultContracts.TakePicturePreview()
+//        ) { bitmap ->
+//            if (bitmap != null) {
+//                binding.itemIV.setImageBitmap(bitmap)
+//                this.bitmap = bitmap
+//                imageName = auth.currentUser!!.uid + LocalDateTime.now()
+//            } else {
+//                Log.d(TAG, "onCreate: bitmap is null ")
+//            }
+//        }
     }
 
     companion object {
@@ -120,11 +137,14 @@ class CreateAuctionFragment : DialogFragment() {
 //            val imageRef = imageView.tag.toString()
 
             if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()) {
-                uploadImage(
+                uploadImages(
                     seller = auth.currentUser?.displayName!!,
                     title = title,
                     description = description,
-                    price = price, bitmap, storageRef.child(imageName)
+                    price = price,
+                    bitmapList = bitmapList,
+                    pathRef = storePathRef,
+                    imagesNamesList = imagesNames
                 )
                 dismiss()
             } else {
@@ -139,42 +159,54 @@ class CreateAuctionFragment : DialogFragment() {
         imageView.setOnClickListener {
             pickMediaActivityResultLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
-        binding.cameraBtn.setOnClickListener {
-            cameraActivityResultLauncher.launch()
-        }
+        //TODO camera
+//        binding.cameraBtn.setOnClickListener {
+//            cameraActivityResultLauncher.launch()
+//        }
     }
 
-    private fun uploadImage(
+    private fun uploadImages(
         seller: String,
         title: String,
         description: String,
         price: String,
-        bitmap: Bitmap,
-        imageRef: StorageReference
+        bitmapList: ArrayList<Bitmap>,
+        pathRef: String,
+        imagesNamesList: ArrayList<String>
     ) {
-        val baos = ByteArrayOutputStream()
+        var baos = ByteArrayOutputStream()
         var downloadUrl: String
 
+        var counter = 0
+
         lifecycleScope.launch(Dispatchers.IO) {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            val data = baos.toByteArray()
-            val uploadTask = imageRef.putBytes(data)
-            uploadTask.addOnFailureListener {
-                Log.d(TAG, "onViewCreated: Could not upload image")
-            }.addOnSuccessListener { taskSnapshot ->
-                imageRef.downloadUrl.addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        downloadUrl = it.result.toString()
-                        val item = Item(seller, title, description, price, downloadUrl)
-                        viewModel.sellItem(item)
+
+            for (i in 0 until bitmapList.size) {
+                val baos = ByteArrayOutputStream()
+                bitmapList[i].compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                val data = baos.toByteArray()
+                val uploadTask = storageRef.child(pathRef).child(imagesNamesList[i]).putBytes(data)
+                uploadTask.addOnFailureListener {
+                    Log.d(TAG, "onViewCreated: Could not upload image")
+                }.addOnSuccessListener { taskSnapshot ->
+                    counter++
+//                    imageRef.downloadUrl.addOnCompleteListener {
+//                        if (it.isSuccessful) {
+//                            downloadUrl = it.result.toString()
+//                            val item = Item(seller, title, description, price, downloadUrl)
+//                            viewModel.sellItem(item)
+
+                    Log.d(
+                        TAG,
+                        "onViewCreated: Successful upload of image ${taskSnapshot.metadata.toString()} "
+                    )
+                    if (counter == bitmapList.size) {
+                        viewModel.sellItem(Item(seller, title, description, price, pathRef))
                     }
                 }
-                Log.d(
-                    TAG,
-                    "onViewCreated: Successful upload of image ${taskSnapshot.metadata.toString()} "
-                )
             }
         }
+//        counter = 0
     }
 
     @Throws(FileNotFoundException::class, IOException::class)

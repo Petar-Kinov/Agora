@@ -56,6 +56,6 @@
         tools:layout="@layout/fragment_item_details">
         <argument
             android:name="Item"
-            app:argType="com.example.agora.model.Item" />
+            app:argType="com.example.agora.model.Item"/>
     </fragment>
 </navigation>

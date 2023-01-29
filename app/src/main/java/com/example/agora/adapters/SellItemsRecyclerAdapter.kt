@@ -1,5 +1,6 @@
 package com.example.agora.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -7,15 +8,20 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.example.agora.GlideApp
 import com.example.agora.databinding.ItemCardBinding
 import com.example.agora.model.Item
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 class SellItemsRecyclerAdapter(private val onClickListener: (Item) -> Unit) : ListAdapter<Item,SellItemsRecyclerAdapter.MyViewHolder> (ItemDiffCallBack()) {
 
     private lateinit var glideApp : RequestManager
+
+    companion object {
+        private const val TAG = "SellItemsRecyclerAdapte"
+    }
 
 
     inner class MyViewHolder(binding : ItemCardBinding, clickAtPosition: (Int) -> Unit) : RecyclerView.ViewHolder(binding.root) {
@@ -38,6 +44,7 @@ class SellItemsRecyclerAdapter(private val onClickListener: (Item) -> Unit) : Li
         }
 
         fun onBind(item : Item) {
+            //TODO move binding to here maybe
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -53,11 +60,26 @@ class SellItemsRecyclerAdapter(private val onClickListener: (Item) -> Unit) : Li
         holder.descriptionTV.text = getItem(position).description
         holder.priceTV.text = getItem(position).price
         holder.sellerTV.text = getItem(position).seller
-        glideApp.load(getItem(position).downloadUrl).into(holder.pictureIV)
 
-//        holder.itemView.setOnClickListener {
-//            onClickListener(getItem(position))
-//        }
+        val storageRef = Firebase.storage.getReference(getItem(position).storageRef)
+
+        storageRef.list(1).addOnSuccessListener { resultList ->
+            resultList.items[0].downloadUrl.addOnSuccessListener {
+                glideApp.load(it).into(holder.pictureIV)
+            }.addOnFailureListener {
+                Log.d(TAG, "onBindViewHolder: failed to get Uri ")
+            }
+
+            }.addOnFailureListener {
+            Log.d(TAG, "onBindViewHolder: failed ot load storeRef")
+        }
+
+
+//        glideApp.load(storageRef.child()).into(holder.pictureIV)
+
+        holder.itemView.setOnClickListener {
+            onClickListener(getItem(position))
+        }
     }
 
     private class ItemDiffCallBack : DiffUtil.ItemCallback<Item>() {
