@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.agora.adapters.PicturesListAdapter
+import com.example.agora.adapters.PicturesUriListAdapter
 import com.example.agora.databinding.FragmentItemDetailsBinding
 import com.example.agora.model.Item
 import com.google.firebase.ktx.Firebase
@@ -30,7 +30,7 @@ class ItemDetailsFragment : Fragment() {
     private lateinit var uriList : ArrayList<Uri>
 
     private lateinit var recyclerView: RecyclerView
-    private val recyclerAdapter = PicturesListAdapter{
+    private val recyclerAdapter = PicturesUriListAdapter{
         Log.d(TAG, "item: $it clicked")
     }
 
@@ -62,25 +62,27 @@ class ItemDetailsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL , false )
         recyclerView.adapter = recyclerAdapter
 
-        getPictures(item.storageRef)
+        getPictures(item.storageRef,item.imagesCount)
     }
 
 
-    private fun getPictures(storageRef: String){
+    private fun getPictures(storageRef: String, imagesCount : Int){
         val storagePathRef = Firebase.storage.getReference(storageRef)
         storagePathRef.listAll()
             .addOnSuccessListener { listResult ->
                 for (item in listResult.items) {
                     item.downloadUrl.addOnSuccessListener {
                         uriList.add(it)
-                        recyclerAdapter.submitList(uriList)
+                        if (uriList.size == imagesCount){
+                            uriList.sort()
+                            recyclerAdapter.submitList(uriList)
+                        }
                     }
-
                 }
-
             }
             .addOnFailureListener { e ->
                 // Handle errors
+                Log.d(TAG, "getPictures: ${e.toString()}")
             }
     }
 }

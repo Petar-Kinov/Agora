@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_homePage_to_itemDetailsFragment"
             app:destination="@id/itemDetailsFragment" />
+        <action
+            android:id="@+id/action_homePage_to_createAuctionFragment"
+            app:destination="@id/createAuctionFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -58,4 +61,9 @@
             android:name="Item"
             app:argType="com.example.agora.model.Item"/>
     </fragment>
+    <fragment
+        android:id="@+id/createAuctionFragment"
+        android:name="com.example.agora.fragments.CreateAuctionFragment"
+        android:label="CreateAuctionFragment"
+        tools:layout="@layout/fragment_create_auction"/>
 </navigation>

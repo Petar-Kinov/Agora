@@ -1,6 +1,6 @@
 package com.example.agora.adapters
 
-import android.net.Uri
+import android.graphics.Bitmap
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -8,17 +8,12 @@ import android.view.ViewGroup
 import android.view.View.OnClickListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.bumptech.glide.RequestManager
-import com.example.agora.GlideApp
 import com.example.agora.databinding.PictureListItemBinding
-import com.google.firebase.storage.StorageReference
 
-class PicturesListAdapter(private val onClickListener: (Uri) -> Unit) :
-    ListAdapter<Uri, PicturesListAdapter.PictureViewHolder>(UriDiffCallback()) {
+class PictureBitmapListAdapter(private val onClickListener: (Bitmap) -> Unit) :
+    ListAdapter<Bitmap, PictureBitmapListAdapter.BitmapViewHolder>(BitmapDC()) {
 
-    private lateinit var glideApp: RequestManager
-
-    inner class PictureViewHolder(
+    inner class BitmapViewHolder(
         val binding: PictureListItemBinding,
         clickAtPosition: (Int) -> Unit
     ) : RecyclerView.ViewHolder(binding.root), OnClickListener {
@@ -36,44 +31,40 @@ class PicturesListAdapter(private val onClickListener: (Uri) -> Unit) :
             val clicked = getItem(adapterPosition)
         }
 
-        fun bind(uri: Uri) = with(itemView) {
-            GlideApp.with(this).load(uri).into(binding.pictureView)
+        fun bind(bitmap: Bitmap) = with(itemView) {
+            binding.pictureView.setImageBitmap(bitmap)
         }
-
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PictureViewHolder {
-        glideApp = GlideApp.with(parent.context)
-        val binding =
-            PictureListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PictureViewHolder(binding) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) : BitmapViewHolder {
+        val binding = PictureListItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        return BitmapViewHolder(binding){
             onClickListener(getItem(it))
         }
     }
 
-    override fun onBindViewHolder(holder: PictureViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BitmapViewHolder, position: Int) =
         holder.bind(getItem(position))
-    }
 
-
-    fun swapData(data: List<Uri>) {
+    fun swapData(data: List<Bitmap>) {
         submitList(data.toMutableList())
     }
 
 
-    private class UriDiffCallback : DiffUtil.ItemCallback<Uri>() {
+    private class BitmapDC : DiffUtil.ItemCallback<Bitmap>() {
         override fun areItemsTheSame(
-            oldItem: Uri,
-            newItem: Uri
+            oldItem: Bitmap,
+            newItem: Bitmap
         ): Boolean {
             return oldItem == newItem
         }
 
         override fun areContentsTheSame(
-            oldItem: Uri,
-            newItem: Uri
+            oldItem: Bitmap,
+            newItem: Bitmap
         ): Boolean {
-            return oldItem == newItem
+            //bitmap does not have .equals()
+            return false
         }
     }
 }

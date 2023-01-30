@@ -1,5 +1,6 @@
 package com.example.agora.viewModel
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -44,8 +45,8 @@ class ItemsViewModel @Inject constructor(private val useCases: UseCases) : ViewM
         }
     }
 
-    fun sellItem(item: Item) = viewModelScope.launch {
-        useCases.sellItem(item)
+    fun sellItem(item: Item, bitmapList : ArrayList<Bitmap>) = viewModelScope.launch {
+        useCases.sellItem(item,bitmapList)
     }
 
 }

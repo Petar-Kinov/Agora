@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".fragments.HomePage">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <ImageButton
         android:id="@+id/popupMenuBtn"
         android:layout_width="wrap_content"

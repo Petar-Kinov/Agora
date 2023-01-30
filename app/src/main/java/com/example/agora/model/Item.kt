@@ -9,7 +9,8 @@ class Item(
     @SerializedName("title") val title: String,
     @SerializedName("description") val description: String,
     @SerializedName("price") val price: String,
-    @SerializedName("storageRef") val storageRef: String
+    @SerializedName("storageRef") val storageRef: String,
+    @SerializedName("imagesCount") val imagesCount: Int
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -17,7 +18,8 @@ class Item(
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readString() ?: ""
+        parcel.readString() ?: "",
+        parcel.readInt()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
