@@ -59,7 +59,8 @@ class CreateAuctionFragment : Fragment() {
     private lateinit var createBtn: Button
     private lateinit var recyclerView: RecyclerView
     private val recyclerAdapter = PictureBitmapListAdapter{
-        Log.d(TAG, "item: $it clicked")
+        bitmapList.removeAt(it)
+        imagesCount--
     }
 
     private lateinit var bitmapList: ArrayList<Bitmap>
@@ -111,6 +112,7 @@ class CreateAuctionFragment : Fragment() {
         ) { bitmap ->
             if (bitmap != null) {
                bitmapList.add(bitmap)
+                imagesCount ++
                 recyclerAdapter.swapData(bitmapList)
             } else {
                 Log.d(TAG, "onCreate: bitmap is null ")
@@ -172,7 +174,7 @@ class CreateAuctionFragment : Fragment() {
         binding.fromStorageBtn.setOnClickListener {
             pickMediaActivityResultLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
-        //TODO camera
+
         binding.fromCameraBtn.setOnClickListener {
             cameraActivityResultLauncher.launch()
         }

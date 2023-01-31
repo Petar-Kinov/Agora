@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.View.OnClickListener
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.RequestManager
@@ -21,6 +22,7 @@ class PicturesUriListAdapter(private val onClickListener: (Uri) -> Unit) :
         val binding: PictureListItemBinding,
         clickAtPosition: (Int) -> Unit
     ) : RecyclerView.ViewHolder(binding.root), OnClickListener {
+
 
         init {
             itemView.setOnClickListener {

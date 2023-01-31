@@ -7,16 +7,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.agora.R
 import com.example.agora.adapters.PicturesUriListAdapter
 import com.example.agora.databinding.FragmentItemDetailsBinding
 import com.example.agora.model.Item
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-
 class ItemDetailsFragment : Fragment() {
 
     companion object {
@@ -34,6 +35,8 @@ class ItemDetailsFragment : Fragment() {
     private val recyclerAdapter = PicturesUriListAdapter{
         Log.d(TAG, "item: $it clicked")
     }
+
+    private lateinit var pictureIndexTV : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,11 +56,13 @@ class ItemDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        GlideApp.with(requireContext()).load(item.downloadUrl).into(binding.detailPictureIV)
         binding.titleTV.text = item.title
         binding.detailDescriptionTV.text = item.description
         binding.priceTextView.text = item.price
         binding.sellerTV.text = item.seller
+
+        pictureIndexTV = binding.picIndexTV
+        pictureIndexTV.text = getString(R.string.picture_index,1 ,item.imagesCount)
 
         recyclerView = binding.imageRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL , false )
@@ -67,9 +72,18 @@ class ItemDetailsFragment : Fragment() {
         snapHelper.attachToRecyclerView(recyclerView)
 
         getPictures(item.storageRef,item.imagesCount)
+
+        // shows which picture is being shown out of how many pictures there are
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                pictureIndexTV.text = getString(R.string.picture_index,firstVisibleItemPosition + 1 ,item.imagesCount)
+            }
+    })
     }
 
-
+// gets the uri of every picture in the storageRef and sends the list to the adapter
     private fun getPictures(storageRef: String, imagesCount : Int){
         val storagePathRef = Firebase.storage.getReference(storageRef)
         storagePathRef.listAll()
@@ -86,7 +100,7 @@ class ItemDetailsFragment : Fragment() {
             }
             .addOnFailureListener { e ->
                 // Handle errors
-                Log.d(TAG, "getPictures: ${e.toString()}")
+                Log.d(TAG, "getPictures: failureListener with error  $e")
             }
     }
 }
