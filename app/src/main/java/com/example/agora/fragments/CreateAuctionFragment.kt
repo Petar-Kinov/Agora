@@ -14,10 +14,13 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.adapters.PictureBitmapListAdapter
 import com.example.agora.adapters.PicturesUriListAdapter
@@ -98,24 +101,21 @@ class CreateAuctionFragment : Fragment() {
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
-                // TODO list is submited only the first time you pic images
                 recyclerAdapter.swapData(bitmapList)
-                Log.d(TAG, "onCreate: ${bitmapList.size}")
             }
 
         // TODO camera
 
-//        cameraActivityResultLauncher = registerForActivityResult(
-//            ActivityResultContracts.TakePicturePreview()
-//        ) { bitmap ->
-//            if (bitmap != null) {
-//                binding.itemIV.setImageBitmap(bitmap)
-//                this.bitmap = bitmap
-//                imageName = auth.currentUser!!.uid + LocalDateTime.now()
-//            } else {
-//                Log.d(TAG, "onCreate: bitmap is null ")
-//            }
-//        }
+        cameraActivityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.TakePicturePreview()
+        ) { bitmap ->
+            if (bitmap != null) {
+               bitmapList.add(bitmap)
+                recyclerAdapter.swapData(bitmapList)
+            } else {
+                Log.d(TAG, "onCreate: bitmap is null ")
+            }
+        }
     }
 
 
@@ -138,6 +138,9 @@ class CreateAuctionFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext(),
             LinearLayoutManager.HORIZONTAL , false )
         recyclerView.adapter = recyclerAdapter
+
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(recyclerView)
 
         createBtn.setOnClickListener {
             val title = binding.titleET.text.toString()
@@ -170,9 +173,9 @@ class CreateAuctionFragment : Fragment() {
             pickMediaActivityResultLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
         //TODO camera
-//        binding.cameraBtn.setOnClickListener {
-//            cameraActivityResultLauncher.launch()
-//        }
+        binding.fromCameraBtn.setOnClickListener {
+            cameraActivityResultLauncher.launch()
+        }
     }
 
 

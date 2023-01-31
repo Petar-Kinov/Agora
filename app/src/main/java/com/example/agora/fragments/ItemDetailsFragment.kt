@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.adapters.PicturesUriListAdapter
 import com.example.agora.databinding.FragmentItemDetailsBinding
@@ -61,6 +62,9 @@ class ItemDetailsFragment : Fragment() {
         recyclerView = binding.imageRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL , false )
         recyclerView.adapter = recyclerAdapter
+
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(recyclerView)
 
         getPictures(item.storageRef,item.imagesCount)
     }
