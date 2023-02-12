@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
 import com.example.agora.databinding.FragmentSettingsBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -39,8 +38,8 @@ class SettingsFragment : Fragment() {
             auth.currentUser!!.delete().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(requireContext(), "User Deleted", Toast.LENGTH_SHORT).show()
-                    val action = SettingsFragmentDirections.actionSettingsFragmentToLoginFragment()
-                    findNavController().navigate(action)
+//                    val action = SettingsFragmentDirections.actionSettingsFragmentToLoginFragment()
+//                    findNavController().navigate(action)
                 }
             }
         }

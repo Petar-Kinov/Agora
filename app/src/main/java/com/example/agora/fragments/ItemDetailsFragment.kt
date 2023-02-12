@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -27,7 +26,7 @@ class ItemDetailsFragment : Fragment() {
     private var _binding : FragmentItemDetailsBinding? = null
     private val binding get() = _binding!!
 
-    private val args : ItemDetailsFragmentArgs by navArgs()
+//    private val args : ItemDetailsFragmentArgs by navArgs()
     private lateinit var item : Item
     private lateinit var uriList : ArrayList<Uri>
 
@@ -40,7 +39,7 @@ class ItemDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        item = args.item
+//        item = args.item
         uriList = arrayListOf()
     }
 

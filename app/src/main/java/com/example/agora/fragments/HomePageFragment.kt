@@ -1,6 +1,7 @@
 package com.example.agora.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,8 @@ class HomePage : Fragment() {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
         firebaseDB = Firebase.firestore
+
+        Log.d(TAG, "onCreate: activity is $activity")
     }
 
     override fun onCreateView(
@@ -51,7 +54,7 @@ class HomePage : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewPager = binding.viewPager
-        viewPager.adapter = ViewPagerAdapter(requireActivity())
+        viewPager.adapter = ViewPagerAdapter(childFragmentManager,viewLifecycleOwner.lifecycle)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             if (position == 0) {
                 tab.text = getString(R.string.auctions)
@@ -77,8 +80,8 @@ class HomePage : Fragment() {
                         Toast.LENGTH_LONG
                     ).show()
                     R.id.settings -> {
-                        val action = HomePageDirections.actionHomePageToSettingsFragment()
-                        findNavController().navigate(action)
+//                        val action = HomePageDirections.actionHomePageToSettingsFragment()
+//                        findNavController().navigate(action)
                     }
                     R.id.logout -> logOut()
                 }
@@ -90,11 +93,14 @@ class HomePage : Fragment() {
 
     private fun logOut() {
         FirebaseAuth.getInstance().signOut()
+        val action = HomePageDirections.actionHomePageToLoginActivity()
+        findNavController().navigate(action)
         requireActivity().viewModelStore.clear()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewPager.adapter = null
         _binding = null
     }
 }

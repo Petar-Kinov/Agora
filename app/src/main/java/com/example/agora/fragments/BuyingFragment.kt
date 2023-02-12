@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.adapters.SellItemsRecyclerAdapter
@@ -33,8 +32,8 @@ class BuyFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private val recyclerAdapter = SellItemsRecyclerAdapter {
 
-        val action = HomePageDirections.actionHomePageToItemDetailsFragment(it)
-        findNavController().navigate(action)
+//        val action = HomePageDirections.actionHomePageToItemDetailsFragment(it)
+//        findNavController().navigate(action)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
