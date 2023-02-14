@@ -2,6 +2,7 @@ package com.example.agora.repository
 
 import android.graphics.Bitmap
 import com.example.agora.model.Item
+import com.example.agora.model.ItemsWithReference
 import com.example.agora.model.Response
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.EventListener
@@ -25,12 +26,13 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
     override fun getItems() = callbackFlow {
             mSnapshotListener = EventListener<QuerySnapshot> { snapshot , e->
                 val itemResponse = if (snapshot != null) {
-                    val itemList = mutableListOf<Item>()
+                    val itemList = mutableListOf<ItemsWithReference>()
                     for (document in snapshot) {
                         val gson = Gson()
                         val item = gson.fromJson(gson.toJson(document.data), Item::class.java)
-                        itemList.add(item)
+                        itemList.add(ItemsWithReference(item,document.reference))
                     }
+                    itemList.sortBy { it.item.storageRef }
                     Response.Success(itemList)
                 } else {
                     Response.Failure(e)
@@ -71,6 +73,7 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
 
             if (imageUploadCounter == bitmapList.size) {
                 //TODO  finish upload in background if app is closed before that
+                //TODO check if the upload was successful
                 itemRef.add(item).await()
                 Response.Success(true)
             } else {
@@ -112,7 +115,9 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
     }
 
 
-    override suspend fun deleteItemToFireStore(itemId: String): Response<Boolean> {
-        TODO("Not yet implemented")
+    override suspend fun deleteItemToFireStore(item: ItemsWithReference): Response<Boolean> {
+        itemRef.document(item.documentReference.id).delete()
+        //TODO add .onSuccessListener
+                return Response.Success(true)
     }
 }

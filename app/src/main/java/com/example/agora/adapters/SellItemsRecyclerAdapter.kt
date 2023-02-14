@@ -12,15 +12,16 @@ import com.bumptech.glide.RequestManager
 import com.example.agora.GlideApp
 import com.example.agora.databinding.ItemCardBinding
 import com.example.agora.model.Item
+import com.example.agora.model.ItemsWithReference
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
-class SellItemsRecyclerAdapter(private val onClickListener: (Item) -> Unit) : ListAdapter<Item,SellItemsRecyclerAdapter.MyViewHolder> (ItemDiffCallBack()) {
+class SellItemsRecyclerAdapter(private val onClickListener: (ItemsWithReference) -> Unit) : ListAdapter<ItemsWithReference,SellItemsRecyclerAdapter.MyViewHolder> (ItemDiffCallBack()) {
 
     private lateinit var glideApp : RequestManager
 
     companion object {
-        private const val TAG = "SellItemsRecyclerAdapte"
+        private const val TAG = "SellItemsRecyclerAdapter"
     }
 
 
@@ -56,12 +57,12 @@ class SellItemsRecyclerAdapter(private val onClickListener: (Item) -> Unit) : Li
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.titleTV.text = getItem(position).title
-        holder.descriptionTV.text = getItem(position).description
-        holder.priceTV.text = getItem(position).price
-        holder.sellerTV.text = getItem(position).seller
+        holder.titleTV.text = getItem(position).item.title
+        holder.descriptionTV.text = getItem(position).item.description
+        holder.priceTV.text = getItem(position).item.price
+        holder.sellerTV.text = getItem(position).item.seller
 
-        val storageRef = Firebase.storage.getReference(getItem(position).storageRef)
+        val storageRef = Firebase.storage.getReference(getItem(position).item.storageRef)
 
         storageRef.list(1).addOnSuccessListener { resultList ->
             resultList.items[0].downloadUrl.addOnSuccessListener {
@@ -74,7 +75,6 @@ class SellItemsRecyclerAdapter(private val onClickListener: (Item) -> Unit) : Li
             Log.d(TAG, "onBindViewHolder: failed ot load storeRef")
         }
 
-
 //        glideApp.load(storageRef.child()).into(holder.pictureIV)
 
         holder.itemView.setOnClickListener {
@@ -82,11 +82,11 @@ class SellItemsRecyclerAdapter(private val onClickListener: (Item) -> Unit) : Li
         }
     }
 
-    private class ItemDiffCallBack : DiffUtil.ItemCallback<Item>() {
-        override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean =
+    private class ItemDiffCallBack : DiffUtil.ItemCallback<ItemsWithReference>() {
+        override fun areItemsTheSame(oldItem: ItemsWithReference, newItem: ItemsWithReference): Boolean =
             oldItem == newItem
 
-        override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean =
+        override fun areContentsTheSame(oldItem: ItemsWithReference, newItem: ItemsWithReference): Boolean =
             oldItem == newItem
     }
 

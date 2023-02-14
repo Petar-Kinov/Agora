@@ -30,7 +30,7 @@ class BuyFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private val recyclerAdapter = SellItemsRecyclerAdapter {
 
-        val action = HomePageDirections.actionHomePageToItemDetailsFragment(it)
+        val action = HomePageDirections.actionHomePageToItemDetailsFragment(it.item)
         findNavController().navigate(action)
     }
 

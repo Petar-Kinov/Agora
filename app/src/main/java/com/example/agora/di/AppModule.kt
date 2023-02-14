@@ -2,6 +2,7 @@ package com.example.agora.di
 
 import com.example.agora.repository.ItemRepositoryImpl
 import com.example.agora.repository.ItemRepository
+import com.example.agora.use_case.DeleteItem
 import com.example.agora.use_case.GetItems
 import com.example.agora.use_case.SellItem
 import com.example.agora.use_case.UseCases
@@ -30,6 +31,7 @@ object AppModule {
         repo: ItemRepository
     ) = UseCases(
         getItems = GetItems(repo),
-        sellItem = SellItem(repo)
+        sellItem = SellItem(repo),
+        deleteItem = DeleteItem(repo)
     )
 }

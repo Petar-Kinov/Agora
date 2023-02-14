@@ -1,23 +1,28 @@
 package com.example.agora.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout.DispatchChangeEvent
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.agora.adapters.SellItemsRecyclerAdapter
+import com.example.agora.adapters.MyItemsListAdapter
 import com.example.agora.databinding.FragmentSellingBinding
-import com.example.agora.model.Item
+import com.example.agora.model.ItemsWithReference
 import com.example.agora.viewModel.ItemsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 private const val TAG = "SellingFragment"
 class SellFragment : Fragment() {
@@ -29,8 +34,9 @@ class SellFragment : Fragment() {
     private lateinit var viewModel: ItemsViewModel
 
     private lateinit var recyclerView: RecyclerView
-    private val recyclerAdapter = SellItemsRecyclerAdapter {
-        Toast.makeText(requireContext(), "${it.title} item clicked", Toast.LENGTH_SHORT).show()
+    private val recyclerAdapter = MyItemsListAdapter {
+        viewModel.deleteItem(it)
+        Toast.makeText(requireContext(), "${it.item.title} item clicked", Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +73,7 @@ class SellFragment : Fragment() {
         val view = binding.root
 
         recyclerView = binding.recyclerView
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = recyclerAdapter
 
         return view
@@ -77,12 +83,13 @@ class SellFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.items.observe(viewLifecycleOwner) {
-            val myItemsList = mutableListOf<Item>()
+            val myItemsList = mutableListOf<ItemsWithReference>()
             for (item in it) {
-                if (item.seller == auth.currentUser!!.displayName) {
+                if (item.item.seller == auth.currentUser!!.displayName) {
                     myItemsList.add(item)
                 }
             }
+            Log.d(TAG, "onViewCreated: list is ${myItemsList.toString()}")
             recyclerAdapter.submitList(myItemsList)
         }
 
