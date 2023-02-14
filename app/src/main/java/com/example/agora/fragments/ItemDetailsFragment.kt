@@ -18,11 +18,9 @@ import com.example.agora.databinding.FragmentItemDetailsBinding
 import com.example.agora.model.Item
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-class ItemDetailsFragment : Fragment() {
 
-    companion object {
-        private const val TAG = "ItemDetailsFragment"
-    }
+private const val TAG = "ItemDetailsFragment"
+class ItemDetailsFragment : Fragment() {
 
     private var _binding : FragmentItemDetailsBinding? = null
     private val binding get() = _binding!!

@@ -19,11 +19,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.adapters.PictureBitmapListAdapter
-import com.example.agora.adapters.PicturesUriListAdapter
 import com.example.agora.databinding.FragmentCreateAuctionBinding
 import com.example.agora.model.Item
 import com.example.agora.viewModel.ItemsViewModel
@@ -40,11 +38,8 @@ import java.io.InputStream
 import java.time.LocalDateTime
 import kotlin.math.floor
 
+private const val TAG = "CreateAuctionFragment"
 class CreateAuctionFragment : Fragment() {
-
-    companion object {
-        private const val TAG = "CreateAuctionFragment"
-    }
 
     private var _binding: FragmentCreateAuctionBinding? = null
     private val binding get() = _binding!!
@@ -92,12 +87,9 @@ class CreateAuctionFragment : Fragment() {
                         //TODO load bitmap list into recycler view
 //                        binding.itemIV.setImageBitmap(bitmap)
 
-
-
                         storePathRef = auth.currentUser!!.uid + LocalDateTime.now()
 //                        imageName = getFileName(requireActivity().contentResolver, uri)!!
                     }
-
 
                 } else {
                     Log.d("PhotoPicker", "No media selected")
@@ -105,8 +97,7 @@ class CreateAuctionFragment : Fragment() {
                 recyclerAdapter.swapData(bitmapList)
             }
 
-        // TODO camera
-
+        // TODO when picture is from camera it is not uploaded
         cameraActivityResultLauncher = registerForActivityResult(
             ActivityResultContracts.TakePicturePreview()
         ) { bitmap ->
@@ -119,8 +110,6 @@ class CreateAuctionFragment : Fragment() {
             }
         }
     }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -208,15 +197,6 @@ class CreateAuctionFragment : Fragment() {
         val k = Integer.highestOneBit(floor(ratio).toInt())
         return if (k == 0) 1 else k
     }
-
-//    private fun getFileName(resolver: ContentResolver, uri: Uri): String? {
-//        val returnCursor = resolver.query(uri, null, null, null, null)!!
-//        val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-//        returnCursor.moveToFirst()
-//        val name = returnCursor.getString(nameIndex)
-//        returnCursor.close()
-//        return name
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

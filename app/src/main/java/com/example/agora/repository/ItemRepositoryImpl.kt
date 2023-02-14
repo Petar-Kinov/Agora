@@ -1,7 +1,6 @@
 package com.example.agora.repository
 
 import android.graphics.Bitmap
-import android.util.Log
 import com.example.agora.model.Item
 import com.example.agora.model.Response
 import com.google.firebase.firestore.CollectionReference
@@ -10,7 +9,6 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
-import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
@@ -18,15 +16,11 @@ import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
+private const val TAG = "ItemRepositoryImpl"
 @Singleton
 class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionReference) : ItemRepository {
 
     private var mSnapshotListener: EventListener<QuerySnapshot>? = null
-
-    companion object {
-        private const val TAG = "firebaseRepo"
-    }
 
     override fun getItems() = callbackFlow {
             mSnapshotListener = EventListener<QuerySnapshot> { snapshot , e->

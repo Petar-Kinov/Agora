@@ -17,11 +17,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
+private const val TAG = "BuyingFragment"
 class BuyFragment : Fragment() {
-
-    companion object {
-        private const val TAG = "BuyingFragment"
-    }
 
     private var _binding : FragmentBuyingBinding? = null
     private val binding get() = _binding!!

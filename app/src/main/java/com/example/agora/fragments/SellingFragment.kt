@@ -19,13 +19,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-
+private const val TAG = "SellingFragment"
 class SellFragment : Fragment() {
-
-    companion object {
-        private const val TAG = "SellingFragment"
-    }
-
     private var _binding: FragmentSellingBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
@@ -56,7 +51,6 @@ class SellFragment : Fragment() {
                 recyclerAdapter.submitList(null)
             }
         }
-
         auth.addAuthStateListener(listener)
     }
 

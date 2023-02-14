@@ -10,12 +10,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.agora.databinding.FragmentSettingsBinding
 import com.google.firebase.auth.FirebaseAuth
 
+private const val TAG = "SettingsFragment"
 class SettingsFragment : Fragment() {
-
-    companion object {
-        private const val TAG = "SettingsFragment"
-    }
-
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
@@ -23,7 +19,6 @@ class SettingsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
-
     }
 
     override fun onCreateView(
@@ -39,7 +34,7 @@ class SettingsFragment : Fragment() {
             auth.currentUser!!.delete().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(requireContext(), "User Deleted", Toast.LENGTH_SHORT).show()
-                    val action = SettingsFragmentDirections.actionSettingsFragmentToLoginFragment()
+                    val action = SettingsFragmentDirections.actionSettingsFragmentToLoginActivity()
                     findNavController().navigate(action)
                 }
             }
