@@ -1,12 +1,10 @@
 package com.example.agora
 
 import android.app.AlertDialog
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.addCallback
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.agora.authentication.FirebaseHelper
@@ -16,30 +14,31 @@ import dagger.hilt.android.AndroidEntryPoint
 private lateinit var auth: FirebaseAuth
 
 private const val TAG = "MainActivity"
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
+//    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         Log.d(TAG, "onCreate: Main Activity created")
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+//        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
 
         setContentView(R.layout.activity_main)
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         auth = FirebaseHelper.getInstance()
-        val user = auth.currentUser
+//        val user = auth.currentUser
 
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
+
+        //TODO the check weather there is a user logged in should be in the Login Activity
 
         // Check if user is signed in (non-null) and update UI accordingly.
 //        if (user != null) {
@@ -84,10 +83,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onStop() {
         super.onStop()
 //        auth.removeAuthStateListener(authStateListener)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy: Main Activity was destroyed")
+        Log.d(TAG, "onDestroy: current user is ${FirebaseAuth.getInstance().currentUser.toString()}")
+    }
 }

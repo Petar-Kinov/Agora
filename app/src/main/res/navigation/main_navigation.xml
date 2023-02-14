@@ -35,13 +35,21 @@
             app:destination="@id/itemDetailsFragment" />
         <action
             android:id="@+id/action_homePage_to_loginActivity"
-            app:destination="@id/loginActivity" />
+            app:destination="@id/loginActivity"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.agora.fragments.SettingsFragment"
         android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settingsFragment_to_loginActivity"
+            app:destination="@id/loginActivity" />
+    </fragment>
     <activity
         android:id="@+id/loginActivity"
         android:name="com.example.agora.authentication.login.LoginActivity"

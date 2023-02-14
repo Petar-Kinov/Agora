@@ -80,8 +80,8 @@ class HomePage : Fragment() {
                         Toast.LENGTH_LONG
                     ).show()
                     R.id.settings -> {
-//                        val action = HomePageDirections.actionHomePageToSettingsFragment()
-//                        findNavController().navigate(action)
+                        val action = HomePageDirections.actionHomePageToSettingsFragment()
+                        findNavController().navigate(action)
                     }
                     R.id.logout -> logOut()
                 }
@@ -96,6 +96,7 @@ class HomePage : Fragment() {
         val action = HomePageDirections.actionHomePageToLoginActivity()
         findNavController().navigate(action)
         requireActivity().viewModelStore.clear()
+        requireActivity().finish()
     }
 
     override fun onDestroyView() {

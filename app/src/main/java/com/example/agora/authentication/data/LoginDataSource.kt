@@ -1,20 +1,10 @@
 package com.example.agora.authentication.data
 
-import android.util.Log
-import com.example.agora.authentication.FirebaseHelper
-import com.example.agora.authentication.repository.AuthRepositoryImpl
-import com.example.agora.authentication.data.model.LoggedInUser
-import com.google.firebase.auth.FirebaseUser
-import java.io.IOException
-
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
+private const val TAG = "LoginDataSource"
 class LoginDataSource {
-
-    companion object {
-        private const val TAG = "LoginDataSource"
-    }
 
 //    fun login(username: String, password: String, callback: (Result<FirebaseUser>) -> Unit){
 //        try {

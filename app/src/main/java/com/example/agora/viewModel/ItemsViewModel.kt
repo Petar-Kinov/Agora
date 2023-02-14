@@ -13,17 +13,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "ItemsViewModel"
 @HiltViewModel
 class ItemsViewModel @Inject constructor(private val useCases: UseCases) : ViewModel() {
-
-    companion object {
-        private const val TAG = "ItemsViewModel"
-    }
 
     private val _items = MutableLiveData<List<Item>>()
     val items = _items as LiveData<List<Item>>
 
-    //    private val firebaseRepo = ItemRepository()
     fun getItems() = viewModelScope.launch {
         useCases.getItems.invoke().collect { response ->
             Log.d(TAG, "getItems: $response")

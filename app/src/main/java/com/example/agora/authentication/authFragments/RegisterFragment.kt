@@ -11,9 +11,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.agora.R
-import com.example.agora.authentication.repository.AuthRepositoryImpl
-import com.example.agora.authentication.viewModel.AuthViewModel
+import com.example.agora.authentication.login.AuthViewModel
+import com.example.agora.authentication.login.LoginViewModelFactory
 import com.example.agora.util.EmailValidator
 import com.example.agora.databinding.FragmentRegisterBinding
 import com.example.agora.model.User
@@ -30,8 +33,9 @@ class RegisterFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var fireStoreDB: FirebaseFirestore
 
-    private val viewModel: AuthViewModel by lazy {
-        AuthViewModel(AuthRepositoryImpl())
+    private val authViewModel: AuthViewModel by lazy {
+        ViewModelProvider(requireActivity(), LoginViewModelFactory())
+            .get(AuthViewModel::class.java)
     }
 
     private lateinit var firstNameET: EditText
@@ -68,7 +72,6 @@ class RegisterFragment : Fragment() {
         verifyPasswordET = binding.editTextTextPassword2
         signUpBtn = binding.signUpBtn
 
-        //set listeners to EditText fields to check if the input is valid
         setCheckMarkListener(listOf(firstNameET, lastNameET, emailET, passwordET, verifyPasswordET))
 
         signUpBtn.setOnClickListener {
@@ -84,12 +87,23 @@ class RegisterFragment : Fragment() {
                     emailET.text.toString(),
                     passwordET.text.toString()
                 )
-                viewModel.signup(user)
+                authViewModel.signup(user)
             } else {
                 Toast.makeText(requireContext(), "Please fill all the fields", Toast.LENGTH_SHORT)
                     .show()
             }
         }
+
+        authViewModel.signUpIsSuccessful.observe(requireActivity(), Observer {
+            val result = it ?: return@Observer
+
+            if (result){
+                // TODO make it so we transition from registration fragment
+                //  straight to Home page instead of going back to login
+                authViewModel.login(username = emailET.text.toString(), password = passwordET.text.toString())
+                findNavController().popBackStack()
+            }
+        })
     }
 
     private fun setCheckMarkListener(editTextViewList: List<TextView>) {

@@ -104,36 +104,36 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/peshoBtn"
+        android:id="@+id/user1Btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="70dp"
         android:backgroundTint="@color/light_blue"
-        android:text="pesho"
+        android:text="user 1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/registerBtn" />
 
     <Button
-        android:id="@+id/ivanBtn"
+        android:id="@+id/user2Btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:backgroundTint="@color/light_blue"
-        android:text="ivan"
-        app:layout_constraintEnd_toEndOf="@+id/peshoBtn"
-        app:layout_constraintStart_toStartOf="@+id/peshoBtn"
-        app:layout_constraintTop_toBottomOf="@+id/peshoBtn" />
+        android:text="user 2"
+        app:layout_constraintEnd_toEndOf="@+id/user1Btn"
+        app:layout_constraintStart_toStartOf="@+id/user1Btn"
+        app:layout_constraintTop_toBottomOf="@+id/user1Btn" />
 
     <Button
-        android:id="@+id/svetlioBtn"
+        android:id="@+id/user3Btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:backgroundTint="@color/light_blue"
-        android:text="Svetlio"
-        app:layout_constraintEnd_toEndOf="@+id/ivanBtn"
-        app:layout_constraintStart_toStartOf="@+id/ivanBtn"
-        app:layout_constraintTop_toBottomOf="@+id/ivanBtn" />
+        android:text="user 3"
+        app:layout_constraintEnd_toEndOf="@+id/user2Btn"
+        app:layout_constraintStart_toStartOf="@+id/user2Btn"
+        app:layout_constraintTop_toBottomOf="@+id/user2Btn" />
 
     <ImageView
         android:id="@+id/accountIcon"

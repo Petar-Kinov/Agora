@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
-import com.example.agora.authentication.data.LoginRepository
+import com.example.agora.authentication.data.AuthRepository
 import com.example.agora.authentication.data.Result
 
 import com.example.agora.R
+import com.example.agora.model.User
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -17,10 +18,13 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
+    private val _signUpIsSuccessful = MutableLiveData<Boolean>()
+    val signUpIsSuccessful: LiveData<Boolean> = _signUpIsSuccessful
+
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
         if (isPasswordValid(username) && isPasswordValid(password)){
-            loginRepository.login(username, password){ result ->
+            authRepository.login(username, password){ result ->
                 if (result is Result.Success) {
                     _loginResult.value =
                         LoginResult(success = result.data.displayName?.let { LoggedInUserView(displayName = it) })
@@ -53,5 +57,11 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     // A placeholder password validation check
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
+    }
+
+    fun signup(user: User) {
+        authRepository.signUp(user){
+            _signUpIsSuccessful.postValue(it)
+        }
     }
 }

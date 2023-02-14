@@ -11,14 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.agora.R
 import com.example.agora.authentication.login.LoggedInUserView
-import com.example.agora.authentication.login.LoginViewModel
+import com.example.agora.authentication.login.AuthViewModel
 import com.example.agora.authentication.login.LoginViewModelFactory
 import com.example.agora.databinding.FragmentLoginBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -29,14 +29,11 @@ private lateinit var auth: FirebaseAuth
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-    private val loginViewModel: LoginViewModel by lazy {
+    private val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(requireActivity(), LoginViewModelFactory())
-            .get(LoginViewModel::class.java)
+            .get(AuthViewModel::class.java)
     }
 
-//    private val viewModel: AuthViewModel by lazy {
-//        AuthViewModel(AuthRepositoryImpl())
-//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,8 +52,8 @@ class LoginFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        loginViewModel.loginFormState.removeObservers(viewLifecycleOwner)
-        loginViewModel.loginResult.removeObservers(viewLifecycleOwner)
+        authViewModel.loginFormState.removeObservers(viewLifecycleOwner)
+        authViewModel.loginResult.removeObservers(viewLifecycleOwner)
         _binding = null
     }
 
@@ -69,57 +66,30 @@ class LoginFragment : Fragment() {
         val login = binding.signInBtn
         val register = binding.registerBtn
         val loading = binding.loading
-
 //
         register.setOnClickListener {
             val action = LoginFragmentDirections.actionLoginFragmentToRegisterFragment2()
             findNavController().navigate(action)
         }
-//        login.setOnClickListener {
-//            val action = LoginFragmentDirections.actionLoginFragmentToMainActivity()
-//            findNavController().navigate(action)
-//            Log.d(TAG, "onViewCreated: activity is $activity")
-//            activity?.finish()
-//        }
-//
-//        binding.signInBtn.setOnClickListener {
-//            val email = binding.usernameET.text.toString()
-//            val password = binding.passwordET.text.toString()
-//            if (email.isEmpty() || password.isEmpty()) {
-//                Toast.makeText(
-//                    requireContext(), "Please enter Email and password",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            } else {
-//                viewModel.logIn(email,password)
-//            }
-//        }
 //
         login.setOnClickListener {
             loading.visibility = View.VISIBLE
-            loginViewModel.login(username.text.toString(), password.text.toString())
+            authViewModel.login(username = username.text.toString(),password = password.text.toString())
         }
 
-        binding.peshoBtn.setOnClickListener {
-            loginViewModel.login("petar.kinov@gmail.com", "qwerty")
+        binding.user1Btn.setOnClickListener {
+            authViewModel.login("petar.kinov@gmail.com", "qwerty")
         }
 
-        binding.ivanBtn.setOnClickListener {
-            loginViewModel.login("i.ivanov@gmail.com", "qwerty")
+        binding.user2Btn.setOnClickListener {
+            authViewModel.login("i.ivanov@gmail.com", "qwerty")
         }
 
-        binding.svetlioBtn.setOnClickListener {
-            loginViewModel.login("s.lambev@gmail.com", "qwerty")
+        binding.user3Btn.setOnClickListener {
+            authViewModel.login("s.lambev@gmail.com", "qwerty")
         }
 
-
-
-        // Generated from android studio !!!!!!!!!!!!!!!!!!!!
-
-
-
-
-        loginViewModel.loginFormState.observe(requireActivity(), Observer {
+        authViewModel.loginFormState.observe(requireActivity(), Observer {
             val loginState = it ?: return@Observer
 
 //         disable login button unless both username / password is valid
@@ -133,14 +103,10 @@ class LoginFragment : Fragment() {
             }
         })
 
-        loginViewModel.loginResult.observe(requireActivity(), Observer {
-
-            Log.d(TAG, "onViewCreated: observer called with Log in result  : $it")
-
-            // this observer is being called twice . no idea why
+        authViewModel.loginResult.observe(requireActivity(), Observer {
             val loginResult = it ?: return@Observer
 
-//            loading.visibility = View.GONE
+            loading.visibility = View.GONE
             if (loginResult.error != null) {
                 showLoginFailed(loginResult.error)
             }
@@ -155,7 +121,7 @@ class LoginFragment : Fragment() {
         })
 
         username.afterTextChanged {
-            loginViewModel.loginDataChanged(
+            authViewModel.loginDataChanged(
                 username.text.toString(),
                 password.text.toString()
             )
@@ -163,7 +129,7 @@ class LoginFragment : Fragment() {
 
         password.apply {
             afterTextChanged {
-                loginViewModel.loginDataChanged(
+                authViewModel.loginDataChanged(
                     username.text.toString(),
                     password.text.toString()
                 )
@@ -172,44 +138,24 @@ class LoginFragment : Fragment() {
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
+                        authViewModel.login(
                             username.text.toString(),
                             password.text.toString()
                         )
                 }
                 false
             }
-
         }
-
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
         // TODO : initiate successful logged in experience
+        findNavController().navigate(R.id.mainActivity)
 
-        // Main Activity was being started twice for some reason
-        // so i set it's launch mode to singleTop
-
-        val navOption = NavOptions.Builder()
-            .setLaunchSingleTop(true)
-            .setPopUpTo(R.id.loginActivity,true)
-            .build()
-
-        val action = LoginFragmentDirections.actionLoginFragmentToMainActivity()
-        findNavController().navigate(action,navOption)
-//        requireActivity().finishAffinity()
-
-//        Toast.makeText(
-//            requireContext(),
-//            "$welcome $displayName",
-//            Toast.LENGTH_LONG
-//        ).show()
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
-//        Toast.makeText(requireContext(), errorString, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), errorString, Toast.LENGTH_SHORT).show()
     }
 
 
