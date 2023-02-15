@@ -46,7 +46,7 @@ inner class MyItemViewHolder(binding : MyItemsCardBinding, clickAtPosition: (Int
         pictureIV = binding.pictureIV
         deleteBtn = binding.deleteAuctionBtn
 
-        itemView.setOnClickListener {
+        deleteBtn.setOnClickListener {
             clickAtPosition(adapterPosition)
         }
     }

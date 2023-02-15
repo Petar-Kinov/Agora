@@ -27,7 +27,7 @@ class HomePage : Fragment() {
     private lateinit var firebaseDB: FirebaseFirestore
     private var _binding: FragmentHomePageBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewPager: ViewPager2
+    private var viewPager: ViewPager2? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +54,7 @@ class HomePage : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewPager = binding.viewPager
-        viewPager.adapter = ViewPagerAdapter(childFragmentManager,viewLifecycleOwner.lifecycle)
+        viewPager!!.adapter = ViewPagerAdapter(childFragmentManager,viewLifecycleOwner.lifecycle)
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             if (position == 0) {
                 tab.text = getString(R.string.auctions)
@@ -101,7 +101,8 @@ class HomePage : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewPager.adapter = null
+        viewPager?.adapter = null
+        viewPager = null
         _binding = null
     }
 }

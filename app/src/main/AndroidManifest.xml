@@ -27,7 +27,6 @@
             </intent-filter>
         </activity>
 
-
         <activity
             android:name=".authentication.login.LoginActivity"
             android:exported="true"

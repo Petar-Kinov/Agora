@@ -27,7 +27,7 @@ class BuyFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firebaseDB: FirebaseFirestore
 
-    private lateinit var recyclerView: RecyclerView
+    private var recyclerView: RecyclerView? = null
     private val recyclerAdapter = SellItemsRecyclerAdapter {
 
         val action = HomePageDirections.actionHomePageToItemDetailsFragment(it.item)
@@ -51,8 +51,8 @@ class BuyFragment : Fragment() {
         val view = binding.root
 
         recyclerView = binding.recyclerView
-        recyclerView.layoutManager = GridLayoutManager(requireContext(),2)
-        recyclerView.adapter = recyclerAdapter
+        recyclerView!!.layoutManager = GridLayoutManager(requireContext(),2)
+        recyclerView!!.adapter = recyclerAdapter
 
         return view
     }
@@ -68,6 +68,8 @@ class BuyFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        recyclerView?.adapter = null
+        recyclerView = null
         _binding = null
     }
 

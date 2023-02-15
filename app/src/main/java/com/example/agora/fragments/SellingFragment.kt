@@ -33,7 +33,7 @@ class SellFragment : Fragment() {
     private lateinit var listener: FirebaseAuth.AuthStateListener
     private lateinit var viewModel: ItemsViewModel
 
-    private lateinit var recyclerView: RecyclerView
+    private var recyclerView: RecyclerView? = null
     private val recyclerAdapter = MyItemsListAdapter {
         viewModel.deleteItem(it)
         Toast.makeText(requireContext(), "${it.item.title} item clicked", Toast.LENGTH_SHORT).show()
@@ -73,8 +73,8 @@ class SellFragment : Fragment() {
         val view = binding.root
 
         recyclerView = binding.recyclerView
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = recyclerAdapter
+        recyclerView!!.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView!!.adapter = recyclerAdapter
 
         return view
     }
@@ -101,6 +101,8 @@ class SellFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        recyclerView?.adapter = null
+        recyclerView = null
         _binding = null
     }
 }
