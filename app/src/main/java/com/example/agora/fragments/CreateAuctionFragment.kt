@@ -59,7 +59,6 @@ class CreateAuctionFragment : Fragment() {
     }
 
     private lateinit var bitmapList: ArrayList<Bitmap>
-    private lateinit var storePathRef: String
     private var imagesCount: Int = 0
 
 
@@ -70,7 +69,6 @@ class CreateAuctionFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity())[ItemsViewModel::class.java]
         storage = Firebase.storage
         storageRef = storage.reference
-        storePathRef = ""
         bitmapList = arrayListOf()
 
         pickMediaActivityResultLauncher =
@@ -87,7 +85,7 @@ class CreateAuctionFragment : Fragment() {
                         //TODO load bitmap list into recycler view
 //                        binding.itemIV.setImageBitmap(bitmap)
 
-                        storePathRef = auth.currentUser!!.uid + LocalDateTime.now()
+
 //                        imageName = getFileName(requireActivity().contentResolver, uri)!!
                     }
 
@@ -138,6 +136,8 @@ class CreateAuctionFragment : Fragment() {
             val description = binding.descriptionET.text.toString()
             val price = binding.priceET.text.toString()
 //            val imageRef = imageView.tag.toString()
+
+            val storePathRef = auth.currentUser!!.uid + LocalDateTime.now()
 
             if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()) {
                viewModel.sellItem(

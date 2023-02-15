@@ -18,4 +18,15 @@
         <!-- Customize your theme here. -->
         <item name="android:autofilledHighlight">@android:color/transparent</item>
     </style>
+    <style name="Theme.Agora.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.Agora.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.Agora.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="SplashStyle" parent="Theme.Agora.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
 </resources>

@@ -1,9 +1,11 @@
 package com.example.agora.repository
 
 import android.graphics.Bitmap
+import android.util.Log
 import com.example.agora.model.Item
 import com.example.agora.model.ItemsWithReference
 import com.example.agora.model.Response
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.QuerySnapshot
@@ -116,8 +118,25 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
 
 
     override suspend fun deleteItemToFireStore(item: ItemsWithReference): Response<Boolean> {
-        itemRef.document(item.documentReference.id).delete()
-        //TODO add .onSuccessListener
+        //TODO make these separate jobs inside coroutine possibly
+        itemRef.document(item.documentReference.id).delete().addOnSuccessListener {
+            val storageReference = Firebase.storage.reference.child(item.item.storageRef)
+            storageReference.listAll().addOnSuccessListener { listResult ->
+                val items = listResult.items
+                val tasks = items.map { it.delete() }
+                Tasks.whenAllSuccess<Void>(tasks).addOnSuccessListener {
+                    Log.d(TAG, "deleteItemToFireStore: Pictures deleted successfully from Firebase storage")
+                }.addOnFailureListener { exception ->
+                    Log.d(TAG, "deleteItemToFireStore: Failed to delete pictures from Firebase storage", exception)
+                }
+            }.addOnFailureListener { exception ->
+                Log.d(TAG, "deleteItemToFireStore: Failed to list contents of folder in Firebase storage", exception)
+            }
+
+            Log.d(TAG, "deleteItemToFireStore: Item deleted successfully from Firestore")
+        }.addOnFailureListener {
+            Log.d(TAG, "deleteItemToFireStore: Failed to delete item")
+        }
                 return Response.Success(true)
     }
 }
