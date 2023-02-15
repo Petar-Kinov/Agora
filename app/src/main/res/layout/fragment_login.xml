@@ -65,22 +65,6 @@
         app:layout_constraintStart_toStartOf="@+id/accountIcon"
         app:layout_constraintTop_toBottomOf="@+id/keepLoggedInChip" />
 
-    <ProgressBar
-        android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="64dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/passwordET"
-        app:layout_constraintStart_toStartOf="@+id/passwordET"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
-
     <CheckBox
         android:id="@+id/keepLoggedInChip"
         android:layout_width="wrap_content"
@@ -166,5 +150,17 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="@+id/signInBtn"
         app:layout_constraintTop_toBottomOf="@+id/signInBtn" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="79dp"
+        android:layout_height="132dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"
+        android:foregroundGravity="top"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registerBtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

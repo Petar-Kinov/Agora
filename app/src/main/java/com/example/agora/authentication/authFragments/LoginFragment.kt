@@ -1,27 +1,30 @@
 package com.example.agora.authentication.authFragments
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.agora.R
-import com.example.agora.authentication.login.LoggedInUserView
 import com.example.agora.authentication.login.AuthViewModel
+import com.example.agora.authentication.login.LoggedInUserView
 import com.example.agora.authentication.login.LoginViewModelFactory
 import com.example.agora.databinding.FragmentLoginBinding
 import com.google.firebase.auth.FirebaseAuth
+
 
 private const val TAG = "LoginFragment"
 private lateinit var auth: FirebaseAuth
@@ -73,8 +76,15 @@ class LoginFragment : Fragment() {
         }
 //
         login.setOnClickListener {
-            loading.visibility = View.VISIBLE
-            authViewModel.login(username = username.text.toString(),password = password.text.toString())
+            if (username.text.isEmpty()){
+                Toast.makeText(requireContext(), "Please enter E-mail", Toast.LENGTH_SHORT).show()
+            } else if (password.text.isEmpty()){
+                Toast.makeText(requireContext(), "Please enter password", Toast.LENGTH_SHORT).show()
+            } else {
+                hideKeybaord(it)
+                loading.visibility = View.VISIBLE
+                authViewModel.login(username = username.text.toString(),password = password.text.toString())
+            }
         }
 
         binding.user1Btn.setOnClickListener {
@@ -92,14 +102,17 @@ class LoginFragment : Fragment() {
         authViewModel.loginFormState.observe(requireActivity(), Observer {
             val loginState = it ?: return@Observer
 
+            //TODO not sure yet if i want to disable the button
 //         disable login button unless both username / password is valid
-            login.isEnabled = loginState.isDataValid
+//            login.isEnabled = loginState.isDataValid
 
             if (loginState.usernameError != null) {
                 username.error = getString(loginState.usernameError)
+                Toast.makeText(requireContext(),"${username.error}", Toast.LENGTH_SHORT).show()
             }
             if (loginState.passwordError != null) {
                 password.error = getString(loginState.passwordError)
+                Toast.makeText(requireContext(), "${password.error}", Toast.LENGTH_SHORT).show()
             }
         })
 
@@ -108,6 +121,7 @@ class LoginFragment : Fragment() {
 
             loading.visibility = View.GONE
             if (loginResult.error != null) {
+                Log.d(TAG, "onViewCreated: error is ${loginResult.error}")
                 showLoginFailed(loginResult.error)
             }
             if (loginResult.success != null) {
@@ -120,28 +134,23 @@ class LoginFragment : Fragment() {
 
         })
 
-        username.afterTextChanged {
-            authViewModel.loginDataChanged(
-                username.text.toString(),
-                password.text.toString()
-            )
-        }
-
+//        username.afterTextChanged {
+//            authViewModel.loginDataChanged(
+//                username.text.toString(),
+//                password.text.toString()
+//            )
+//        }
+//
         password.apply {
-            afterTextChanged {
-                authViewModel.loginDataChanged(
-                    username.text.toString(),
-                    password.text.toString()
-                )
-            }
-
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
-                    EditorInfo.IME_ACTION_DONE ->
+                    EditorInfo.IME_ACTION_DONE -> {
+                        loading.visibility = View.VISIBLE
                         authViewModel.login(
                             username.text.toString(),
                             password.text.toString()
                         )
+                    }
                 }
                 false
             }
@@ -156,8 +165,8 @@ class LoginFragment : Fragment() {
 
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(requireContext(), errorString, Toast.LENGTH_SHORT).show()
+        Log.d(TAG, "showLoginFailed: error string is $errorString")
     }
-
 
     /**
      * Extension function to simplify setting an afterTextChanged action to EditText components.
@@ -174,6 +183,10 @@ class LoginFragment : Fragment() {
         })
     }
 
+    private fun hideKeybaord(v: View) {
+        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        inputMethodManager!!.hideSoftInputFromWindow(v.applicationWindowToken, 0)
+    }
 
 
     override fun onDestroy() {

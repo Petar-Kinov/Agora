@@ -1,5 +1,6 @@
 package com.example.agora.authentication.login
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -30,6 +31,7 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
                         LoginResult(success = result.data.displayName?.let { LoggedInUserView(displayName = it) })
                 } else {
                     _loginResult.value = LoginResult(error = R.string.login_failed)
+                    Log.d("TAG", "login: ${_loginResult.value}")
                 }
             }
         }
