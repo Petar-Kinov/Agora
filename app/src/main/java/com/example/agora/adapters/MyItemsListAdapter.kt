@@ -3,24 +3,18 @@ package com.example.agora.adapters
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.view.View.OnClickListener
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.bumptech.glide.RequestManager
 import com.example.agora.GlideApp
-import com.example.agora.R
-import com.example.agora.databinding.ItemCardBinding
 import com.example.agora.databinding.MyItemsCardBinding
 import com.example.agora.model.Item
 import com.example.agora.model.ItemsWithReference
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import kotlin.math.log
 
 private const val TAG = "MyItemsListAdapter"
 
@@ -47,6 +41,8 @@ inner class MyItemViewHolder(binding : MyItemsCardBinding, clickAtPosition: (Int
         deleteBtn = binding.deleteAuctionBtn
 
         deleteBtn.setOnClickListener {
+            Log.d(TAG, "current list size is ${currentList.size}")
+            Log.d(TAG, "item at adapter position is $adapterPosition ")
             clickAtPosition(adapterPosition)
         }
     }
@@ -85,7 +81,7 @@ override fun onBindViewHolder(holder: MyItemViewHolder, position: Int) {
 
     holder.deleteBtn.setOnClickListener {
         Log.d(TAG, "onBindViewHolder: position is $position")
-        Log.d(TAG, "onBindViewHolder: list is ${currentList.toString()}")
+        Log.d(TAG, "onBindViewHolder: list is ${currentList}")
         onClickListener(getItem(position))
     }
 }
@@ -95,7 +91,9 @@ private class ItemDiffCallBack : DiffUtil.ItemCallback<ItemsWithReference>() {
         oldItem == newItem
 
     override fun areContentsTheSame(oldItem: ItemsWithReference, newItem: ItemsWithReference): Boolean =
-        oldItem == newItem
+        //sometimes causes IndexOutOfBounds , have to change the equals() check
+//        oldItem == newItem
+        false
 }
 
 //    interface OnItemClickListener {

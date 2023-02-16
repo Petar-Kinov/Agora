@@ -1,30 +1,30 @@
 package com.example.agora.fragments
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.coordinatorlayout.widget.CoordinatorLayout.DispatchChangeEvent
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.agora.R
 import com.example.agora.adapters.MyItemsListAdapter
 import com.example.agora.databinding.FragmentSellingBinding
+import com.example.agora.model.Item
 import com.example.agora.model.ItemsWithReference
 import com.example.agora.viewModel.ItemsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 private const val TAG = "SellingFragment"
+
 class SellFragment : Fragment() {
     private var _binding: FragmentSellingBinding? = null
     private val binding get() = _binding!!
@@ -97,7 +97,21 @@ class SellFragment : Fragment() {
             val action = HomePageDirections.actionHomePageToCreateAuctionFragment()
             findNavController().navigate(action)
         }
+
+        binding.testBtn.setOnClickListener {
+            viewModel.sellItem(
+                Item(
+                    seller = auth.currentUser!!.displayName.toString(),
+                    title = "some title",
+                    description = "some description",
+                    price = (0..100).random().toString(),
+                    storageRef = java.util.UUID.randomUUID().toString(),
+                    imagesCount = 1
+                ), arrayListOf( BitmapFactory.decodeResource(requireContext().resources, R.drawable.something))
+            )
+        }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

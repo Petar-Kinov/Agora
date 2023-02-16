@@ -16,7 +16,7 @@ import com.example.agora.model.ItemsWithReference
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
-class SellItemsRecyclerAdapter(private val onClickListener: (ItemsWithReference) -> Unit) : ListAdapter<ItemsWithReference,SellItemsRecyclerAdapter.MyViewHolder> (ItemDiffCallBack()) {
+class ItemsRecyclerAdapter(private val onClickListener: (ItemsWithReference) -> Unit) : ListAdapter<ItemsWithReference,ItemsRecyclerAdapter.MyViewHolder> (ItemDiffCallBack()) {
 
     private lateinit var glideApp : RequestManager
 
@@ -84,7 +84,8 @@ class SellItemsRecyclerAdapter(private val onClickListener: (ItemsWithReference)
 
     private class ItemDiffCallBack : DiffUtil.ItemCallback<ItemsWithReference>() {
         override fun areItemsTheSame(oldItem: ItemsWithReference, newItem: ItemsWithReference): Boolean =
-            oldItem == newItem
+//            oldItem == newItem
+            false
 
         override fun areContentsTheSame(oldItem: ItemsWithReference, newItem: ItemsWithReference): Boolean =
             oldItem == newItem

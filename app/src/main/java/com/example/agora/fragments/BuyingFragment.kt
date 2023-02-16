@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.agora.adapters.SellItemsRecyclerAdapter
+import com.example.agora.adapters.ItemsRecyclerAdapter
 import com.example.agora.databinding.FragmentBuyingBinding
 import com.example.agora.viewModel.ItemsViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -28,7 +28,7 @@ class BuyFragment : Fragment() {
     private lateinit var firebaseDB: FirebaseFirestore
 
     private var recyclerView: RecyclerView? = null
-    private val recyclerAdapter = SellItemsRecyclerAdapter {
+    private val recyclerAdapter = ItemsRecyclerAdapter {
 
         val action = HomePageDirections.actionHomePageToItemDetailsFragment(it.item)
         findNavController().navigate(action)
