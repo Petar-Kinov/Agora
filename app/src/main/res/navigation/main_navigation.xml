@@ -7,21 +7,21 @@
 
     <fragment
         android:id="@+id/itemDetailsFragment"
-        android:name="com.example.agora.fragments.ItemDetailsFragment"
+        android:name="com.example.agora.ui.fragments.core.ItemDetailsFragment"
         android:label="fragment_item_details"
         tools:layout="@layout/fragment_item_details">
         <argument
             android:name="Item"
-            app:argType="com.example.agora.model.Item" />
+            app:argType="com.example.agora.data.core.model.Item" />
     </fragment>
     <fragment
         android:id="@+id/createAuctionFragment"
-        android:name="com.example.agora.fragments.CreateAuctionFragment"
+        android:name="com.example.agora.ui.fragments.core.CreateAuctionFragment"
         android:label="fragment_create_auction"
         tools:layout="@layout/fragment_create_auction" />
     <fragment
         android:id="@+id/homePage"
-        android:name="com.example.agora.fragments.HomePage"
+        android:name="com.example.agora.ui.fragments.core.HomePage"
         android:label="fragment_home_page"
         tools:layout="@layout/fragment_home_page" >
         <action
@@ -43,7 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.agora.fragments.SettingsFragment"
+        android:name="com.example.agora.ui.fragments.core.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" >
         <action
@@ -52,7 +52,7 @@
     </fragment>
     <activity
         android:id="@+id/loginActivity"
-        android:name="com.example.agora.authentication.login.LoginActivity"
+        android:name="com.example.agora.LoginActivity"
         android:label="activity_login"
         tools:layout="@layout/activity_login" />
 </navigation>

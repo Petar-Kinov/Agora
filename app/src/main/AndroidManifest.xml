@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools" >
 
     <application
-        android:name=".AgoraApp"
+        android:name=".util.AgoraApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -28,7 +28,7 @@
         </activity>
 
         <activity
-            android:name=".authentication.login.LoginActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login"
             android:launchMode="singleTask"

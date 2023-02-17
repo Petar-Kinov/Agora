@@ -4,8 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.example.agora.authentication.FirebaseHelper
-import com.example.agora.authentication.login.LoginActivity
+import com.example.agora.util.FirebaseHelper
 import com.google.firebase.auth.FirebaseAuth
 
 class LauncherActivity : AppCompatActivity() {

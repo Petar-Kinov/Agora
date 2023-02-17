@@ -1,11 +1,11 @@
 package com.example.agora.di
 
-import com.example.agora.repository.ItemRepositoryImpl
-import com.example.agora.repository.ItemRepository
-import com.example.agora.use_case.DeleteItem
-import com.example.agora.use_case.GetItems
-import com.example.agora.use_case.SellItem
-import com.example.agora.use_case.UseCases
+import com.example.agora.data.core.repository.ItemRepository
+import com.example.agora.data.core.repository.ItemRepositoryImpl
+import com.example.agora.domain.core.use_case.DeleteItem
+import com.example.agora.domain.core.use_case.GetItems
+import com.example.agora.domain.core.use_case.SellItem
+import com.example.agora.domain.core.use_case.UseCases
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
