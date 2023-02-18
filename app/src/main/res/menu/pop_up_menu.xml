@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/bids"
-        android:title="My Bids" />
+        android:id="@+id/homeBtn"
+        android:title="Home" />
     <item
-        android:id="@+id/auctions"
-        android:title="My Auctions" />
+        android:id="@+id/messagesBtn"
+        android:title="Messages" />
     <item
         android:id="@+id/settings"
         android:title="Settings" />

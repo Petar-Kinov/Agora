@@ -22,6 +22,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildscript {
+        repositories{
+            mavenCentral()
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -44,7 +50,9 @@ android {
 }
 
 dependencies {
+
     def nav_version = "2.5.3"
+    def groupie_version = "2.10.1"
 
     implementation 'androidx.annotation:annotation:1.5.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
@@ -75,11 +83,10 @@ dependencies {
 //
 //    // Jetpack Compose Integration
 //    implementation("androidx.navigation:navigation-compose:$nav_version")
-//
-//    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
+
 
     // Import the BoM for the Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:31.1.1')
+    implementation platform('com.google.firebase:firebase-bom:31.2.2')
 
     // Declare the dependency for the Cloud Firestore library
     // When using the BoM, you don't specify versions in Firebase library dependencies
@@ -92,6 +99,10 @@ dependencies {
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-auth-ktx'
+
+    // Firebase UI Library
+//    implementation 'com.firebaseui:firebase-ui-auth:8.0.1'
+    implementation 'com.firebaseui:firebase-ui-database:8.0.1'
 
     // Also add the dependency for the Google Play services library and specify its version
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
@@ -115,5 +126,15 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
 
     // lifecycle library for DefaultLifecycleObserver
-    implementation 'androidx.lifecycle:lifecycle-common-java8'
+//    implementation 'androidx.lifecycle:lifecycle-common-java8'
+
+    // Firebase Cloud Massaging
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    // Groupie
+    implementation "com.github.lisawray.groupie:groupie:$groupie_version"
+//    implementation "com.xwray:groupie-kotlin-android-extensions:$groupie_version"
+    implementation "com.github.lisawray.groupie:groupie-viewbinding:$groupie_version"
 }

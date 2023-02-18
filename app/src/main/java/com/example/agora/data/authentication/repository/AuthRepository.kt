@@ -5,8 +5,11 @@ import com.example.agora.data.authentication.model.Result
 import com.example.agora.data.core.model.User
 import com.example.agora.domain.auth.LoginDataSource
 import com.example.agora.util.FirebaseHelper
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 private const val TAG = "AuthRepository"
 
@@ -31,7 +34,7 @@ class AuthRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String, callback : (Result<FirebaseUser>) -> Unit){
+    fun login(username: String, password: String, callback: (Result<FirebaseUser>) -> Unit) {
         // handle login
         val auth = FirebaseHelper.getInstance()
         auth.signInWithEmailAndPassword(username, password)
@@ -46,7 +49,7 @@ class AuthRepository(val dataSource: LoginDataSource) {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(
-                       TAG,
+                        TAG,
                         "signInWithEmail:failure",
                         task.exception
                     )
@@ -59,7 +62,7 @@ class AuthRepository(val dataSource: LoginDataSource) {
 //        }
     }
 
-    fun signUp(user: User, callback : (Boolean) -> Unit){
+    fun signUp(user: User, callback: (Boolean) -> Unit) {
         val auth = FirebaseHelper.getInstance()
         auth.createUserWithEmailAndPassword(user.email, user.password)
             .addOnCompleteListener { task ->
@@ -68,8 +71,16 @@ class AuthRepository(val dataSource: LoginDataSource) {
                     Log.d(TAG, "createUserWithEmail:success")
                     auth.currentUser?.updateProfile(
                         UserProfileChangeRequest.Builder()
-                        .setDisplayName("${user.firstName} ${user.lastName}")
-                        .build())
+                            .setDisplayName("${user.firstName} ${user.lastName}")
+                            .build()
+                    )
+                    val userhashMap = hashMapOf(
+                        "firstName" to user.firstName,
+                        "lastName" to user.lastName
+                    )
+                    Firebase.firestore.collection("users").document()
+                        .set(userhashMap)
+                    //TODO add onSuccessListener
 
                     Log.d(
                         TAG,
