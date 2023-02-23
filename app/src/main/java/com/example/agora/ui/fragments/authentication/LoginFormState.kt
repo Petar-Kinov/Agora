@@ -1,4 +1,4 @@
-package com.example.agora.data.authentication.login
+package com.example.agora.ui.fragments.authentication
 
 /**
  * Data validation state of the login form.

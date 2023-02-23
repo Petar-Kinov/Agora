@@ -1,13 +1,10 @@
 package com.example.agora.data.Messaging.repository
 
 import com.example.agora.data.Messaging.Model.Chat
-import com.example.agora.data.core.model.Item
 import com.example.agora.data.core.model.TestUser
-import com.example.agora.data.core.model.User
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers

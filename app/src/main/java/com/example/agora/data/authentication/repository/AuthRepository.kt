@@ -5,7 +5,6 @@ import com.example.agora.data.authentication.model.Result
 import com.example.agora.data.core.model.User
 import com.example.agora.domain.auth.LoginDataSource
 import com.example.agora.util.FirebaseHelper
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
@@ -71,15 +70,14 @@ class AuthRepository(val dataSource: LoginDataSource) {
                     Log.d(TAG, "createUserWithEmail:success")
                     auth.currentUser?.updateProfile(
                         UserProfileChangeRequest.Builder()
-                            .setDisplayName("${user.firstName} ${user.lastName}")
+                            .setDisplayName(user.username)
                             .build()
                     )
-                    val userhashMap = hashMapOf(
-                        "firstName" to user.firstName,
-                        "lastName" to user.lastName
+                    val userHashMap = hashMapOf(
+                        "username" to user.username
                     )
                     Firebase.firestore.collection("users").document()
-                        .set(userhashMap)
+                        .set(userHashMap)
                     //TODO add onSuccessListener
 
                     Log.d(

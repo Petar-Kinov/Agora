@@ -7,11 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.agora.R
 import com.example.agora.data.authentication.login.LoggedInUserView
-import com.example.agora.data.authentication.login.LoginFormState
 import com.example.agora.data.authentication.login.LoginResult
 import com.example.agora.data.authentication.model.Result
 import com.example.agora.data.authentication.repository.AuthRepository
 import com.example.agora.data.core.model.User
+import com.example.agora.ui.fragments.authentication.LoginFormState
 
 class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 

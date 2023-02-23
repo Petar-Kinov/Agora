@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:tooltipText="Password must be at least 6 characters long"
     tools:context=".ui.fragments.authentication.RegisterFragment">
 
     <TextView
@@ -21,7 +22,7 @@
 
     <EditText
         android:id="@+id/editTextTextPassword"
-        android:layout_width="250dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:backgroundTint="@color/black"
@@ -37,12 +38,12 @@
 
     <EditText
         android:id="@+id/editTextTextPersonName"
-        android:layout_width="250dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:backgroundTint="@color/black"
         android:ems="10"
-        android:hint="@string/first_name"
+        android:hint="Username"
         android:inputType="textCapSentences"
         android:textColor="@color/black"
         android:textColorHint="@color/hint_color"
@@ -52,24 +53,8 @@
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName2"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="@color/black"
-        android:ems="10"
-        android:hint="@string/last_name"
-        android:inputType="textCapSentences"
-        android:textColor="@color/black"
-        android:textColorHint="@color/hint_color"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
-
-    <EditText
         android:id="@+id/editTextTextEmailAddress"
-        android:layout_width="250dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:backgroundTint="@color/black"
@@ -81,11 +66,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName2" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
 
     <EditText
         android:id="@+id/editTextTextPassword2"
-        android:layout_width="250dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:backgroundTint="@color/black"
@@ -110,4 +95,57 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword2" />
+
+    <ImageButton
+        android:id="@+id/usernameInfoBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:background="@drawable/info_icon"
+        android:src="@drawable/info_icon"
+        android:tooltipText="Please enter username"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextTextPersonName"
+        app:layout_constraintStart_toEndOf="@+id/editTextTextPersonName"
+        app:layout_constraintTop_toTopOf="@+id/editTextTextPersonName"
+        app:tint="@color/light_blue" />
+
+    <ImageButton
+        android:id="@+id/repeatPasswordInfoBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/info_icon"
+        android:src="@drawable/info_icon"
+        android:tooltipText="Repeat password"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextTextPassword2"
+        app:layout_constraintEnd_toEndOf="@+id/passwordInfoBtn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/passwordInfoBtn"
+        app:layout_constraintTop_toTopOf="@+id/editTextTextPassword2"
+        app:tint="@color/light_blue" />
+
+    <ImageButton
+        android:id="@+id/passwordInfoBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/info_icon"
+        android:src="@drawable/info_icon"
+        android:tooltipText="Password must be at least 6 characters long"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextTextPassword"
+        app:layout_constraintEnd_toEndOf="@+id/emailInfoBtn"
+        app:layout_constraintStart_toStartOf="@+id/emailInfoBtn"
+        app:layout_constraintTop_toTopOf="@+id/editTextTextPassword"
+        app:tint="@color/light_blue" />
+
+    <ImageButton
+        android:id="@+id/emailInfoBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/info_icon"
+        android:src="@drawable/info_icon"
+        android:tooltipText="Please enter valid email"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextTextEmailAddress"
+        app:layout_constraintEnd_toEndOf="@+id/usernameInfoBtn"
+        app:layout_constraintStart_toStartOf="@+id/usernameInfoBtn"
+        app:layout_constraintTop_toTopOf="@+id/editTextTextEmailAddress"
+        app:tint="@color/light_blue" />
 </androidx.constraintlayout.widget.ConstraintLayout>

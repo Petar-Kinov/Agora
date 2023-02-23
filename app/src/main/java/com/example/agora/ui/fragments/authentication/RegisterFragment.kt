@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -38,8 +39,7 @@ class RegisterFragment : Fragment() {
             .get(AuthViewModel::class.java)
     }
 
-    private lateinit var firstNameET: EditText
-    private lateinit var lastNameET: EditText
+    private lateinit var usernameET: EditText
     private lateinit var emailET: EditText
     private lateinit var passwordET: EditText
     private lateinit var verifyPasswordET: EditText
@@ -65,25 +65,23 @@ class RegisterFragment : Fragment() {
 
         fireStoreDB = Firebase.firestore
 
-        firstNameET = binding.editTextTextPersonName
-        lastNameET = binding.editTextTextPersonName2
+        usernameET = binding.editTextTextPersonName
         emailET = binding.editTextTextEmailAddress
         passwordET = binding.editTextTextPassword
         verifyPasswordET = binding.editTextTextPassword2
         signUpBtn = binding.signUpBtn
 
-        setCheckMarkListener(listOf(firstNameET, lastNameET, emailET, passwordET, verifyPasswordET))
+        setCheckMarkListener(listOf(usernameET, emailET, passwordET, verifyPasswordET))
+        showTooltipOnClick(listOf(binding.usernameInfoBtn,binding.emailInfoBtn,binding.passwordInfoBtn,binding.repeatPasswordInfoBtn))
 
         signUpBtn.setOnClickListener {
-            if (firstNameET.compoundDrawables[2] != null &&
-                lastNameET.compoundDrawables[2] != null &&
+            if (usernameET.compoundDrawables[2] != null &&
                 emailET.compoundDrawables[2] != null &&
                 passwordET.compoundDrawables[2] != null &&
                 verifyPasswordET.compoundDrawables[2] != null
             ) {
                 val user = User(
-                    firstNameET.text.toString(),
-                    lastNameET.text.toString(),
+                    usernameET.text.toString(),
                     emailET.text.toString(),
                     passwordET.text.toString()
                 )
@@ -118,7 +116,7 @@ class RegisterFragment : Fragment() {
 
                 override fun afterTextChanged(text: Editable) {
                     when (editTextView) {
-                        firstNameET, lastNameET -> if (text.isNotEmpty()) {
+                        usernameET -> if (text.isNotEmpty()) {
                             editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
                                 0, 0, R.drawable.ic_baseline_check_24, 0
                             )
@@ -153,12 +151,20 @@ class RegisterFragment : Fragment() {
                 editTextView.tag = textWatcher
             }
         }
+
     }
 
+    fun showTooltipOnClick(infoBtns : List<ImageButton>){
+        for(button in infoBtns){
+            button.setOnClickListener {
+                button.performLongClick()
+            }
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         authViewModel.signUpIsSuccessful.removeObservers(viewLifecycleOwner)
-        listOf(firstNameET, lastNameET, emailET, passwordET, verifyPasswordET).forEach { editText ->
+        listOf(usernameET, emailET, passwordET, verifyPasswordET).forEach { editText ->
             editText.removeTextChangedListener(editText.tag as? TextWatcher)
         }
         _binding = null
