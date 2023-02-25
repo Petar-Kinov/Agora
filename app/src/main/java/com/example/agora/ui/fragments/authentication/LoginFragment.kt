@@ -152,13 +152,11 @@ class LoginFragment : Fragment() {
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
-        // TODO : initiate successful logged in experience
         findNavController().navigate(R.id.mainActivity)
-
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
-        // TODO toast causes a memory leak
+        // TODO toast may cause a memory leak
         Toast.makeText(requireContext(), errorString, Toast.LENGTH_SHORT).show()
         Log.d(TAG, "showLoginFailed: error string is $errorString")
     }

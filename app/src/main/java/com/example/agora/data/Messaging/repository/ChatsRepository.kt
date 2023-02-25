@@ -1,6 +1,6 @@
 package com.example.agora.data.Messaging.repository
 
-import com.example.agora.data.Messaging.Model.Person
+import com.example.agora.data.Messaging.recyclerViewItem.Person
 import com.example.agora.data.core.model.TestUser
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.QuerySnapshot

@@ -1,4 +1,4 @@
-package com.example.agora.data.Messaging.Model
+package com.example.agora.data.Messaging.recyclerViewItem
 
 import android.view.View
 import com.example.agora.R

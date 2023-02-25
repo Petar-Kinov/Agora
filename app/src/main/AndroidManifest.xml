@@ -58,7 +58,8 @@
         <activity
             android:name=".ChatActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
+            android:parentActivityName="com.example.agora.MainActivity"/>
 
         <service
             android:name=".domain.Messaging.MyFirebaseMessagingService"
@@ -69,7 +70,7 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value="com.example.agora.MainActivity"/>
         </service>
 
     </application>

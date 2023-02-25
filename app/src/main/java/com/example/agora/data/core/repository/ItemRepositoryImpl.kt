@@ -69,7 +69,7 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
 
                 val imageRef = Firebase.storage.reference.child(item.storageRef).child("$imageUploadCounter")
                 val uploadTask = imageRef.putBytes(imageData)
-                //todo  what happens if a picture is not uploaded
+                //TODO  what happens if a picture is not uploaded
                 uploadTask.await()
                 imageUploadCounter++
             }
@@ -118,10 +118,10 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
     }
 
 
-    override suspend fun deleteItemToFireStore(item: ItemsWithReference): Response<Boolean> {
-        //TODO make these separate jobs inside coroutine possibly
-        itemRef.document(item.documentReference.id).delete().addOnSuccessListener {
-            val storageReference = Firebase.storage.reference.child(item.item.storageRef)
+    override suspend fun deleteItemToFireStore(itemWithReference: ItemsWithReference): Response<Boolean> {
+        //TODO make these separate jobs inside coroutine
+        itemRef.document(itemWithReference.documentReference.id).delete().addOnSuccessListener {
+            val storageReference = Firebase.storage.reference.child(itemWithReference.item.storageRef)
             storageReference.listAll().addOnSuccessListener { listResult ->
                 val items = listResult.items
                 val tasks = items.map { it.delete() }

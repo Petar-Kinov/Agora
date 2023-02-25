@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.ChatActivity
-import com.example.agora.data.Messaging.Model.Person
+import com.example.agora.data.Messaging.recyclerViewItem.Person
 import com.example.agora.databinding.FragmentChatsBinding
 import com.example.agora.domain.Messaging.ViewModel.ChatsViewModel
 import com.example.agora.util.AppConstants

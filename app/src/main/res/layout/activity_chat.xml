@@ -27,7 +27,20 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/sendImageButton"
+            android:id="@+id/sendImageFromCameraBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:clickable="true"
+            android:src="@drawable/ic_camera"
+            app:backgroundTint="@color/baby_blue"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toBottomOf="@+id/sendImageFromGaleryBtn"
+            app:layout_constraintStart_toEndOf="@+id/sendImageFromGaleryBtn"
+            app:layout_constraintTop_toTopOf="@+id/sendImageFromGaleryBtn" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/sendImageFromGaleryBtn"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
@@ -49,7 +62,7 @@
             app:hintEnabled="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/sendMessageBtn"
-            app:layout_constraintStart_toEndOf="@+id/sendImageButton"
+            app:layout_constraintStart_toEndOf="@+id/sendImageFromCameraBtn"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText

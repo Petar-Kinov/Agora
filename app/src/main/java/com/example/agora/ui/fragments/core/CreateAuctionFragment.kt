@@ -81,11 +81,7 @@ class CreateAuctionFragment : Fragment() {
                     for (uri in uriList) {
                         // !! might be null not sure
                         bitmapList.add(getThumbnail(uri, requireContext())!!)
-
-                        //TODO load bitmap list into recycler view
 //                        binding.itemIV.setImageBitmap(bitmap)
-
-
 //                        imageName = getFileName(requireActivity().contentResolver, uri)!!
                     }
 
@@ -95,7 +91,6 @@ class CreateAuctionFragment : Fragment() {
                 recyclerAdapter.swapData(bitmapList)
             }
 
-        // TODO when picture is from camera it is not uploaded
         cameraActivityResultLauncher = registerForActivityResult(
             ActivityResultContracts.TakePicturePreview()
         ) { bitmap ->

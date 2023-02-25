@@ -3,6 +3,10 @@ package com.example.agora.util
 import android.content.Context
 import android.util.Log
 import com.example.agora.data.Messaging.Model.*
+import com.example.agora.data.Messaging.recyclerViewItem.ImageMessageItem
+import com.example.agora.data.Messaging.recyclerViewItem.MessageItem
+import com.example.agora.data.Messaging.recyclerViewItem.Person
+import com.example.agora.data.Messaging.recyclerViewItem.TextMessageItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -56,7 +60,7 @@ object FirestoreUtil {
                 onListen(items)
             }
     }
-    fun addChatMessageListener(channelId: String, context: Context,onListen: (List<TextMessageItem>) -> Unit): ListenerRegistration {
+    fun addChatMessageListener(channelId: String, context: Context,onListen: (List<MessageItem<*>>) -> Unit): ListenerRegistration {
         return chatChannelCollectionRef.document(channelId).collection("messages")
             .orderBy("time")
             .addSnapshotListener { querySnapshot , firebaseFirestoreException ->
@@ -65,12 +69,12 @@ object FirestoreUtil {
                     return@addSnapshotListener
                 }
 
-                val items = mutableListOf<TextMessageItem>()
-                querySnapshot?.documents?.forEach{
+                val items = mutableListOf<MessageItem<*>>()
+                querySnapshot!!.documents.forEach{
                     if (it["type"] == MessageType.TEXT){
                         items.add(TextMessageItem(it.toObject(TextMessage::class.java)!!,context))
                     } else {
-                        TODO("Add picture message")
+                        items.add(ImageMessageItem(it.toObject(ImageMessage::class.java)!!,context))
                     }
                     onListen(items)
                 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.agora.data.Messaging.Model.Person
+import com.example.agora.data.Messaging.recyclerViewItem.Person
 import com.example.agora.data.Messaging.repository.ChatsRepository
 import kotlinx.coroutines.launch
 

@@ -8,7 +8,6 @@ class LoginDataSource {
 
 //    fun login(username: String, password: String, callback: (Result<FirebaseUser>) -> Unit){
 //        try {
-//            // TODO: handle loggedInUser authentication
 ////            val fakeUser = LoggedInUser(java.util.UUID.randomUUID().toString(), "Jane Doe")
 //            val auth = FirebaseHelper.getInstance()
 //            auth.signInWithEmailAndPassword(username, password)
@@ -28,6 +27,5 @@ class LoginDataSource {
 //    }
 
     fun logout() {
-        // TODO: revoke authentication
     }
 }

@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.agora"
-        minSdk 26
+        minSdk 28
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -54,7 +54,7 @@ dependencies {
     def nav_version = "2.5.3"
     def groupie_version = "2.10.1"
 
-    implementation 'androidx.annotation:annotation:1.5.0'
+    implementation 'androidx.annotation:annotation:1.6.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'com.google.firebase:firebase-auth:21.1.0'
@@ -103,6 +103,8 @@ dependencies {
     // Firebase UI Library
 //    implementation 'com.firebaseui:firebase-ui-auth:8.0.1'
     implementation 'com.firebaseui:firebase-ui-database:8.0.1'
+
+    implementation 'com.firebaseui:firebase-ui-storage:8.0.2'
 
     // Also add the dependency for the Google Play services library and specify its version
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
