@@ -6,19 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.ChatActivity
 import com.example.agora.data.Messaging.Model.Person
 import com.example.agora.databinding.FragmentChatsBinding
 import com.example.agora.domain.Messaging.ViewModel.ChatsViewModel
-import com.example.agora.domain.Messaging.ViewModel.ChatsViewModelFactory
 import com.example.agora.util.AppConstants
 import com.example.agora.util.FirestoreUtil
 import com.google.firebase.firestore.ListenerRegistration
 import com.xwray.groupie.GroupieAdapter
-import com.xwray.groupie.Item
 import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.Section
 

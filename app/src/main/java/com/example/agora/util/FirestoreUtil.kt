@@ -2,13 +2,11 @@ package com.example.agora.util
 
 import android.content.Context
 import android.util.Log
-import androidx.core.content.ContextCompat
 import com.example.agora.data.Messaging.Model.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.auth.User
 
 private const val TAG = "FirestoreUtil"
 
@@ -57,9 +55,7 @@ object FirestoreUtil {
                 }
                 onListen(items)
             }
-
     }
-
     fun addChatMessageListener(channelId: String, context: Context,onListen: (List<TextMessageItem>) -> Unit): ListenerRegistration {
         return chatChannelCollectionRef.document(channelId).collection("messages")
             .orderBy("time")
@@ -79,7 +75,10 @@ object FirestoreUtil {
                     onListen(items)
                 }
             }
+    }
 
+    fun sendMessage(message : Message, channelId: String) {
+        chatChannelCollectionRef.document(channelId).collection("messages").add(message)
     }
 
     fun removeListener(registration: ListenerRegistration) = registration.remove()
