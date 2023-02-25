@@ -110,6 +110,7 @@ class HomePage : Fragment() {
         }.attach()
 
         binding.popupMenuBtn.setOnClickListener {
+            //TODO disable button if it was clicked already
             val popupMenu = PopupMenu(requireContext(), it)
             val inflater = popupMenu.menuInflater
             inflater.inflate(R.menu.pop_up_menu, popupMenu.menu)
