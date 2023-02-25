@@ -5,7 +5,7 @@ import com.example.agora.R
 import com.example.agora.databinding.PersonRowItemBinding
 import com.xwray.groupie.viewbinding.BindableItem
 
-class Chat(val name : String, val userId : String) : BindableItem<PersonRowItemBinding>(){
+class Person(val name : String, val firestoreUserId : String) : BindableItem<PersonRowItemBinding>(){
 
     override fun bind(viewBinding: PersonRowItemBinding, position: Int) {
         viewBinding.personNameTV.text = name

@@ -60,7 +60,7 @@
         tools:layout="@layout/activity_login" />
     <fragment
         android:id="@+id/chatsFragment"
-        android:name="com.example.agora.ui.fragments.Messaging.ChatsFragment"
+        android:name="com.example.agora.ui.fragments.Messaging.PeopleFragment"
         android:label="fragment_chats"
         tools:layout="@layout/fragment_chats" />
 </navigation>

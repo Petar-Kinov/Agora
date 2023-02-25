@@ -1,6 +1,6 @@
 package com.example.agora.data.Messaging.repository
 
-import com.example.agora.data.Messaging.Model.Chat
+import com.example.agora.data.Messaging.Model.Person
 import com.example.agora.data.core.model.TestUser
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.QuerySnapshot
@@ -16,14 +16,14 @@ class ChatsRepository {
     private var mSnapshotListener: EventListener<QuerySnapshot>? = null
 
 
-    suspend fun getChats(): List<Chat> = withContext(Dispatchers.IO) {
+    suspend fun getChats(): List<Person> = withContext(Dispatchers.IO) {
         try {
             Firebase.firestore.collection("users").get().await().let { snapshot ->
                 if (!snapshot.isEmpty) {
                     snapshot.documents.mapNotNull { document ->
                         val gson = Gson()
                         val user = gson.fromJson(gson.toJson(document.data), TestUser::class.java)
-                        if (user != null) Chat("${user.firstName} ${user.lastName}", "asdffgdhfjgt")
+                        if (user != null) Person(user.username, document.id)
                         else null
                     }.sortedBy { it.name }
                 } else {

@@ -29,4 +29,8 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
+    <style name="ActionBarStyle" parent="@style/Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="windowActionBar">true</item>
+    </style>
+
 </resources>

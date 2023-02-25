@@ -2,18 +2,17 @@ package com.example.agora.util
 
 import android.content.Context
 import android.util.Log
-import com.example.agora.data.Messaging.Model.ChatChannel
-import com.example.agora.data.Messaging.Model.MessageType
-import com.example.agora.data.Messaging.Model.TextMessage
-import com.example.agora.data.Messaging.Model.TextMessageItem
+import androidx.core.content.ContextCompat
+import com.example.agora.data.Messaging.Model.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.auth.User
 
 private const val TAG = "FirestoreUtil"
 
-class FirestoreUtil {
+object FirestoreUtil {
     private val firestoreInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance()}
 
     private val currentUserDocRef : DocumentReference
@@ -44,6 +43,23 @@ class FirestoreUtil {
             }
     }
 
+    fun addUsersListener(context :Context, onListen: (List<Person>) -> Unit) : ListenerRegistration{
+        return firestoreInstance.collection("users")
+            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                if (firebaseFirestoreException != null) {
+                    Log.e(TAG,"addChatMessageListener: Exception is ", firebaseFirestoreException)
+                    return@addSnapshotListener
+                }
+                val items = mutableListOf<Person>()
+                querySnapshot?.documents?.forEach {
+                    if (it.id != FirebaseAuth.getInstance().currentUser?.uid)
+                        items.add(Person(it["username"] as String,it.id))
+                }
+                onListen(items)
+            }
+
+    }
+
     fun addChatMessageListener(channelId: String, context: Context,onListen: (List<TextMessageItem>) -> Unit): ListenerRegistration {
         return chatChannelCollectionRef.document(channelId).collection("messages")
             .orderBy("time")
@@ -65,5 +81,7 @@ class FirestoreUtil {
             }
 
     }
+
+    fun removeListener(registration: ListenerRegistration) = registration.remove()
 
 }

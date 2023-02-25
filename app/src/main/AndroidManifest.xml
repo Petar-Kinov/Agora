@@ -57,7 +57,8 @@
 
         <activity
             android:name=".ChatActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"/>
 
         <service
             android:name=".domain.Messaging.MyFirebaseMessagingService"

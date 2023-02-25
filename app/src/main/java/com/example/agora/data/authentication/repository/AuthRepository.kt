@@ -63,7 +63,7 @@ class AuthRepository(val dataSource: LoginDataSource) {
 
     fun signUp(user: User, callback: (Boolean) -> Unit) {
         val auth = FirebaseHelper.getInstance()
-        auth.createUserWithEmailAndPassword(user.email, user.password)
+        auth.createUserWithEmailAndPassword(user.email.trim(), user.password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
@@ -76,7 +76,7 @@ class AuthRepository(val dataSource: LoginDataSource) {
                     val userHashMap = hashMapOf(
                         "username" to user.username
                     )
-                    Firebase.firestore.collection("users").document()
+                    Firebase.firestore.collection("users").document(auth.currentUser!!.uid)
                         .set(userHashMap)
                     //TODO add onSuccessListener
 
