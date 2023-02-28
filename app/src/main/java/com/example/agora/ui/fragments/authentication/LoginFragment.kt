@@ -20,9 +20,11 @@ import com.example.agora.R
 import com.example.agora.data.authentication.login.LoggedInUserView
 import com.example.agora.data.authentication.login.LoginViewModelFactory
 import com.example.agora.databinding.FragmentLoginBinding
+import com.example.agora.domain.Messaging.MyFirebaseMessagingService
 import com.example.agora.domain.auth.viewModel.AuthViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 private const val TAG = "LoginFragment"
@@ -153,6 +155,16 @@ class LoginFragment : Fragment() {
 
     private fun updateUiWithUser(model: LoggedInUserView) {
         findNavController().navigate(R.id.mainActivity)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { completedTask ->
+            if (completedTask.isSuccessful) {
+                val registrationToken = completedTask.result
+                MyFirebaseMessagingService.addTokenToFirestore(registrationToken)
+            } else {
+                val exception = completedTask.exception
+                Log.w(TAG, "Fetching FCM registration token failed", exception)
+            }
+        }
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {

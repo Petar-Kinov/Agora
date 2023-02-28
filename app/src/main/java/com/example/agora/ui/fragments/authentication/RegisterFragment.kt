@@ -83,7 +83,8 @@ class RegisterFragment : Fragment() {
                 val user = User(
                     usernameET.text.toString(),
                     emailET.text.toString(),
-                    passwordET.text.toString()
+                    passwordET.text.toString(),
+                    registrationTokens = mutableListOf()
                 )
                 authViewModel.signup(user)
             } else {

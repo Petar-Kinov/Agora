@@ -58,9 +58,20 @@
         <activity
             android:name=".ChatActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
-            android:parentActivityName="com.example.agora.MainActivity"/>
+            android:parentActivityName="com.example.agora.MainActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">
 
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.agora.MainActivity" />
+
+        </activity>
+
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/bank"
+            />
         <service
             android:name=".domain.Messaging.MyFirebaseMessagingService"
             android:exported="false">
@@ -68,9 +79,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
 
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.agora.MainActivity"/>
+
         </service>
 
     </application>

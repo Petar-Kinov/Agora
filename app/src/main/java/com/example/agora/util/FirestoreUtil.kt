@@ -7,10 +7,12 @@ import com.example.agora.data.Messaging.recyclerViewItem.ImageMessageItem
 import com.example.agora.data.Messaging.recyclerViewItem.MessageItem
 import com.example.agora.data.Messaging.recyclerViewItem.Person
 import com.example.agora.data.Messaging.recyclerViewItem.TextMessageItem
+import com.example.agora.data.core.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.ktx.toObject
 
 private const val TAG = "FirestoreUtil"
 
@@ -84,7 +86,22 @@ object FirestoreUtil {
     fun sendMessage(message : Message, channelId: String) {
         chatChannelCollectionRef.document(channelId).collection("messages").add(message)
     }
-
     fun removeListener(registration: ListenerRegistration) = registration.remove()
 
+
+
+    //region FCM
+
+    fun getFCMRegistrationToken(onComplete: (tokens : MutableList<String>) -> Unit){
+        currentUserDocRef.get().addOnSuccessListener {
+            val user = it.toObject(User::class.java)!!
+            onComplete(user.registrationTokens)
+        }
+    }
+
+    fun setFCMRegistrationTokens(registrationToken : MutableList<String>){
+        currentUserDocRef.update(mapOf("registrationTokens" to registrationToken))
+    }
+
+    //endregion FCM
 }
