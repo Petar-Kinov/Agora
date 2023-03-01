@@ -6,9 +6,11 @@ data class TextMessage(
     val text: String,
     override val time: Date,
     override val senderId: String,
+    override val recipientId : String,
+    override val senderName: String,
     override val type: String = MessageType.TEXT
 ) : Message {
-    constructor() : this("", Date(0), "")
+    constructor() : this("", Date(0), "","","")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

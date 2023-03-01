@@ -12,7 +12,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.ktx.toObject
 
 private const val TAG = "FirestoreUtil"
 
@@ -23,6 +22,12 @@ object FirestoreUtil {
     get() = firestoreInstance.document("users/${FirebaseAuth.getInstance().currentUser?.uid}")
 
     private val chatChannelCollectionRef = firestoreInstance.collection("chatChannels")
+
+    fun getCurrentUser(onComplete: (User) -> Unit) {
+        currentUserDocRef.get().addOnSuccessListener {
+            it.toObject(User::class.java)?.let { it1 -> onComplete(it1) }
+        }
+    }
 
     fun getOrCreateChatChannel(otherUserId : String,onComplete : (channelId : String) -> Unit){
         currentUserDocRef.collection("engagedChatChannels")
@@ -87,7 +92,6 @@ object FirestoreUtil {
         chatChannelCollectionRef.document(channelId).collection("messages").add(message)
     }
     fun removeListener(registration: ListenerRegistration) = registration.remove()
-
 
 
     //region FCM

@@ -12,9 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.data.Messaging.Model.ImageMessage
-import com.example.agora.data.Messaging.Model.MessageType
 import com.example.agora.data.Messaging.Model.TextMessage
 import com.example.agora.data.Messaging.recyclerViewItem.MessageItem
+import com.example.agora.data.core.model.User
 import com.example.agora.databinding.ActivityChatBinding
 import com.example.agora.util.AppConstants
 import com.example.agora.util.FirebaseHelper
@@ -31,10 +31,14 @@ class ChatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityChatBinding
     private lateinit var messagesListenerRegistration: ListenerRegistration
+
     private var shouldInitRecyclerView = true
     private lateinit var messagesSection: Section
     private var recyclerView: RecyclerView? = null
     private lateinit var currentChannelId: String
+    private lateinit var currentUser : User
+    private lateinit var otherUserId : String
+
     private lateinit var pickMediaActivityResultLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Void?>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +46,10 @@ class ChatActivity : AppCompatActivity() {
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
         recyclerView = binding.recyclerViewMessages
+
+        //TODO the back button should go to People fragment instead of the home destination of the MainActivity
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
 
         pickMediaActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -60,7 +68,9 @@ class ChatActivity : AppCompatActivity() {
                         val messageToSend = ImageMessage(
                             imagePath = it,
                             Calendar.getInstance().time,
-                            FirebaseAuth.getInstance().currentUser!!.uid
+                            FirebaseAuth.getInstance().currentUser!!.uid,
+                            otherUserId,
+                            currentUser.username
                         )
                         FirestoreUtil.sendMessage(messageToSend, currentChannelId)
                     }
@@ -82,7 +92,9 @@ class ChatActivity : AppCompatActivity() {
                     val messageToSend = ImageMessage(
                         imagePath = it,
                         Calendar.getInstance().time,
-                        FirebaseAuth.getInstance().currentUser!!.uid
+                        FirebaseAuth.getInstance().currentUser!!.uid,
+                        otherUserId,
+                        currentUser.username
                     )
                     FirestoreUtil.sendMessage(messageToSend, currentChannelId)
                 }
@@ -91,32 +103,36 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
-        //TODO the back button should go to People fragment instead of the home destination of the MainActivity
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
+        FirestoreUtil.getCurrentUser {
+            currentUser = it
+        }
 
-        val otherUserId = intent.getStringExtra(AppConstants.USER_ID)
-        FirestoreUtil.getOrCreateChatChannel(otherUserId!!) { channelId ->
+        // not sure about the toString
+        otherUserId = intent.getStringExtra(AppConstants.USER_ID).toString()
+
+        FirestoreUtil.getOrCreateChatChannel(otherUserId) { channelId ->
             currentChannelId = channelId
             messagesListenerRegistration = FirestoreUtil.addChatMessageListener(
                 channelId = channelId,
                 context = this,
                 this::updateRecyclerView
             )
+        }
 
-            binding.sendMessageBtn.setOnClickListener {
-                if (!binding.editTextMessage.text.isNullOrEmpty()){
-                    val messageToSend = TextMessage(
-                        text = binding.editTextMessage.text.toString(),
-                        time = Calendar.getInstance().time,
-                        FirebaseHelper.getInstance().currentUser!!.uid,
-                        type = MessageType.TEXT
-                    )
-                    binding.editTextMessage.setText("")
-                    FirestoreUtil.sendMessage(messageToSend, channelId)
-                }
+        binding.sendMessageBtn.setOnClickListener {
+            if (!binding.editTextMessage.text.isNullOrEmpty()){
+                val messageToSend = TextMessage(
+                    text = binding.editTextMessage.text.toString(),
+                    time = Calendar.getInstance().time,
+                    FirebaseHelper.getInstance().currentUser!!.uid,
+                    otherUserId,
+                    currentUser.username
+                )
+                binding.editTextMessage.setText("")
+                FirestoreUtil.sendMessage(messageToSend, currentChannelId)
             }
         }
+
 
         binding.sendImageFromGaleryBtn.setOnClickListener {
             pickMediaActivityResultLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
