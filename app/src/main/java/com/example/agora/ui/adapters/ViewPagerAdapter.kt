@@ -15,7 +15,8 @@ class ViewPagerAdapter(fragmentManager : FragmentManager, lifecycle: Lifecycle) 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> BuyFragment()
-            else -> SellFragment()
+            1 -> SellFragment()
+            else -> throw IllegalArgumentException("Invalid ViewPager position: $position")
         }
     }
 }

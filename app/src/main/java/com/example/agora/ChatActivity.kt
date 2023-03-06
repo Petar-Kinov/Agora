@@ -1,9 +1,12 @@
 package com.example.agora
 
+import android.R
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,8 +39,8 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var messagesSection: Section
     private var recyclerView: RecyclerView? = null
     private lateinit var currentChannelId: String
-    private lateinit var currentUser : User
-    private lateinit var otherUserId : String
+    private lateinit var currentUser: User
+    private lateinit var otherUserId: String
 
     private lateinit var pickMediaActivityResultLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Void?>
@@ -50,6 +53,8 @@ class ChatActivity : AppCompatActivity() {
         //TODO the back button should go to People fragment instead of the home destination of the MainActivity
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
+
+
 
         pickMediaActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -120,7 +125,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         binding.sendMessageBtn.setOnClickListener {
-            if (!binding.editTextMessage.text.isNullOrEmpty()){
+            if (!binding.editTextMessage.text.isNullOrEmpty()) {
                 val messageToSend = TextMessage(
                     text = binding.editTextMessage.text.toString(),
                     time = Calendar.getInstance().time,
@@ -141,6 +146,29 @@ class ChatActivity : AppCompatActivity() {
         binding.sendImageFromCameraBtn.setOnClickListener {
             cameraActivityResultLauncher.launch()
         }
+    }
+
+    //overriding the action bar back button, otherwise it goes to the home destination of the parent activity
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.home -> {
+                val fragmentManager = supportFragmentManager
+                val backStackEntryCount = fragmentManager.backStackEntryCount
+                if (backStackEntryCount > 0) {
+                    // If there are fragments in the back stack, pop the top fragment
+                    fragmentManager.popBackStack()
+                } else {
+                    // If there are no fragments in the back stack, start MainActivity and navigate to MessagesFragment
+                    val mainActivityIntent = Intent(this, MainActivity::class.java)
+                    mainActivityIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    mainActivityIntent.putExtra("navigate_to_messages_fragment", true)
+                    startActivity(mainActivityIntent)
+                    finish()
+                }
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun updateRecyclerView(messages: List<MessageItem<*>>) {

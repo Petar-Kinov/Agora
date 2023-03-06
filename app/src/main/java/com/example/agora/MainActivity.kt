@@ -24,11 +24,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         auth = FirebaseHelper.getInstance()
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
+
+        val navigateToMessagesFragment = intent.getBooleanExtra("navigate_to_messages_fragment", false)
+
+        if (navigateToMessagesFragment) {
+            navController.navigate(R.id.chatsFragment)
+        }
 
         this.onBackPressedDispatcher.addCallback(this) {
             // Handle the back button event
