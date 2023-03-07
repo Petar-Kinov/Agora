@@ -5,6 +5,7 @@ import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.agora.R
 import com.example.agora.data.authentication.login.LoggedInUserView
 import com.example.agora.data.authentication.login.LoginResult
@@ -12,7 +13,11 @@ import com.example.agora.data.authentication.model.Result
 import com.example.agora.data.authentication.repository.AuthRepository
 import com.example.agora.data.core.model.User
 import com.example.agora.ui.fragments.authentication.LoginFormState
+import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
+private const val TAG = "AuthViewModel"
 class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
@@ -21,23 +26,27 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    private val _signUpIsSuccessful = MutableLiveData<Boolean>()
-    val signUpIsSuccessful: LiveData<Boolean> = _signUpIsSuccessful
+    private val _signUpResult = MutableLiveData<FirebaseUser>()
+    val signUpIsResult: LiveData<FirebaseUser> = _signUpResult
 
     fun login(username: String, password: String) {
-        // can be launched in a separate asynchronous job
-        if (isPasswordValid(username) && isPasswordValid(password)){
-            authRepository.login(username, password){ result ->
+        if (isPasswordValid(username) && isPasswordValid(password)) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val result = authRepository.login(username, password)
                 if (result is Result.Success) {
-                    _loginResult.value =
-                        LoginResult(success = result.data.displayName?.let { LoggedInUserView(displayName = it) })
+                    _loginResult.postValue(LoginResult(success = result.data.displayName?.let {
+                        LoggedInUserView(
+                            displayName = it
+                        )
+                    }))
                 } else {
-                    _loginResult.value = LoginResult(error = R.string.login_failed)
+                    _loginResult.postValue(LoginResult(error = R.string.login_failed))
                     Log.d("TAG", "login: ${_loginResult.value}")
                 }
             }
         }
     }
+
 
     fun loginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
@@ -64,8 +73,26 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     }
 
     fun signup(user: User) {
-        authRepository.signUp(user){
-            _signUpIsSuccessful.postValue(it)
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = authRepository.signUp(user)
+            if (result is Result.Success) {
+                _signUpResult.postValue(result.data)
+                _loginResult.postValue(LoginResult(success = result.data.displayName?.let {
+                    LoggedInUserView(
+                        displayName = it
+                    )
+                }))
+            } else {
+                Log.d(TAG, "signup: Sign up failed ${(result as Result.Error).exception}")
+            }
         }
+    }
+
+    fun logout() {
+        authRepository.logout()
+    }
+
+    fun deleteUser() {
+        authRepository.deleteUser()
     }
 }

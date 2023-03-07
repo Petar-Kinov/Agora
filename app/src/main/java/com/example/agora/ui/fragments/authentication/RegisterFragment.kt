@@ -1,8 +1,10 @@
 package com.example.agora.ui.fragments.authentication
 
+import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,7 @@ import com.example.agora.R
 import com.example.agora.data.authentication.login.LoginViewModelFactory
 import com.example.agora.data.core.model.User
 import com.example.agora.databinding.FragmentRegisterBinding
+import com.example.agora.domain.Messaging.MyFirebaseMessagingService
 import com.example.agora.domain.auth.viewModel.AuthViewModel
 import com.example.agora.util.EmailValidator
 import com.google.android.material.snackbar.Snackbar
@@ -25,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 
 private const val TAG = "RegisterFragment"
 
@@ -92,16 +96,23 @@ class RegisterFragment : Fragment() {
             }
         }
 
-        authViewModel.signUpIsSuccessful.observe(requireActivity(), Observer {
+        authViewModel.signUpIsResult.observe(requireActivity(), Observer {
             val result = it ?: return@Observer
 
-            if (result){
-                // TODO make it so we transition from registration fragment
-                //  straight to Home page instead of going back to login
-                authViewModel.login(username = emailET.text.toString(), password = passwordET.text.toString())
-                findNavController().popBackStack()
+            requireActivity().setResult(Activity.RESULT_OK)
+            findNavController().navigate(R.id.mainActivity)
+
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { completedTask ->
+                if (completedTask.isSuccessful) {
+                    val registrationToken = completedTask.result
+                    MyFirebaseMessagingService.addTokenToFirestore(registrationToken)
+                } else {
+                    val exception = completedTask.exception
+                    Log.w(TAG, "Fetching FCM registration token failed", exception)
+                }
             }
         })
+
     }
 
     private fun setCheckMarkListener(editTextViewList: List<TextView>) {
@@ -155,7 +166,7 @@ class RegisterFragment : Fragment() {
 
     }
 
-    fun showTooltipOnClick(infoBtns : List<ImageButton>){
+    private fun showTooltipOnClick(infoBtns : List<ImageButton>){
         for(button in infoBtns){
             button.setOnClickListener {
                 button.performLongClick()
@@ -164,7 +175,7 @@ class RegisterFragment : Fragment() {
     }
     override fun onDestroyView() {
         super.onDestroyView()
-        authViewModel.signUpIsSuccessful.removeObservers(viewLifecycleOwner)
+        authViewModel.signUpIsResult.removeObservers(viewLifecycleOwner)
         listOf(usernameET, emailET, passwordET, verifyPasswordET).forEach { editText ->
             editText.removeTextChangedListener(editText.tag as? TextWatcher)
         }

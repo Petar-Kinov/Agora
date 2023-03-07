@@ -33,6 +33,4 @@ data class TextMessage(
         result = 31 * result + type.hashCode()
         return result
     }
-
-
 }

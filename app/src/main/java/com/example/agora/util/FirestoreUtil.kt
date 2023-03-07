@@ -83,8 +83,9 @@ object FirestoreUtil {
                     } else {
                         items.add(ImageMessageItem(it.toObject(ImageMessage::class.java)!!,context))
                     }
-                    onListen(items)
+
                 }
+                onListen(items)
             }
     }
 

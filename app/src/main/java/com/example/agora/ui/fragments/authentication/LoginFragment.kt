@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -34,8 +33,7 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private val authViewModel: AuthViewModel by lazy {
-        ViewModelProvider(requireActivity(), LoginViewModelFactory())
-            .get(AuthViewModel::class.java)
+        ViewModelProvider(requireActivity(), LoginViewModelFactory())[AuthViewModel::class.java]
     }
 
     private var username : EditText? = null
@@ -81,7 +79,7 @@ class LoginFragment : Fragment() {
             } else {
                 hideKeybaord(it)
                 loading?.visibility = View.VISIBLE
-                authViewModel.login(username = username!!.text.toString(),password = password!!.text.toString())
+                authViewModel.login(username = username!!.text.toString().trim(),password = password!!.text.toString())
             }
         }
 
@@ -169,7 +167,8 @@ class LoginFragment : Fragment() {
 
     private fun showLoginFailed(@StringRes errorString: Int) {
         // TODO toast may cause a memory leak
-        Toast.makeText(requireContext(), errorString, Toast.LENGTH_SHORT).show()
+//        Toast.makeText(requireContext(), errorString, Toast.LENGTH_SHORT).show()
+        Snackbar.make(binding.root,errorString, Snackbar.LENGTH_LONG).show()
         Log.d(TAG, "showLoginFailed: error string is $errorString")
     }
 

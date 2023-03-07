@@ -12,6 +12,7 @@ import com.example.agora.util.FirebaseHelper
 import com.xwray.groupie.Item
 import java.text.SimpleDateFormat
 
+private const val TAG = "TextMessageItem"
 class TextMessageItem(val message : TextMessage, val context : Context)  : MessageItem<ItemTextMessageBinding>(message){
 
     override fun bind(viewBinding: ItemTextMessageBinding, position: Int) {
@@ -48,14 +49,15 @@ class TextMessageItem(val message : TextMessage, val context : Context)  : Messa
 
     //TODO all messages except the first one are always updated
     override fun isSameAs(other: Item<*>): Boolean {
-        if (other !is TextMessageItem)
-            return false
-        if (this.message != other.message)
-            return false
-        return true
+        if (other !is TextMessageItem) return false
+        // Compare items by their message field
+        return message.equals(other.message)
     }
+
     override fun equals(other: Any?): Boolean {
-        return isSameAs((other as TextMessageItem))
+        if (other == null || other !is TextMessageItem) return false
+        // Compare items by their message field
+        return message.equals(other.message)
     }
 
     override fun hashCode(): Int {
@@ -63,6 +65,5 @@ class TextMessageItem(val message : TextMessage, val context : Context)  : Messa
         result = 31 * result + context.hashCode()
         return result
     }
-
 
 }

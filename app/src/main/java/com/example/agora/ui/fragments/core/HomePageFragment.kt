@@ -13,10 +13,13 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.agora.R
+import com.example.agora.data.authentication.login.LoginViewModelFactory
 import com.example.agora.databinding.FragmentHomePageBinding
+import com.example.agora.domain.auth.viewModel.AuthViewModel
 import com.example.agora.ui.adapters.ViewPagerAdapter
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
@@ -37,6 +40,9 @@ class HomePage : Fragment() {
     private var _binding: FragmentHomePageBinding? = null
     private val binding get() = _binding!!
     private var viewPager: ViewPager2? = null
+    private val authViewModel: AuthViewModel by lazy {
+        ViewModelProvider(requireActivity(), LoginViewModelFactory())[AuthViewModel::class.java]
+    }
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -44,7 +50,6 @@ class HomePage : Fragment() {
         if (isGranted) {
             // FCM SDK (and your app) can post notifications.
         } else {
-            // TODO: Inform user that that your app will not show notifications.
             Snackbar.make(requireView(),"No notifications will be shown", Snackbar.LENGTH_LONG)
         }
     }
@@ -163,7 +168,7 @@ class HomePage : Fragment() {
 
 
     private fun logOut() {
-        FirebaseAuth.getInstance().signOut()
+        authViewModel.logout()
         val action = HomePageDirections.actionHomePageToLoginActivity()
         findNavController().navigate(action)
         requireActivity().viewModelStore.clear()
