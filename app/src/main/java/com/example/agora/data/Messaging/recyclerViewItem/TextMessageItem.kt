@@ -46,8 +46,6 @@ class TextMessageItem(val message : TextMessage, val context : Context)  : Messa
         }
     }
 
-
-    //TODO all messages except the first one are always updated
     override fun isSameAs(other: Item<*>): Boolean {
         if (other !is TextMessageItem) return false
         // Compare items by their message field

@@ -166,7 +166,6 @@ class LoginFragment : Fragment() {
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
-        // TODO toast may cause a memory leak
 //        Toast.makeText(requireContext(), errorString, Toast.LENGTH_SHORT).show()
         Snackbar.make(binding.root,errorString, Snackbar.LENGTH_LONG).show()
         Log.d(TAG, "showLoginFailed: error string is $errorString")
@@ -197,7 +196,7 @@ class LoginFragment : Fragment() {
         authViewModel.loginFormState.removeObservers(viewLifecycleOwner)
         authViewModel.loginResult.removeObservers(viewLifecycleOwner)
 
-        // TODO the editTexts cause a leak for some reason so ended up making them nullable
+        // TODO the editTexts cause a leak for some reason, so ended up making them nullable
         username = null
         password = null
         loading = null

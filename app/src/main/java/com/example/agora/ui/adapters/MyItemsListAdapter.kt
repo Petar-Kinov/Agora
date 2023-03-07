@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.example.agora.data.core.model.Item
 import com.example.agora.data.core.model.ItemsWithReference
 import com.example.agora.databinding.MyItemsCardBinding
 import com.example.agora.util.GlideApp
@@ -42,16 +41,35 @@ inner class MyItemViewHolder(binding : MyItemsCardBinding, clickAtPosition: (Int
         deleteBtn = binding.deleteAuctionBtn
 
         deleteBtn.setOnClickListener {
-            Log.d(TAG, "current list size is ${currentList.size}")
-            Log.d(TAG, "item at adapter position is $adapterPosition ")
             clickAtPosition(adapterPosition)
         }
     }
 
-    fun onBind(item : Item) {
-        //TODO move binding to here maybe
+    fun onBind(item : ItemsWithReference) {
+        titleTV.text = item.item.title
+        descriptionTV.text = item.item.description
+        priceTV.text = item.item.price
+        sellerTV.text = item.item.seller
+
+        val storageRef = Firebase.storage.getReference(item.item.storageRef)
+
+        storageRef.list(1).addOnSuccessListener { resultList ->
+            resultList.items[0].downloadUrl.addOnSuccessListener {
+                glideApp.load(it).into(pictureIV)
+            }.addOnFailureListener {
+                Log.d(TAG, "onBindViewHolder: failed to get Uri ")
+            }
+
+        }.addOnFailureListener {
+            Log.d(TAG, "onBindViewHolder: failed ot load storeRef")
+        }
+
+        deleteBtn.setOnClickListener {
+            onClickListener(item)
+        }
     }
 }
+
 override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyItemViewHolder {
     glideApp = GlideApp.with(parent.context)
     val binding = MyItemsCardBinding.inflate(LayoutInflater.from(parent.context), parent , false)
@@ -61,30 +79,7 @@ override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyItemViewHol
 }
 
 override fun onBindViewHolder(holder: MyItemViewHolder, position: Int) {
-    holder.titleTV.text = getItem(position).item.title
-    holder.descriptionTV.text = getItem(position).item.description
-    holder.priceTV.text = getItem(position).item.price
-    holder.sellerTV.text = getItem(position).item.seller
-
-    val storageRef = Firebase.storage.getReference(getItem(position).item.storageRef)
-
-    storageRef.list(1).addOnSuccessListener { resultList ->
-        resultList.items[0].downloadUrl.addOnSuccessListener {
-            glideApp.load(it).into(holder.pictureIV)
-        }.addOnFailureListener {
-            Log.d(TAG, "onBindViewHolder: failed to get Uri ")
-        }
-
-    }.addOnFailureListener {
-        Log.d(TAG, "onBindViewHolder: failed ot load storeRef")
-    }
-//        glideApp.load(storageRef.child()).into(holder.pictureIV)
-
-    holder.deleteBtn.setOnClickListener {
-        Log.d(TAG, "onBindViewHolder: position is $position")
-        Log.d(TAG, "onBindViewHolder: list is ${currentList}")
-        onClickListener(getItem(position))
-    }
+     holder.onBind(getItem(position))
 }
 
 private class ItemDiffCallBack : DiffUtil.ItemCallback<ItemsWithReference>() {

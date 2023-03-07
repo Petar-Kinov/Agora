@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -115,10 +117,13 @@ class HomePage : Fragment() {
         }.attach()
 
         binding.popupMenuBtn.setOnClickListener {
-            //TODO disable button if it was clicked already
+            binding.popupMenuBtn.isEnabled = false
             val popupMenu = PopupMenu(requireContext(), it)
             val inflater = popupMenu.menuInflater
             inflater.inflate(R.menu.pop_up_menu, popupMenu.menu)
+
+            popupMenu.menu.setGroupEnabled(0,false)
+
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.homeBtn -> Toast.makeText(
@@ -138,7 +143,17 @@ class HomePage : Fragment() {
                 }
                 true
             }
+            popupMenu.setOnDismissListener {
+                popupMenu.menu.setGroupEnabled(0,false)
+                binding.popupMenuBtn.isEnabled = true
+            }
             popupMenu.show()
+
+            // Enable the menu items after a short delay to avoid
+            // accidental clicks during enter animations
+            Handler(Looper.getMainLooper()).postDelayed({
+                popupMenu.menu.setGroupEnabled(0, true)
+            }, 500)
         }
     }
 

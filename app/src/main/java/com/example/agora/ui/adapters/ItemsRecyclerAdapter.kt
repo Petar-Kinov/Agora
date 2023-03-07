@@ -47,7 +47,7 @@ class ItemsRecyclerAdapter(private val onClickListener: (ItemsWithReference) -> 
         }
 
         fun onBind(item : Item) {
-            //TODO move binding to here maybe
+
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {

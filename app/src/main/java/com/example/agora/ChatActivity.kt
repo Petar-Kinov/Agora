@@ -50,11 +50,8 @@ class ChatActivity : AppCompatActivity() {
         setContentView(binding.root)
         recyclerView = binding.recyclerViewMessages
 
-        //TODO the back button should go to People fragment instead of the home destination of the MainActivity
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
-
-
 
         pickMediaActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -84,7 +81,6 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
 
-        //TODO send pictures from camera
         cameraActivityResultLauncher = registerForActivityResult(
             ActivityResultContracts.TakePicturePreview()
         ) { bitmap ->
