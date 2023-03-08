@@ -83,15 +83,17 @@ class ItemDetailsFragment : Fragment() {
 
 // gets the uri of every picture in the storageRef and sends the list to the adapter
     private fun getPictures(storageRef: String, imagesCount : Int){
-        val storagePathRef = Firebase.storage.getReference(storageRef)
+        val storagePathRef = Firebase.storage.reference.child("items").child(storageRef)
         storagePathRef.listAll()
             .addOnSuccessListener { listResult ->
+                Log.d(TAG, "getPictures: item has ${listResult.items.size} pictures")
                 for (item in listResult.items) {
                     item.downloadUrl.addOnSuccessListener {
                         uriList.add(it)
                         if (uriList.size == imagesCount){
                             uriList.sort()
                             recyclerAdapter.submitList(uriList)
+                            Log.d(TAG, "getPictures: submited list is of size ${uriList.size}")
                         }
                     }
                 }

@@ -51,7 +51,7 @@ inner class MyItemViewHolder(binding : MyItemsCardBinding, clickAtPosition: (Int
         priceTV.text = item.item.price
         sellerTV.text = item.item.seller
 
-        val storageRef = Firebase.storage.getReference(item.item.storageRef)
+        val storageRef = Firebase.storage.reference.child("items").child(item.item.storageRef)
 
         storageRef.list(1).addOnSuccessListener { resultList ->
             resultList.items[0].downloadUrl.addOnSuccessListener {

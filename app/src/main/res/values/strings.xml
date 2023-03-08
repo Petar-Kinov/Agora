@@ -58,6 +58,9 @@
     <string name="msg_token_fmt">FCM Token is : %1$s</string>
 
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="upload_success">Upload Successful</string>
+    <string name="upload_failure">Upload failed</string>
+    <string name="progress_uploading">Loading</string>
 
 
 </resources>

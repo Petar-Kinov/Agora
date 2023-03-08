@@ -1,6 +1,7 @@
 package com.example.agora.ui.fragments.core
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -21,6 +22,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.agora.Services.UploadService
 import com.example.agora.data.core.model.Item
 import com.example.agora.databinding.FragmentCreateAuctionBinding
 import com.example.agora.domain.core.viewModel.ItemsViewModel
@@ -51,6 +53,11 @@ class CreateAuctionFragment : Fragment() {
     private lateinit var pickMediaActivityResultLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Void?>
 
+
+    private var downloadUrl: Uri? = null
+    private var fileUri: Uri? = null
+    private var uriList : List<Uri> = listOf()
+
     private lateinit var createBtn: Button
     private lateinit var recyclerView: RecyclerView
     private val recyclerAdapter = PictureBitmapListAdapter{
@@ -80,10 +87,13 @@ class CreateAuctionFragment : Fragment() {
                     Log.d(TAG, "onCreate: $imagesCount")
                     for (uri in uriList) {
                         // !! might be null not sure
+
                         bitmapList.add(getThumbnail(uri, requireContext())!!)
 //                        binding.itemIV.setImageBitmap(bitmap)
 //                        imageName = getFileName(requireActivity().contentResolver, uri)!!
                     }
+
+                    this.uriList = uriList
 
                 } else {
                     Log.d("PhotoPicker", "No media selected")
@@ -91,6 +101,7 @@ class CreateAuctionFragment : Fragment() {
                 recyclerAdapter.swapData(bitmapList)
             }
 
+        //TODO fix uploads from camera need to save image locally ot get Uri and name to upload via UploadService
         cameraActivityResultLauncher = registerForActivityResult(
             ActivityResultContracts.TakePicturePreview()
         ) { bitmap ->
@@ -132,19 +143,25 @@ class CreateAuctionFragment : Fragment() {
             val price = binding.priceET.text.toString()
 //            val imageRef = imageView.tag.toString()
 
-            val storePathRef = auth.currentUser!!.uid + LocalDateTime.now()
+            val documentRef = auth.currentUser!!.uid + LocalDateTime.now()
 
             if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()) {
-               viewModel.sellItem(
-                    Item(
+//               viewModel.sellItem(
+                    val item = Item(
                         seller = auth.currentUser?.displayName!!,
                         title = title,
                         description = description,
                         price = price,
-                        storageRef = storePathRef,
+                        storageRef = documentRef,
                         imagesCount = imagesCount
-                    ), bitmapList = bitmapList
-                )
+                    )
+//                , bitmapList = bitmapList
+//                )
+
+                // Uploads the image to storage
+                Log.d(TAG, "onViewCreated: item is $item with ${item.imagesCount} images")
+                uploadFromUri(item, uriList,documentRef)
+
                 findNavController().popBackStack()
             } else {
                 Toast.makeText(
@@ -191,6 +208,29 @@ class CreateAuctionFragment : Fragment() {
     private fun getPowerOfTwoForSampleRatio(ratio: Double): Int {
         val k = Integer.highestOneBit(floor(ratio).toInt())
         return if (k == 0) 1 else k
+    }
+
+    private fun uploadFromUri(item : Item, uploadUriList: List<Uri>, documentRef : String) {
+        Log.d(TAG, "uploadFromUri:src: $uploadUriList")
+
+        // Save the File URI
+//        fileUri = uploadUri
+
+        // Clear the last download, if any
+//        updateUI(auth.currentUser)
+        downloadUrl = null
+
+        // Start MyUploadService to upload the file, so that the file is uploaded
+        // even if this Activity is killed or put in the background
+        requireActivity().startService(
+            Intent(requireContext(), UploadService::class.java)
+                .putParcelableArrayListExtra(UploadService.URI_LIST, ArrayList(uploadUriList))
+                .putExtra(UploadService.ITEM,item)
+                .putExtra(UploadService.DOCUMENT_REF,documentRef)
+                .setAction(UploadService.ACTION_UPLOAD))
+
+        // Show loading spinner
+//        showProgressBar(getString(R.string.progress_uploading))
     }
 
     override fun onDestroyView() {

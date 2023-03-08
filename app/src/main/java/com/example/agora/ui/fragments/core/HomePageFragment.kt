@@ -180,8 +180,6 @@ class HomePage : Fragment() {
         }
     }
 
-
-
     private fun logOut() {
         authViewModel.logout()
         val action = HomePageDirections.actionHomePageToLoginActivity()

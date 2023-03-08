@@ -1,10 +1,12 @@
 package com.example.agora.data.core.repository
 
 import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import com.example.agora.data.core.model.Item
 import com.example.agora.data.core.model.ItemsWithReference
 import com.example.agora.data.core.model.Response
+import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.EventListener
@@ -60,6 +62,44 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
     override suspend fun addItemToFireStore(item: Item, bitmapList: ArrayList<Bitmap>): Response<Boolean> {
 
         var imageUploadCounter = 0
+        val uploadTasks = mutableListOf<Task<Uri>>()
+//
+//
+//        return try {
+//            for (bitmap in bitmapList) {
+//                val baos = ByteArrayOutputStream()
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+//                val imageData = baos.toByteArray()
+//
+//                val imageRef = Firebase.storage.reference.child(item.storageRef).child("$imageUploadCounter")
+//                val uploadTask = imageRef.putBytes(imageData)
+//                uploadTasks.add(uploadTask)
+//                imageUploadCounter++
+//            }
+//
+//            Tasks.whenAllSuccess<Uri>(uploadTasks).addOnCompleteListener { task ->
+//                if (task.isSuccessful) {
+//                    val downloadUrls = task.result
+//                    if (downloadUrls.size == bitmapList.size) {
+//                        itemRef.add(item).await()
+//                        // Start the UploadService to upload the photos in the background
+//                        for (i in 0 until bitmapList.size) {
+//                            val intent = Intent(context, UploadService::class.java)
+//                            intent.putExtra("imageRef", downloadUrls[i].toString())
+//                            context.startService(intent)
+//                        }
+//                        Response.Success(true)
+//                    } else {
+//                        Response.Success(false)
+//                    }
+//                } else {
+//                    Response.Failure(task.exception!!)
+//                }
+//            }.await()
+//
+//        } catch (e: Exception) {
+//            Response.Failure(e)
+//        }
 
         return try {
             for (bitmap in bitmapList) {
@@ -72,6 +112,11 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
                 //TODO  what happens if a picture is not uploaded
                 uploadTask.await()
                 imageUploadCounter++
+
+//                val intent = Intent(, UploadService::class.java)
+//                intent.putExtra(Intent.EXTRA_STREAM, imageRef.downloadUrl)
+//                context.startService(intent)
+
             }
 
             if (imageUploadCounter == bitmapList.size) {
@@ -86,42 +131,13 @@ class ItemRepositoryImpl @Inject constructor(private val itemRef : CollectionRef
             Response.Failure(e)
         }
 
-
-//        var counter = 0
-//        var itemAdded = false
-//
-//        val deferredResult = CompletableDeferred<Response<Boolean>>()
-//
-//        for (i in 0 until bitmapList.size) {
-//            val baos = ByteArrayOutputStream()
-//            bitmapList[i].compress(Bitmap.CompressFormat.JPEG, 100, baos)
-//            val data = baos.toByteArray()
-//            val uploadTask = Firebase.storage.reference.child(item.storageRef).child("$i").putBytes(data)
-//            uploadTask.addOnFailureListener {
-//                Log.d(TAG, "onViewCreated: Could not upload image")
-//                deferredResult.complete(Response.Failure(it))
-//            }.addOnSuccessListener { taskSnapshot ->
-//                counter++
-//                Log.d(TAG, "onViewCreated: Successful upload of image ${taskSnapshot.metadata.toString()} ")
-//                if (counter == bitmapList.size && !itemAdded) {
-//                    itemAdded = true
-//                    itemRef.add(item).addOnSuccessListener {
-//                        deferredResult.complete(Response.Success(true))
-//                    }.addOnFailureListener { exception ->
-//                        deferredResult.complete(Response.Failure(exception))
-//                    }
-//                }
-//            }
-//        }
-//
-//        return deferredResult.await()
     }
-
 
     override suspend fun deleteItemToFireStore(itemWithReference: ItemsWithReference): Response<Boolean> {
         //TODO make these separate jobs inside coroutine
         itemRef.document(itemWithReference.documentReference.id).delete().addOnSuccessListener {
-            val storageReference = Firebase.storage.reference.child(itemWithReference.item.storageRef)
+            //TODO deletes the firestore item but not the images in storage
+            val storageReference = Firebase.storage.reference.child("items").child(itemWithReference.item.storageRef)
             storageReference.listAll().addOnSuccessListener { listResult ->
                 val items = listResult.items
                 val tasks = items.map { it.delete() }

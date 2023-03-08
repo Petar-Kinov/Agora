@@ -114,7 +114,6 @@ class SellFragment : Fragment() {
         }
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         recyclerView?.adapter = null

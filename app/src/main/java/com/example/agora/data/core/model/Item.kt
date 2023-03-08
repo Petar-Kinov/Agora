@@ -28,6 +28,7 @@ class Item(
         parcel.writeString(description)
         parcel.writeString(price)
         parcel.writeString(storageRef)
+        parcel.writeInt(imagesCount)
     }
 
     override fun describeContents(): Int {

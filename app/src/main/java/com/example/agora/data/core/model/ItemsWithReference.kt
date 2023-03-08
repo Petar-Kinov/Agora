@@ -26,7 +26,8 @@ class ItemsWithReference(val item: Item, val documentReference: DocumentReferenc
 ////   Log.d(TAG, "bind: item ${item.title} clicked")
 //  }
 
-        val storageRef = Firebase.storage.getReference(item.storageRef)
+        val storageRef = Firebase.storage.reference.child("items").child(item.storageRef)
+        Log.d(TAG, "bind: storage ref is $storageRef")
 
         storageRef.list(1).addOnSuccessListener { resultList ->
             resultList.items[0].downloadUrl.addOnSuccessListener {
