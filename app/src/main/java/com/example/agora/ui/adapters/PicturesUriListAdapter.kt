@@ -25,7 +25,7 @@ class PicturesUriListAdapter(private val onClickListener: (Uri) -> Unit) :
 
         init {
             itemView.setOnClickListener {
-                clickAtPosition(adapterPosition)
+                clickAtPosition(absoluteAdapterPosition)
             }
         }
 
@@ -33,7 +33,7 @@ class PicturesUriListAdapter(private val onClickListener: (Uri) -> Unit) :
 
             if (adapterPosition == RecyclerView.NO_POSITION) return
 
-            val clicked = getItem(adapterPosition)
+            val clicked = getItem(absoluteAdapterPosition)
         }
 
         fun bind(uri: Uri) = with(itemView) {

@@ -75,15 +75,17 @@ class UploadService : BaseTaskService() {
         showProgressNotification(getString(R.string.progress_uploading), 0, 0)
 
         var uploadCount = 0
+        var imageNumber = 0
 
         for (fileUri in uriList) {
 
             //TODO make sure no subfolders are created inside firebase storage
-            //TODO probably just name the images 1,2,3,4...
             fileUri.lastPathSegment?.let {
                 val photoRef = storageRef.child("items").child(docRef)
-                    .child(it)
+                    .child(imageNumber.toString())
                 // [END get_child_ref]
+
+                imageNumber++
 
                 // Upload file to Firebase Storage
                 Log.d(TAG, "uploadFromUri:dst:" + photoRef.path)

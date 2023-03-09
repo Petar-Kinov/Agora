@@ -1,11 +1,13 @@
 package com.example.agora.ui.fragments.core
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -56,12 +58,13 @@ class CreateAuctionFragment : Fragment() {
 
     private var downloadUrl: Uri? = null
     private var fileUri: Uri? = null
-    private var uriList : List<Uri> = listOf()
+    private var uriList : MutableList<Uri> = mutableListOf()
 
     private lateinit var createBtn: Button
     private lateinit var recyclerView: RecyclerView
     private val recyclerAdapter = PictureBitmapListAdapter{
         bitmapList.removeAt(it)
+        uriList.removeAt(it)
         imagesCount--
     }
 
@@ -86,14 +89,13 @@ class CreateAuctionFragment : Fragment() {
                     imagesCount += uriList.size
                     Log.d(TAG, "onCreate: $imagesCount")
                     for (uri in uriList) {
-                        // !! might be null not sure
+
+                        this.uriList.add(uri)
 
                         bitmapList.add(getThumbnail(uri, requireContext())!!)
 //                        binding.itemIV.setImageBitmap(bitmap)
 //                        imageName = getFileName(requireActivity().contentResolver, uri)!!
                     }
-
-                    this.uriList = uriList
 
                 } else {
                     Log.d("PhotoPicker", "No media selected")
@@ -106,12 +108,31 @@ class CreateAuctionFragment : Fragment() {
             ActivityResultContracts.TakePicturePreview()
         ) { bitmap ->
             if (bitmap != null) {
-               bitmapList.add(bitmap)
+                bitmapList.add(bitmap)
                 imagesCount ++
+
+                // Convert bitmap to JPEG and insert into MediaStore
+                savePicture(bitmap)
                 recyclerAdapter.swapData(bitmapList)
             } else {
-                Log.d(TAG, "onCreate: bitmap is null ")
+                Log.d(TAG, "onCreate: bitmap is null")
             }
+        }
+    }
+
+    private fun savePicture(bitmap: Bitmap){
+        val resolver = requireContext().contentResolver
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "image.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
+        }
+        val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        imageUri?.let {
+            resolver.openOutputStream(it).use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            }
+            uriList.add(imageUri)
         }
     }
 
@@ -212,9 +233,6 @@ class CreateAuctionFragment : Fragment() {
 
     private fun uploadFromUri(item : Item, uploadUriList: List<Uri>, documentRef : String) {
         Log.d(TAG, "uploadFromUri:src: $uploadUriList")
-
-        // Save the File URI
-//        fileUri = uploadUri
 
         // Clear the last download, if any
 //        updateUI(auth.currentUser)

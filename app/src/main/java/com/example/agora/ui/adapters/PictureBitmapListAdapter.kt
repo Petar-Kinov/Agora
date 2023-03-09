@@ -24,22 +24,22 @@ class PictureBitmapListAdapter(private val onClickListener: (Int) -> Unit) :
         init {
             deleteBtn = binding.deleteBtn
             deleteBtn.setOnClickListener {
-                clickAtPosition(adapterPosition)
+                clickAtPosition(absoluteAdapterPosition)
                 val list = currentList.toMutableList()
-                list.removeAt(adapterPosition)
+                list.removeAt(absoluteAdapterPosition)
                 submitList(list)
             }
 
             itemView.setOnClickListener {
-                clickAtPosition(adapterPosition)
+                clickAtPosition(absoluteAdapterPosition)
             }
         }
 
         override fun onClick(v: View?) {
 
-            if (adapterPosition == RecyclerView.NO_POSITION) return
+            if (absoluteAdapterPosition == RecyclerView.NO_POSITION) return
 
-            val clicked = getItem(adapterPosition)
+            val clicked = getItem(absoluteAdapterPosition)
         }
 
         fun bind(bitmap: Bitmap) = with(itemView) {
