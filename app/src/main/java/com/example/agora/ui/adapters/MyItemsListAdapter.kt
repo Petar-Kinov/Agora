@@ -17,83 +17,87 @@ import com.google.firebase.storage.ktx.storage
 
 private const val TAG = "MyItemsListAdapter"
 
-class MyItemsListAdapter(private val onClickListener: (ItemsWithReference) -> Unit) : ListAdapter<ItemsWithReference, MyItemsListAdapter.MyItemViewHolder> (
-    ItemDiffCallBack()
-) {
+class MyItemsListAdapter(private val onClickListener: (ItemsWithReference) -> Unit) :
+    ListAdapter<ItemsWithReference, MyItemsListAdapter.MyItemViewHolder>(
+        ItemDiffCallBack()
+    ) {
 
-    private lateinit var glideApp : RequestManager
+    private lateinit var glideApp: RequestManager
 
 
-inner class MyItemViewHolder(binding : MyItemsCardBinding, clickAtPosition: (Int) -> Unit) : RecyclerView.ViewHolder(binding.root) {
-    val titleTV : TextView
-    val descriptionTV : TextView
-    val priceTV : TextView
-    val sellerTV : TextView
-    val pictureIV : ImageView
-    val deleteBtn : ImageView
+    inner class MyItemViewHolder(binding: MyItemsCardBinding, clickAtPosition: (Int) -> Unit) :
+        RecyclerView.ViewHolder(binding.root) {
+        val titleTV: TextView
+        val descriptionTV: TextView
+        val priceTV: TextView
+        val sellerTV: TextView
+        val pictureIV: ImageView
+        val deleteBtn: ImageView
 
-    init {
-        titleTV = binding.nameTV
-        descriptionTV = binding.descriptionTV
-        priceTV = binding.priceTV
-        sellerTV = binding.sellerNameTV
-        pictureIV = binding.pictureIV
-        deleteBtn = binding.deleteAuctionBtn
+        init {
+            titleTV = binding.nameTV
+            descriptionTV = binding.descriptionTV
+            priceTV = binding.priceTV
+            sellerTV = binding.sellerNameTV
+            pictureIV = binding.pictureIV
+            deleteBtn = binding.deleteAuctionBtn
 
-        deleteBtn.setOnClickListener {
-            clickAtPosition(adapterPosition)
+            deleteBtn.setOnClickListener {
+                clickAtPosition(absoluteAdapterPosition)
+            }
         }
-    }
 
-    fun onBind(item : ItemsWithReference) {
-        titleTV.text = item.item.title
-        descriptionTV.text = item.item.description
-        priceTV.text = item.item.price
-        sellerTV.text = item.item.seller
+        fun onBind(item: ItemsWithReference) {
+            titleTV.text = item.item.title
+            descriptionTV.text = item.item.description
+            priceTV.text = item.item.price
+            sellerTV.text = item.item.seller
 
-        val storageRef = Firebase.storage.reference.child("items").child(item.item.storageRef)
+            val storageRef = Firebase.storage.reference.child("items").child(item.item.storageRef)
 
-        storageRef.list(1).addOnSuccessListener { resultList ->
-            resultList.items[0].downloadUrl.addOnSuccessListener {
-                glideApp.load(it).into(pictureIV)
+            storageRef.list(1).addOnSuccessListener { resultList ->
+                resultList.items[0].downloadUrl.addOnSuccessListener {
+                    glideApp.load(it).into(pictureIV)
+                }.addOnFailureListener {
+                    Log.d(TAG, "onBindViewHolder: failed to get Uri ")
+                }
+
             }.addOnFailureListener {
-                Log.d(TAG, "onBindViewHolder: failed to get Uri ")
+                Log.d(TAG, "onBindViewHolder: failed ot load storeRef")
             }
 
-        }.addOnFailureListener {
-            Log.d(TAG, "onBindViewHolder: failed ot load storeRef")
-        }
-
-        deleteBtn.setOnClickListener {
-            onClickListener(item)
+            deleteBtn.setOnClickListener {
+                onClickListener(item)
+            }
         }
     }
-}
 
-override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyItemViewHolder {
-    glideApp = GlideApp.with(parent.context)
-    val binding = MyItemsCardBinding.inflate(LayoutInflater.from(parent.context), parent , false)
-    return MyItemViewHolder(binding) {
-        onClickListener(getItem(it))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyItemViewHolder {
+        glideApp = GlideApp.with(parent.context)
+        val binding = MyItemsCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MyItemViewHolder(binding) {
+            onClickListener(getItem(it))
+        }
     }
-}
 
-override fun onBindViewHolder(holder: MyItemViewHolder, position: Int) {
-     holder.onBind(getItem(position))
-}
+    override fun onBindViewHolder(holder: MyItemViewHolder, position: Int) {
+        holder.onBind(getItem(position))
+    }
 
-private class ItemDiffCallBack : DiffUtil.ItemCallback<ItemsWithReference>() {
-    override fun areItemsTheSame(oldItem: ItemsWithReference, newItem: ItemsWithReference): Boolean =
-        oldItem == newItem
+    private class ItemDiffCallBack : DiffUtil.ItemCallback<ItemsWithReference>() {
+        override fun areItemsTheSame(
+            oldItem: ItemsWithReference,
+            newItem: ItemsWithReference
+        ): Boolean =
+            oldItem == newItem
 
-    override fun areContentsTheSame(oldItem: ItemsWithReference, newItem: ItemsWithReference): Boolean =
-        //sometimes causes IndexOutOfBounds , have to change the equals() check
-//        oldItem == newItem
-        false
-}
-
-//    interface OnItemClickListener {
-//        fun onItemClicked(position: Int)
-//    }
+        override fun areContentsTheSame(
+            oldItem: ItemsWithReference,
+            newItem: ItemsWithReference
+        ): Boolean =
+            //sometimes causes IndexOutOfBounds , have to change the equals() check
+            oldItem == newItem
+//        false
+    }
 
 }

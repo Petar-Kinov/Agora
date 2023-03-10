@@ -164,7 +164,7 @@ class CreateAuctionFragment : Fragment() {
             val price = binding.priceET.text.toString()
 //            val imageRef = imageView.tag.toString()
 
-            val documentRef = auth.currentUser!!.uid + LocalDateTime.now()
+            val storageRef = auth.currentUser!!.uid + LocalDateTime.now()
 
             if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()) {
 //               viewModel.sellItem(
@@ -173,7 +173,7 @@ class CreateAuctionFragment : Fragment() {
                         title = title,
                         description = description,
                         price = price,
-                        storageRef = documentRef,
+                        storageRef = storageRef,
                         imagesCount = imagesCount
                     )
 //                , bitmapList = bitmapList
@@ -181,7 +181,7 @@ class CreateAuctionFragment : Fragment() {
 
                 // Uploads the image to storage
                 Log.d(TAG, "onViewCreated: item is $item with ${item.imagesCount} images")
-                uploadFromUri(item, uriList,documentRef)
+                uploadFromUri(item, uriList)
 
                 findNavController().popBackStack()
             } else {
@@ -231,12 +231,12 @@ class CreateAuctionFragment : Fragment() {
         return if (k == 0) 1 else k
     }
 
-    private fun uploadFromUri(item : Item, uploadUriList: List<Uri>, documentRef : String) {
+    private fun uploadFromUri(item : Item, uploadUriList: List<Uri>) {
         Log.d(TAG, "uploadFromUri:src: $uploadUriList")
 
         // Clear the last download, if any
 //        updateUI(auth.currentUser)
-        downloadUrl = null
+//        downloadUrl = null
 
         // Start MyUploadService to upload the file, so that the file is uploaded
         // even if this Activity is killed or put in the background
@@ -244,7 +244,6 @@ class CreateAuctionFragment : Fragment() {
             Intent(requireContext(), UploadService::class.java)
                 .putParcelableArrayListExtra(UploadService.URI_LIST, ArrayList(uploadUriList))
                 .putExtra(UploadService.ITEM,item)
-                .putExtra(UploadService.DOCUMENT_REF,documentRef)
                 .setAction(UploadService.ACTION_UPLOAD))
 
         // Show loading spinner

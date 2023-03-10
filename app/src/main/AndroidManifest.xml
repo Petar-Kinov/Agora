@@ -93,6 +93,9 @@
         <service android:name=".Services.BaseTaskService"
             android:exported="false"/>
 
+        <service android:name=".Services.DeleteItemService"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package com.example.agora.ui.fragments.core
 
-import android.graphics.BitmapFactory
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,7 +13,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.agora.R
+import com.example.agora.Services.DeleteItemService
+import com.example.agora.Services.UploadService
 import com.example.agora.data.core.model.Item
 import com.example.agora.data.core.model.ItemsWithReference
 import com.example.agora.databinding.FragmentSellingBinding
@@ -22,7 +24,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.util.*
+import java.time.LocalDateTime
 
 private const val TAG = "SellingFragment"
 
@@ -36,7 +38,8 @@ class SellFragment : Fragment() {
 
     private var recyclerView: RecyclerView? = null
     private val recyclerAdapter = MyItemsListAdapter {
-        viewModel.deleteItem(it)
+//        viewModel.deleteItem(it)
+        deleteItem(it)
         Toast.makeText(requireContext(), "${it.item.title} item clicked", Toast.LENGTH_SHORT).show()
     }
 
@@ -100,18 +103,41 @@ class SellFragment : Fragment() {
             findNavController().navigate(action)
         }
 
+        //currently disabled , just for quick adding of items
         binding.testBtn.setOnClickListener {
-            viewModel.sellItem(
-                Item(
-                    seller = auth.currentUser!!.displayName.toString(),
-                    title = "some title",
-                    description = "some description",
-                    price = (0..100).random().toString(),
-                    storageRef = UUID.randomUUID().toString(),
-                    imagesCount = 1
-                ), arrayListOf( BitmapFactory.decodeResource(requireContext().resources, R.drawable.something))
+
+            val storageReference = auth.currentUser!!.uid + LocalDateTime.now()
+            val item = Item(
+                seller = auth.currentUser!!.displayName.toString(),
+                title = "some title",
+                description = "some description",
+                price = (0..100).random().toString(),
+                storageRef = storageReference,
+                imagesCount = 1
             )
+            val resourceId =
+                resources.getIdentifier("something", "drawable", requireContext().packageName)
+            val uri = Uri.parse("android.resource://${requireContext().packageName}/$resourceId")
+            val uriList = arrayListOf(uri)
+
+            requireActivity().startService(
+                Intent(requireContext(), UploadService::class.java)
+                    .putParcelableArrayListExtra(UploadService.URI_LIST, ArrayList(uriList))
+                    .putExtra(UploadService.ITEM, item)
+                    .putExtra(UploadService.DOCUMENT_REF, storageReference)
+                    .setAction(UploadService.ACTION_UPLOAD)
+            )
+
         }
+    }
+
+    private fun deleteItem(itemsWithReference: ItemsWithReference) {
+        requireActivity().startService(
+            Intent(requireContext(), DeleteItemService::class.java)
+                .putExtra(DeleteItemService.ITEM, itemsWithReference.item)
+                .putExtra(DeleteItemService.REFERENCE, itemsWithReference.documentReference.path)
+                .setAction(DeleteItemService.DELETE_ACTION)
+        )
     }
 
     override fun onDestroyView() {

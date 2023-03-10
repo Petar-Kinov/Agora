@@ -41,13 +41,35 @@ class ItemsWithReference(val item: Item, val documentReference: DocumentReferenc
         }
     }
 
-
     override fun getLayout(): Int {
         return R.layout.item_card
     }
     override fun initializeViewBinding(view: View): ItemCardBinding {
         return ItemCardBinding.bind(view)
     }
+
+    override fun isSameAs(other: com.xwray.groupie.Item<*>): Boolean {
+        return item == (other as ItemsWithReference).item
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ItemsWithReference
+
+        if (item != other.item) return false
+        if (documentReference != other.documentReference) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = item.hashCode()
+        result = 31 * result + documentReference.hashCode()
+        return result
+    }
+
 }
 
 class GroupDiffCallback(

@@ -1,12 +1,10 @@
 package com.example.agora.domain.core.viewModel
 
-import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.agora.data.core.model.Item
 import com.example.agora.data.core.model.ItemsWithReference
 import com.example.agora.data.core.model.Response
 import com.example.agora.domain.core.use_case.UseCases
@@ -40,14 +38,6 @@ class ItemsViewModel @Inject constructor(private val useCases: UseCases) : ViewM
                 }
             }
         }
-    }
-
-    fun sellItem(item: Item, bitmapList : ArrayList<Bitmap>) = viewModelScope.launch {
-        useCases.sellItem(item,bitmapList)
-    }
-
-    fun deleteItem (itemsWithReference: ItemsWithReference) = viewModelScope.launch {
-        useCases.deleteItem(itemsWithReference)
     }
 
 }

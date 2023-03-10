@@ -3,7 +3,6 @@ package com.example.agora.Services
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.os.IBinder
 import android.os.Parcelable
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -20,10 +19,6 @@ import com.google.firebase.storage.ktx.storage
 class UploadService : BaseTaskService() {
 
     private lateinit var storageRef: StorageReference
-
-    override fun onBind(p0: Intent?): IBinder? {
-        return null
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -52,7 +47,6 @@ class UploadService : BaseTaskService() {
 //                intent.getParcelableExtra<Uri>(EXTRA_FILE_URI)!!
 //            }
 
-            val storageRef = intent.getStringExtra(DOCUMENT_REF)!!
 
             // Make sure we have permission to read the data
 //            contentResolver.takePersistableUriPermission(
@@ -60,7 +54,7 @@ class UploadService : BaseTaskService() {
 //                Intent.FLAG_GRANT_READ_URI_PERMISSION
 //            )
 
-            uploadFilesFromUri(item, uriList, storageRef)
+            uploadFilesFromUri(item, uriList)
 
 //            uploadFromUri(fileUri,storageRef)
         }
@@ -68,26 +62,21 @@ class UploadService : BaseTaskService() {
         return START_REDELIVER_INTENT
     }
 
-    private fun uploadFilesFromUri(item : Item, uriList: List<Uri>, docRef: String) {
+    private fun uploadFilesFromUri(item : Item, uriList: List<Uri>) {
         Log.d(TAG, "uploadFromUri:src:$uriList")
 
         taskStarted()
         showProgressNotification(getString(R.string.progress_uploading), 0, 0)
 
         var uploadCount = 0
-        var imageNumber = 0
 
-        for (fileUri in uriList) {
-
-            //TODO make sure no subfolders are created inside firebase storage
-            fileUri.lastPathSegment?.let {
-                val photoRef = storageRef.child("items").child(docRef)
-                    .child(imageNumber.toString())
+        // pictures are uploaded to firebase storage with their list index as their name
+        for ((index, fileUri) in uriList.withIndex()) {
+                val photoRef = storageRef.child("items").child(item.storageRef)
+                    .child(index.toString())
                 // [END get_child_ref]
 
-                imageNumber++
-
-                // Upload file to Firebase Storage
+            // Upload file to Firebase Storage
                 Log.d(TAG, "uploadFromUri:dst:" + photoRef.path)
                 photoRef.putFile(fileUri)
                     .addOnProgressListener { (bytesTransferred, totalByteCount) ->
@@ -114,7 +103,6 @@ class UploadService : BaseTaskService() {
                         uploadCount++
 
                         if (uploadCount == uriList.size) {
-                            Log.d(TAG, "uploadFilesFromUri: uploaded $uploadCount out of ${uriList.size}")
                             uploadItemToFirestore(item)
                         }
 
@@ -132,11 +120,11 @@ class UploadService : BaseTaskService() {
 //                taskCompleted()
                     // [END_EXCLUDE]
                 }
-            }
+
         }
     }
 
-    fun uploadItemToFirestore(item : Item) {
+    private fun uploadItemToFirestore(item : Item) {
         Firebase.firestore.collection("items").add(item).addOnSuccessListener {
             Log.d(TAG, "uploadItemToFirestore: Uploaded item successfully to firestore")
         }
