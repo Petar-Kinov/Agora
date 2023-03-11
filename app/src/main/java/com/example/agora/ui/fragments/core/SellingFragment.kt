@@ -109,6 +109,7 @@ class SellFragment : Fragment() {
             val storageReference = auth.currentUser!!.uid + LocalDateTime.now()
             val item = Item(
                 seller = auth.currentUser!!.displayName.toString(),
+                sellerId = auth.currentUser!!.uid,
                 title = "some title",
                 description = "some description",
                 price = (0..100).random().toString(),

@@ -170,6 +170,7 @@ class CreateAuctionFragment : Fragment() {
 //               viewModel.sellItem(
                     val item = Item(
                         seller = auth.currentUser?.displayName!!,
+                        sellerId = auth.currentUser?.uid.toString(),
                         title = title,
                         description = description,
                         price = price,

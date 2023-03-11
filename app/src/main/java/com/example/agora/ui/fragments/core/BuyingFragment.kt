@@ -69,8 +69,10 @@ class BuyFragment : Fragment() {
         recyclerView!!.layoutManager = GridLayoutManager(requireContext(), 2)
 //        recyclerView!!.adapter = recyclerAdapter
 
-        viewModel.items.observe(viewLifecycleOwner) {
-            adapter.update(it)
+        viewModel.items.observe(viewLifecycleOwner) {items ->
+            if (items != null) {
+                adapter.update(items)
+            }
 //            recyclerAdapter.submitList(it)
         }
 

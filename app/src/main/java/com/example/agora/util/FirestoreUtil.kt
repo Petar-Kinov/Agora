@@ -52,6 +52,8 @@ object FirestoreUtil {
             }
     }
 
+    // get all the people currently registered
+    //TODO get only the people you have chats with
     fun addUsersListener(context :Context, onListen: (List<Person>) -> Unit) : ListenerRegistration{
         return firestoreInstance.collection("users")
             .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
@@ -67,6 +69,8 @@ object FirestoreUtil {
                 onListen(items)
             }
     }
+
+
     fun addChatMessageListener(channelId: String, context: Context,onListen: (List<MessageItem<*>>) -> Unit): ListenerRegistration {
         return chatChannelCollectionRef.document(channelId).collection("messages")
             .orderBy("time")
@@ -75,7 +79,6 @@ object FirestoreUtil {
                     Log.e(TAG, "addChatMessageListener: Exception is ", firebaseFirestoreException)
                     return@addSnapshotListener
                 }
-
                 val items = mutableListOf<MessageItem<*>>()
                 querySnapshot!!.documents.forEach{
                     if (it["type"] == MessageType.TEXT){
@@ -83,7 +86,6 @@ object FirestoreUtil {
                     } else {
                         items.add(ImageMessageItem(it.toObject(ImageMessage::class.java)!!,context))
                     }
-
                 }
                 onListen(items)
             }
@@ -93,7 +95,6 @@ object FirestoreUtil {
         chatChannelCollectionRef.document(channelId).collection("messages").add(message)
     }
     fun removeListener(registration: ListenerRegistration) = registration.remove()
-
 
     //region FCM
 

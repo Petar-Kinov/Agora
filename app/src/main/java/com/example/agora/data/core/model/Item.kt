@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName
 
 class Item(
     @SerializedName("seller") val seller: String,
+    @SerializedName("sellerId") val sellerId : String,
     @SerializedName("title") val title: String,
     @SerializedName("description") val description: String,
     @SerializedName("price") val price: String,
@@ -14,16 +15,18 @@ class Item(
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
-        parcel.readString() ?: "",
+        seller = parcel.readString() ?: "",
+        sellerId = parcel.readString() ?: "",
+        title = parcel.readString() ?: "",
+        description = parcel.readString() ?: "",
+        price = parcel.readString() ?: "",
+        storageRef = parcel.readString() ?: "",
         parcel.readInt()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(seller)
+        parcel.writeString(sellerId)
         parcel.writeString(title)
         parcel.writeString(description)
         parcel.writeString(price)

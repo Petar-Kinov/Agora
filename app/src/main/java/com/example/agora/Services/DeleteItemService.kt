@@ -36,7 +36,6 @@ class DeleteItemService: BaseTaskService() {
             val docRef =  FirebaseFirestore.getInstance().document(docRefPath)
 
             docRef.delete().addOnSuccessListener {
-                //TODO deletes the firestore item but not the images in storage
                 val storageReference = Firebase.storage.reference.child("items").child(item.storageRef)
                 storageReference.listAll().addOnSuccessListener { listResult ->
                     val items = listResult.items

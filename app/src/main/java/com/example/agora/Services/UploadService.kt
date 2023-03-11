@@ -72,6 +72,8 @@ class UploadService : BaseTaskService() {
 
         // pictures are uploaded to firebase storage with their list index as their name
         for ((index, fileUri) in uriList.withIndex()) {
+
+            Log.d(TAG, "uploadFilesFromUri: storageRef is $storageRef")
                 val photoRef = storageRef.child("items").child(item.storageRef)
                     .child(index.toString())
                 // [END get_child_ref]

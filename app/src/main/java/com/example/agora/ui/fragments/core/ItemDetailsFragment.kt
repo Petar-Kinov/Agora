@@ -1,5 +1,6 @@
 package com.example.agora.ui.fragments.core
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,10 +13,12 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.agora.ChatActivity
 import com.example.agora.R
 import com.example.agora.data.core.model.Item
 import com.example.agora.databinding.FragmentItemDetailsBinding
 import com.example.agora.ui.adapters.PicturesUriListAdapter
+import com.example.agora.util.AppConstants
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
@@ -79,6 +82,13 @@ class ItemDetailsFragment : Fragment() {
                 pictureIndexTV.text = getString(R.string.picture_index,firstVisibleItemPosition + 1 ,item.imagesCount)
             }
     })
+
+        binding.contactSellerBtn.setOnClickListener {
+            val intent = Intent(requireContext(), ChatActivity::class.java)
+            intent.putExtra(AppConstants.USER_NAME,item.seller)
+            intent.putExtra(AppConstants.USER_ID,item.sellerId)
+            startActivity(intent)
+        }
     }
 
 // gets the uri of every picture in the storageRef and sends the list to the adapter

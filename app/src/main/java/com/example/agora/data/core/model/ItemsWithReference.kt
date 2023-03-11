@@ -30,12 +30,15 @@ class ItemsWithReference(val item: Item, val documentReference: DocumentReferenc
         Log.d(TAG, "bind: storage ref is $storageRef")
 
         storageRef.list(1).addOnSuccessListener { resultList ->
-            resultList.items[0].downloadUrl.addOnSuccessListener {
-                Glide.with(viewBinding.root.context).load(it).into(viewBinding.pictureIV)
-            }.addOnFailureListener {
-                Log.d(TAG, "onBindViewHolder: failed to get Uri ")
+            if (resultList.items.isNotEmpty()) {
+                resultList.items[0].downloadUrl.addOnSuccessListener { uri ->
+                    Glide.with(viewBinding.root.context).load(uri).into(viewBinding.pictureIV)
+                }.addOnFailureListener {
+                    Log.d(TAG, "onBindViewHolder: failed to get Uri ")
+                }
+            } else {
+                Log.d(TAG, "onBindViewHolder: storage reference is empty")
             }
-
         }.addOnFailureListener {
             Log.d(TAG, "onBindViewHolder: failed ot load storeRef")
         }
