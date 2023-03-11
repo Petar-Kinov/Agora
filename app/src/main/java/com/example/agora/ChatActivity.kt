@@ -41,6 +41,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var currentChannelId: String
     private lateinit var currentUser: User
     private lateinit var otherUserId: String
+    private lateinit var otherUserName : String
 
     private lateinit var pickMediaActivityResultLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Void?>
@@ -50,8 +51,11 @@ class ChatActivity : AppCompatActivity() {
         setContentView(binding.root)
         recyclerView = binding.recyclerViewMessages
 
+        otherUserId = intent.getStringExtra(AppConstants.USER_ID)!!
+        otherUserName = intent.getStringExtra(AppConstants.USER_NAME)!!
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = intent.getStringExtra(AppConstants.USER_NAME)
+        supportActionBar?.title = otherUserName
 
         pickMediaActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -108,10 +112,7 @@ class ChatActivity : AppCompatActivity() {
             currentUser = it
         }
 
-        // not sure about the toString
-        otherUserId = intent.getStringExtra(AppConstants.USER_ID).toString()
-
-        FirestoreUtil.getOrCreateChatChannel(otherUserId) { channelId ->
+        FirestoreUtil.getOrCreateChatChannel(otherUserId,otherUserName) { channelId ->
             currentChannelId = channelId
             messagesListenerRegistration = FirestoreUtil.addChatMessageListener(
                 channelId = channelId,

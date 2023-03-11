@@ -29,7 +29,7 @@ object FirestoreUtil {
         }
     }
 
-    fun getOrCreateChatChannel(otherUserId : String,onComplete : (channelId : String) -> Unit){
+    fun getOrCreateChatChannel(otherUserId : String, otherUserName : String,onComplete : (channelId : String) -> Unit){
         currentUserDocRef.collection("engagedChatChannels")
             .document(otherUserId).get().addOnSuccessListener {
                 if (it.exists()){
@@ -38,15 +38,16 @@ object FirestoreUtil {
                 }
 
                 val currentUserId = FirebaseAuth.getInstance().currentUser!!.uid
+                val currentUserName = FirebaseAuth.getInstance().currentUser!!.displayName
 
                 val newChannel = chatChannelCollectionRef.document()
                 newChannel.set(ChatChannel(mutableListOf(currentUserId, otherUserId)))
 
-                currentUserDocRef.collection("engagedChatChannels").document(otherUserId).set(mapOf("channelId" to newChannel.id))
+                currentUserDocRef.collection("engagedChatChannels").document(otherUserId).set(mapOf("channelId" to newChannel.id , "otherUserName" to otherUserName))
 
                 firestoreInstance.collection("users").document(otherUserId)
                     .collection("engagedChatChannels").document(currentUserId)
-                    .set(mapOf("channelId" to newChannel.id))
+                    .set(mapOf("channelId" to newChannel.id , "otherUserName" to currentUserName))
 
                 onComplete(newChannel.id)
             }
@@ -55,7 +56,7 @@ object FirestoreUtil {
     // get all the people currently registered
     //TODO get only the people you have chats with
     fun addUsersListener(context :Context, onListen: (List<Person>) -> Unit) : ListenerRegistration{
-        return firestoreInstance.collection("users")
+        return firestoreInstance.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).collection("engagedChatChannels")
             .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 if (firebaseFirestoreException != null) {
                     Log.e(TAG,"addChatMessageListener: Exception is ", firebaseFirestoreException)
@@ -64,7 +65,7 @@ object FirestoreUtil {
                 val items = mutableListOf<Person>()
                 querySnapshot?.documents?.forEach {
                     if (it.id != FirebaseAuth.getInstance().currentUser?.uid)
-                        items.add(Person(it["username"] as String,it.id))
+                        items.add(Person(it["otherUserName"] as String,it.id))
                 }
                 onListen(items)
             }
