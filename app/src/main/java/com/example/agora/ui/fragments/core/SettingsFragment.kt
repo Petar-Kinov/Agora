@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,10 @@ import com.example.agora.R
 import com.example.agora.data.authentication.login.LoginViewModelFactory
 import com.example.agora.databinding.FragmentSettingsBinding
 import com.example.agora.domain.auth.viewModel.AuthViewModel
+import com.example.agora.util.GlideApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 private const val TAG = "SettingsFragment"
 class SettingsFragment : Fragment() {
@@ -51,6 +55,18 @@ class SettingsFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        val storageRef = Firebase.storage.reference.child("avatars/${FirebaseAuth.getInstance().currentUser!!.uid}")
+        storageRef.downloadUrl.addOnSuccessListener {
+            val options: RequestOptions = RequestOptions()
+                .circleCrop()
+                .placeholder(R.mipmap.ic_launcher_round)
+                .error(R.mipmap.ic_launcher_round)
+
+            GlideApp.with(requireContext()).load(it).apply(options).into(binding.myAvatarIV)
+        }.addOnFailureListener {
+            Log.d(TAG, "bind: Failed to load avatar ")
+        }
 
         binding.deleteAccBtn.setOnClickListener {
             //Disabled until i put confirmation on it to avoid accidental deletion
