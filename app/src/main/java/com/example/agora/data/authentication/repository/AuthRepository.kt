@@ -1,5 +1,6 @@
 package com.example.agora.data.authentication.repository
 
+import android.graphics.Bitmap
 import android.util.Log
 import com.example.agora.data.authentication.model.Result
 import com.example.agora.data.core.model.User
@@ -10,7 +11,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
 
 private const val TAG = "AuthRepository"
 
@@ -75,11 +78,12 @@ class AuthRepository(val dataSource: LoginDataSource) {
 //        }
     }
 
-    suspend fun signUp(user: User): Result<FirebaseUser> {
+    suspend fun signUp(user: User, avatarBitmap: Bitmap): Result<FirebaseUser> {
         val auth = FirebaseHelper.getInstance()
         return try {
             val result =
                 auth.createUserWithEmailAndPassword(user.email.trim(), user.password).await()
+            uploadAvatar(avatarBitmap)
             updateDisplayName(user.username)
             //TODO add onSuccessListener to check if the user was added to firestore
             addUserToFireStore(user.username)
@@ -90,6 +94,22 @@ class AuthRepository(val dataSource: LoginDataSource) {
         }
     }
 
+    fun uploadAvatar(avatarBitmap: Bitmap) {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val avatarsRef = storageRef.child("avatars/${FirebaseAuth.getInstance().currentUser!!.uid}")
+
+        val baos = ByteArrayOutputStream()
+        avatarBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+
+        val uploadTask = avatarsRef.putBytes(data)
+        uploadTask.addOnSuccessListener {
+
+            Log.d(TAG, "uploadAvatar: avatar uploaded successfully")
+        }.addOnFailureListener {
+            Log.e(TAG, "uploadAvatar: failed to upload avatar", it)
+        }
+    }
     private fun addUserToFireStore(username: String) {
         Firebase.firestore.collection("users").document(auth.currentUser!!.uid)
             .set(hashMapOf("username" to username))

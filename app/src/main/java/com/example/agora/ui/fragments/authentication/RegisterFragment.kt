@@ -1,7 +1,8 @@
 package com.example.agora.ui.fragments.authentication
 
 import android.app.Activity
-import android.graphics.drawable.Drawable
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -23,7 +24,6 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.example.agora.R
 import com.example.agora.data.authentication.login.LoginViewModelFactory
 import com.example.agora.data.core.model.User
@@ -60,21 +60,27 @@ class RegisterFragment : Fragment() {
     private lateinit var passwordET: EditText
     private lateinit var verifyPasswordET: EditText
     private lateinit var signUpBtn: Button
-    private var avatarUri : Uri? = null
+    private lateinit var avatarUri : Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
         glideApp = GlideApp.with(this)
 
+        val drawableId = R.drawable.avatar
+        avatarUri = Uri.parse("android.resource://" + requireActivity().packageName + "/" + drawableId)
+
         pickMediaActivityResultLauncher =  registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            avatarUri = uri
+            if (uri != null) {
+                avatarUri = uri
+
             val options: RequestOptions = RequestOptions()
                 .circleCrop()
                 .placeholder(R.mipmap.ic_launcher_round)
                 .error(R.mipmap.ic_launcher_round)
 
             Glide.with(this).load(avatarUri).apply(options).into(binding.avatarIV)
+        }
         }
     }
 
@@ -113,7 +119,13 @@ class RegisterFragment : Fragment() {
                     passwordET.text.toString(),
                     registrationTokens = mutableListOf()
                 )
-                authViewModel.signup(user)
+
+                val imageView = binding.avatarIV
+                val bitmap = Bitmap.createBitmap(imageView.width, imageView.height, Bitmap.Config.ARGB_8888)
+                val canvas = Canvas(bitmap)
+                imageView.draw(canvas)
+
+                authViewModel.signup(user, bitmap)
             } else {
                 Snackbar.make(it,"Please fill all the fields",Snackbar.LENGTH_LONG).show()
             }

@@ -1,12 +1,10 @@
 package com.example.agora.data.core.model
 
-import android.content.res.Resources
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
 import com.example.agora.R
-import com.example.agora.databinding.ItemCardBinding
 import com.example.agora.databinding.ItemCardSimplifiedBinding
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.ktx.Firebase

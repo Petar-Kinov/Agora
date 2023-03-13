@@ -1,5 +1,6 @@
 package com.example.agora.domain.auth.viewModel
 
+import android.graphics.Bitmap
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.LiveData
@@ -72,9 +73,9 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         return password.length > 5
     }
 
-    fun signup(user: User) {
+    fun signup(user: User, avatarBitmap: Bitmap) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = authRepository.signUp(user)
+            val result = authRepository.signUp(user, avatarBitmap)
             if (result is Result.Success) {
                 _signUpResult.postValue(result.data)
                 _loginResult.postValue(LoginResult(success = result.data.displayName?.let {
@@ -85,6 +86,11 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
             } else {
                 Log.d(TAG, "signup: Sign up failed ${(result as Result.Error).exception}")
             }
+        }
+    }
+    fun uploadAvatar(avatarBitmap: Bitmap){
+        viewModelScope.launch(Dispatchers.IO) {
+            authRepository.uploadAvatar(avatarBitmap)
         }
     }
 
