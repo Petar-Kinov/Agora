@@ -1,11 +1,13 @@
 package com.example.agora.data.core.model
 
+import android.content.res.Resources
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
 import com.example.agora.R
 import com.example.agora.databinding.ItemCardBinding
+import com.example.agora.databinding.ItemCardSimplifiedBinding
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -14,13 +16,12 @@ import com.xwray.groupie.viewbinding.BindableItem
 private const val TAG = "ItemsWithReference"
 
 class ItemsWithReference(val item: Item, val documentReference: DocumentReference) :
-    BindableItem<ItemCardBinding>() {
+    BindableItem<ItemCardSimplifiedBinding>() {
 
-    override fun bind(viewBinding: ItemCardBinding, position: Int) {
-        viewBinding.nameTV.text = item.title
-        viewBinding.descriptionTV.text = item.description
-        viewBinding.priceTV.text = item.price
-        viewBinding.sellerNameTV.text = item.seller
+    override fun bind(viewBinding: ItemCardSimplifiedBinding, position: Int) {
+        viewBinding.titleTV.text = item.title
+        val priceValue = item.price.toFloatOrNull() ?: 0.0f
+        viewBinding.priceTV.text = viewBinding.root.context.getString(R.string.price_tag, priceValue)
 
 //  viewBinding.root.setOnClickListener{
 ////   Log.d(TAG, "bind: item ${item.title} clicked")
@@ -45,10 +46,10 @@ class ItemsWithReference(val item: Item, val documentReference: DocumentReferenc
     }
 
     override fun getLayout(): Int {
-        return R.layout.item_card
+        return R.layout.item_card_simplified
     }
-    override fun initializeViewBinding(view: View): ItemCardBinding {
-        return ItemCardBinding.bind(view)
+    override fun initializeViewBinding(view: View): ItemCardSimplifiedBinding {
+        return ItemCardSimplifiedBinding.bind(view)
     }
 
     override fun isSameAs(other: com.xwray.groupie.Item<*>): Boolean {

@@ -1,6 +1,8 @@
 package com.example.agora.ui.fragments.authentication
 
 import android.app.Activity
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,10 +14,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.example.agora.R
 import com.example.agora.data.authentication.login.LoginViewModelFactory
 import com.example.agora.data.core.model.User
@@ -23,12 +31,14 @@ import com.example.agora.databinding.FragmentRegisterBinding
 import com.example.agora.domain.Messaging.MyFirebaseMessagingService
 import com.example.agora.domain.auth.viewModel.AuthViewModel
 import com.example.agora.util.EmailValidator
+import com.example.agora.util.GlideApp
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+
 
 private const val TAG = "RegisterFragment"
 
@@ -37,6 +47,8 @@ class RegisterFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
     private lateinit var fireStoreDB: FirebaseFirestore
+    private lateinit var pickMediaActivityResultLauncher: ActivityResultLauncher<String>
+    private lateinit var glideApp : RequestManager
 
     private val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(requireActivity(), LoginViewModelFactory())
@@ -48,10 +60,22 @@ class RegisterFragment : Fragment() {
     private lateinit var passwordET: EditText
     private lateinit var verifyPasswordET: EditText
     private lateinit var signUpBtn: Button
+    private var avatarUri : Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
+        glideApp = GlideApp.with(this)
+
+        pickMediaActivityResultLauncher =  registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            avatarUri = uri
+            val options: RequestOptions = RequestOptions()
+                .circleCrop()
+                .placeholder(R.mipmap.ic_launcher_round)
+                .error(R.mipmap.ic_launcher_round)
+
+            Glide.with(this).load(avatarUri).apply(options).into(binding.avatarIV)
+        }
     }
 
     override fun onCreateView(
@@ -61,13 +85,12 @@ class RegisterFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         val view = binding.root
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         fireStoreDB = Firebase.firestore
+
+        binding.avatarIV.setOnClickListener {
+            pickMediaActivityResultLauncher.launch("image/*")
+        }
 
         usernameET = binding.editTextTextPersonName
         emailET = binding.editTextTextEmailAddress
@@ -113,6 +136,7 @@ class RegisterFragment : Fragment() {
             }
         })
 
+        return view
     }
 
     private fun setCheckMarkListener(editTextViewList: List<TextView>) {
