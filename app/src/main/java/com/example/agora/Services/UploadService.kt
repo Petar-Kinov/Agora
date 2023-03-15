@@ -2,7 +2,6 @@ package com.example.agora.Services
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Parcelable
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -34,11 +33,12 @@ class UploadService : BaseTaskService() {
             val item = intent.getParcelableExtra<Parcelable>(ITEM) as Item
 
 
-            val uriList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) ({
-                intent.getParcelableExtra(URI_LIST, ArrayList::class.java)
-            }) as ArrayList<Uri> else {
+            val uriList =
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) ({
+//                intent.getParcelableExtra(URI_LIST, ArrayList::class.java)
+//            }) as ArrayList<Uri> else {
                 intent.getParcelableArrayListExtra<Parcelable>(URI_LIST) as ArrayList<Uri>
-            }
+//            }
 
 
 //            val fileUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

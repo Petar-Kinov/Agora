@@ -12,9 +12,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.agora.R
 import com.example.agora.data.authentication.login.LoginViewModelFactory
 import com.example.agora.databinding.FragmentSettingsBinding
 import com.example.agora.domain.auth.viewModel.AuthViewModel
@@ -39,11 +37,7 @@ class SettingsFragment : Fragment() {
 
         pickMediaActivityResultLauncher =  registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             if (uri != null) {
-                val options: RequestOptions = RequestOptions()
-                    .circleCrop()
-                    .placeholder(R.mipmap.ic_launcher_round)
-                    .error(R.mipmap.ic_launcher_round)
-                Glide.with(this).load(uri).apply(options).into(binding.myAvatarIV)
+                loadAvatar(uri)
             }
         }
     }
@@ -58,12 +52,7 @@ class SettingsFragment : Fragment() {
 
         val storageRef = Firebase.storage.reference.child("avatars/${FirebaseAuth.getInstance().currentUser!!.uid}")
         storageRef.downloadUrl.addOnSuccessListener {
-            val options: RequestOptions = RequestOptions()
-                .circleCrop()
-                .placeholder(R.mipmap.ic_launcher_round)
-                .error(R.mipmap.ic_launcher_round)
-
-            GlideApp.with(requireContext()).load(it).apply(options).into(binding.myAvatarIV)
+            loadAvatar(it)
         }.addOnFailureListener {
             Log.d(TAG, "bind: Failed to load avatar ")
         }
@@ -90,6 +79,13 @@ class SettingsFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun loadAvatar(uri : Uri) {
+        val options: RequestOptions = RequestOptions()
+            .circleCrop()
+
+        GlideApp.with(requireContext()).load(uri).apply(options).into(binding.myAvatarIV)
     }
 
     override fun onDestroy() {

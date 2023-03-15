@@ -19,7 +19,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent">
+            android:background="@drawable/transparent_bg"
+            android:backgroundTint="@android:color/transparent"
+            android:elevation="0dp">
 
             <TextView
                 android:id="@+id/personNameTV"
@@ -55,7 +57,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="Last message"
-                android:textColor="@color/black"
+                android:textColor="@color/hint_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/messageTimeTV"
                 app:layout_constraintStart_toStartOf="@+id/personNameTV"
@@ -67,10 +69,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:text="Time of message"
-                android:textColor="@color/black"
+                android:textColor="@color/hint_color"
+                android:textSize="10sp"
                 app:layout_constraintBottom_toBottomOf="@+id/lastMessageTV"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/lastMessageTV" />
+                app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

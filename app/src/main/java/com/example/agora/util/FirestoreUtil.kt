@@ -12,14 +12,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.SetOptions
 
 private const val TAG = "FirestoreUtil"
 
 object FirestoreUtil {
-    private val firestoreInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance()}
+    private val firestoreInstance: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
-    private val currentUserDocRef : DocumentReference
-    get() = firestoreInstance.document("users/${FirebaseAuth.getInstance().currentUser?.uid}")
+    private val currentUserDocRef: DocumentReference
+        get() = firestoreInstance.document("users/${FirebaseAuth.getInstance().currentUser?.uid}")
 
     private val chatChannelCollectionRef = firestoreInstance.collection("chatChannels")
 
@@ -29,10 +30,14 @@ object FirestoreUtil {
         }
     }
 
-    fun getOrCreateChatChannel(otherUserId : String, otherUserName : String,onComplete : (channelId : String) -> Unit){
+    fun getOrCreateChatChannel(
+        otherUserId: String,
+        otherUserName: String,
+        onComplete: (channelId: String) -> Unit
+    ) {
         currentUserDocRef.collection("engagedChatChannels")
             .document(otherUserId).get().addOnSuccessListener {
-                if (it.exists()){
+                if (it.exists()) {
                     onComplete(it["channelId"] as String)
                     return@addOnSuccessListener
                 }
@@ -43,11 +48,15 @@ object FirestoreUtil {
                 val newChannel = chatChannelCollectionRef.document()
                 newChannel.set(ChatChannel(mutableListOf(currentUserId, otherUserId)))
 
-                currentUserDocRef.collection("engagedChatChannels").document(otherUserId).set(mapOf("channelId" to newChannel.id , "otherUserName" to otherUserName))
+                currentUserDocRef.collection("engagedChatChannels").document(otherUserId)
+                    .set(mapOf("channelId" to newChannel.id, "otherUserName" to otherUserName))
 
                 firestoreInstance.collection("users").document(otherUserId)
                     .collection("engagedChatChannels").document(currentUserId)
-                    .set(mapOf("channelId" to newChannel.id , "otherUserName" to currentUserName))
+                    .set(
+                        mapOf("channelId" to newChannel.id, "otherUserName" to currentUserName),
+                        SetOptions.merge()
+                    )
 
                 onComplete(newChannel.id)
             }
@@ -55,58 +64,107 @@ object FirestoreUtil {
 
     // get all the people currently registered
     //TODO get only the people you have chats with
-    fun addUsersListener(context :Context, onListen: (List<Person>) -> Unit) : ListenerRegistration{
-        return firestoreInstance.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid).collection("engagedChatChannels")
+    fun addUsersListener(context: Context, onListen: (List<Person>) -> Unit): ListenerRegistration {
+        return firestoreInstance.collection("users")
+            .document(FirebaseAuth.getInstance().currentUser!!.uid)
+            .collection("engagedChatChannels")
             .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 if (firebaseFirestoreException != null) {
-                    Log.e(TAG,"addChatMessageListener: Exception is ", firebaseFirestoreException)
+                    Log.e(TAG, "addChatMessageListener: Exception is ", firebaseFirestoreException)
                     return@addSnapshotListener
                 }
                 val items = mutableListOf<Person>()
                 querySnapshot?.documents?.forEach {
+//                    var lastMessage = LastMessage("asdad",Calendar.getInstance().time)
+                    val last = it.toObject(EngagedChatChannel::class.java)
+//
                     if (it.id != FirebaseAuth.getInstance().currentUser?.uid)
-                        items.add(Person(it["otherUserName"] as String,it.id))
+                        items.add(Person(it["otherUserName"] as String, it.id, last!!.lastMessage))
                 }
                 onListen(items)
             }
     }
 
 
-    fun addChatMessageListener(channelId: String, context: Context,onListen: (List<MessageItem<*>>) -> Unit): ListenerRegistration {
+    fun addChatMessageListener(
+        channelId: String,
+        context: Context,
+        onListen: (List<MessageItem<*>>) -> Unit
+    ): ListenerRegistration {
         return chatChannelCollectionRef.document(channelId).collection("messages")
             .orderBy("time")
-            .addSnapshotListener { querySnapshot , firebaseFirestoreException ->
-                if (firebaseFirestoreException != null){
+            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                if (firebaseFirestoreException != null) {
                     Log.e(TAG, "addChatMessageListener: Exception is ", firebaseFirestoreException)
                     return@addSnapshotListener
                 }
                 val items = mutableListOf<MessageItem<*>>()
-                querySnapshot!!.documents.forEach{
-                    if (it["type"] == MessageType.TEXT){
-                        items.add(TextMessageItem(it.toObject(TextMessage::class.java)!!,context))
+                querySnapshot!!.documents.forEach {
+                    if (it["type"] == MessageType.TEXT) {
+                        items.add(TextMessageItem(it.toObject(TextMessage::class.java)!!, context))
                     } else {
-                        items.add(ImageMessageItem(it.toObject(ImageMessage::class.java)!!,context))
+                        items.add(
+                            ImageMessageItem(
+                                it.toObject(ImageMessage::class.java)!!,
+                                context
+                            )
+                        )
                     }
                 }
                 onListen(items)
             }
     }
 
-    fun sendMessage(message : Message, channelId: String) {
-        chatChannelCollectionRef.document(channelId).collection("messages").add(message)
+    fun getLastMessage(channelId: String, callback: (lastMessage: String, time: String) -> Unit) {
+        chatChannelCollectionRef.document(channelId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val message = querySnapshot.getString("lastMessage") as String
+                val time = querySnapshot.getString("time") as String
+
+                Log.d(TAG, "getLastMessage: message is $message and time is $time")
+                callback(message, time)
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error getting last message: $exception")
+            }
     }
+
+    fun sendMessage(message: Message, channelId: String, otherUserId: String) {
+        chatChannelCollectionRef.document(channelId).collection("messages").add(message)
+
+
+        // setting the last message inside each users engagedChatChannels/channel
+        // otherwise we have to query again for each person in the contact list to get the message
+        val lastMessage: LastMessage
+        if (message is TextMessage) {
+            lastMessage = LastMessage(message.text, message.time)
+        } else {
+            lastMessage = LastMessage("Photo", message.time)
+        }
+        currentUserDocRef.collection("engagedChatChannels").document(otherUserId)
+            .set(hashMapOf("lastMessage" to lastMessage), SetOptions.merge())
+        firestoreInstance.document("users/$otherUserId").collection("engagedChatChannels")
+            .document(FirebaseAuth.getInstance().currentUser!!.uid).set(
+            hashMapOf(
+                "lastMessage" to lastMessage
+            ), SetOptions.merge()
+        )
+
+    }
+
     fun removeListener(registration: ListenerRegistration) = registration.remove()
 
     //region FCM
 
-    fun getFCMRegistrationToken(onComplete: (tokens : MutableList<String>) -> Unit){
+    fun getFCMRegistrationToken(onComplete: (tokens: MutableList<String>) -> Unit) {
         currentUserDocRef.get().addOnSuccessListener {
             val user = it.toObject(User::class.java)!!
             onComplete(user.registrationTokens)
         }
     }
 
-    fun setFCMRegistrationTokens(registrationToken : MutableList<String>){
+    fun setFCMRegistrationTokens(registrationToken: MutableList<String>) {
         currentUserDocRef.update(mapOf("registrationTokens" to registrationToken))
     }
 

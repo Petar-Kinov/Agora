@@ -1,5 +1,6 @@
 package com.example.agora.data.Messaging.repository
 
+import com.example.agora.data.Messaging.Model.LastMessage
 import com.example.agora.data.Messaging.recyclerViewItem.Person
 import com.example.agora.data.core.model.TestUser
 import com.google.firebase.firestore.EventListener
@@ -10,6 +11,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class ChatsRepository {
 
@@ -23,7 +25,8 @@ class ChatsRepository {
                     snapshot.documents.mapNotNull { document ->
                         val gson = Gson()
                         val user = gson.fromJson(gson.toJson(document.data), TestUser::class.java)
-                        if (user != null) Person(user.username, document.id)
+                        if (user != null) Person(user.username, document.id, LastMessage("asdad",
+                            Calendar.getInstance().time))
                         else null
                     }.sortedBy { it.name }
                 } else {

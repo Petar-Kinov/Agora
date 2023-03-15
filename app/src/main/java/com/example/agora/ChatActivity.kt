@@ -78,7 +78,7 @@ class ChatActivity : AppCompatActivity() {
                             otherUserId,
                             currentUser.username
                         )
-                        FirestoreUtil.sendMessage(messageToSend, currentChannelId)
+                        FirestoreUtil.sendMessage(messageToSend, currentChannelId,otherUserId)
                     }
                 } else {
                     Log.d("PhotoPicker", "No media selected")
@@ -101,7 +101,7 @@ class ChatActivity : AppCompatActivity() {
                         otherUserId,
                         currentUser.username
                     )
-                    FirestoreUtil.sendMessage(messageToSend, currentChannelId)
+                    FirestoreUtil.sendMessage(messageToSend, currentChannelId,otherUserId)
                 }
             } else {
                 // No image was taken
@@ -131,7 +131,7 @@ class ChatActivity : AppCompatActivity() {
                     currentUser.username
                 )
                 binding.editTextMessage.setText("")
-                FirestoreUtil.sendMessage(messageToSend, currentChannelId)
+                FirestoreUtil.sendMessage(messageToSend, currentChannelId,otherUserId)
             }
         }
 
@@ -190,6 +190,7 @@ class ChatActivity : AppCompatActivity() {
         recyclerView!!.scrollToPosition(recyclerView!!.adapter!!.itemCount.minus(1))
     }
 
+    //TODO change onBckPressed to do the same as the action bar back button
     override fun onDestroy() {
         super.onDestroy()
         recyclerView?.adapter = null
