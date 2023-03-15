@@ -1,6 +1,5 @@
 package com.example.agora
 
-import android.R
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -14,10 +13,10 @@ import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.agora.data.Messaging.Model.ImageMessage
-import com.example.agora.data.Messaging.Model.TextMessage
-import com.example.agora.data.Messaging.recyclerViewItem.MessageItem
 import com.example.agora.data.core.model.User
+import com.example.agora.data.messaging.model.ImageMessage
+import com.example.agora.data.messaging.model.TextMessage
+import com.example.agora.data.messaging.recyclerViewItem.MessageItem
 import com.example.agora.databinding.ActivityChatBinding
 import com.example.agora.util.AppConstants
 import com.example.agora.util.FirebaseHelper
@@ -148,7 +147,7 @@ class ChatActivity : AppCompatActivity() {
     //overriding the action bar back button, otherwise it goes to the home destination of the parent activity
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.home -> {
+            androidx.appcompat.R.id.home -> {
                 val fragmentManager = supportFragmentManager
                 val backStackEntryCount = fragmentManager.backStackEntryCount
                 if (backStackEntryCount > 0) {

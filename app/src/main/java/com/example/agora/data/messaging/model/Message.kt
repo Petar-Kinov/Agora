@@ -1,4 +1,4 @@
-package com.example.agora.data.Messaging.Model
+package com.example.agora.data.messaging.model
 
 import java.util.*
 

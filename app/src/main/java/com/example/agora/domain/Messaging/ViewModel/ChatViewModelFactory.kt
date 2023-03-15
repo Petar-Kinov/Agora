@@ -2,7 +2,7 @@ package com.example.agora.domain.Messaging.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.agora.data.Messaging.repository.ChatsRepository
+import com.example.agora.data.messaging.repository.ChatsRepository
 
 @Suppress("UNCHECKED_CAST")
 class ChatsViewModelFactory : ViewModelProvider.Factory {

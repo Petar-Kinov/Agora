@@ -1,4 +1,4 @@
-package com.example.agora.data.Messaging.recyclerViewItem
+package com.example.agora.data.messaging.recyclerViewItem
 
 import android.content.Context
 import android.util.Log
@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.example.agora.R
-import com.example.agora.data.Messaging.Model.ImageMessage
+import com.example.agora.data.messaging.model.ImageMessage
 import com.example.agora.databinding.ItemImageMessageBinding
 import com.example.agora.util.FirebaseHelper
 import com.example.agora.util.GlideApp

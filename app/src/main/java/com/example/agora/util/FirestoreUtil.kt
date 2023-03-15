@@ -2,11 +2,10 @@ package com.example.agora.util
 
 import android.content.Context
 import android.util.Log
-import com.example.agora.data.Messaging.Model.*
-import com.example.agora.data.Messaging.recyclerViewItem.ImageMessageItem
-import com.example.agora.data.Messaging.recyclerViewItem.MessageItem
-import com.example.agora.data.Messaging.recyclerViewItem.Person
-import com.example.agora.data.Messaging.recyclerViewItem.TextMessageItem
+import com.example.agora.data.messaging.model.*
+import com.example.agora.data.messaging.recyclerViewItem.ImageMessageItem
+import com.example.agora.data.messaging.recyclerViewItem.MessageItem
+import com.example.agora.data.messaging.recyclerViewItem.TextMessageItem
 import com.example.agora.data.core.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -49,12 +48,12 @@ object FirestoreUtil {
                 newChannel.set(ChatChannel(mutableListOf(currentUserId, otherUserId)))
 
                 currentUserDocRef.collection("engagedChatChannels").document(otherUserId)
-                    .set(mapOf("channelId" to newChannel.id, "otherUserName" to otherUserName))
+                    .set(mapOf("channelId" to newChannel.id, "otherUserName" to otherUserName, "otherUserId" to otherUserId))
 
                 firestoreInstance.collection("users").document(otherUserId)
                     .collection("engagedChatChannels").document(currentUserId)
                     .set(
-                        mapOf("channelId" to newChannel.id, "otherUserName" to currentUserName),
+                        mapOf("channelId" to newChannel.id, "otherUserName" to currentUserName, "otherUserId" to currentUserId),
                         SetOptions.merge()
                     )
 
@@ -62,9 +61,7 @@ object FirestoreUtil {
             }
     }
 
-    // get all the people currently registered
-    //TODO get only the people you have chats with
-    fun addUsersListener(context: Context, onListen: (List<Person>) -> Unit): ListenerRegistration {
+    fun addUsersListener(context: Context, onListen: (List<EngagedChatChannel>) -> Unit): ListenerRegistration {
         return firestoreInstance.collection("users")
             .document(FirebaseAuth.getInstance().currentUser!!.uid)
             .collection("engagedChatChannels")
@@ -73,13 +70,14 @@ object FirestoreUtil {
                     Log.e(TAG, "addChatMessageListener: Exception is ", firebaseFirestoreException)
                     return@addSnapshotListener
                 }
-                val items = mutableListOf<Person>()
+                val items = mutableListOf<EngagedChatChannel>()
                 querySnapshot?.documents?.forEach {
 //                    var lastMessage = LastMessage("asdad",Calendar.getInstance().time)
-                    val last = it.toObject(EngagedChatChannel::class.java)
+                    val chatChannel = it.toObject(EngagedChatChannel::class.java)
 //
                     if (it.id != FirebaseAuth.getInstance().currentUser?.uid)
-                        items.add(Person(it["otherUserName"] as String, it.id, last!!.lastMessage))
+                        //not sure about the !!
+                        items.add(chatChannel!!)
                 }
                 onListen(items)
             }
@@ -115,24 +113,8 @@ object FirestoreUtil {
             }
     }
 
-    fun getLastMessage(channelId: String, callback: (lastMessage: String, time: String) -> Unit) {
-        chatChannelCollectionRef.document(channelId)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val message = querySnapshot.getString("lastMessage") as String
-                val time = querySnapshot.getString("time") as String
-
-                Log.d(TAG, "getLastMessage: message is $message and time is $time")
-                callback(message, time)
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "Error getting last message: $exception")
-            }
-    }
-
     fun sendMessage(message: Message, channelId: String, otherUserId: String) {
         chatChannelCollectionRef.document(channelId).collection("messages").add(message)
-
 
         // setting the last message inside each users engagedChatChannels/channel
         // otherwise we have to query again for each person in the contact list to get the message

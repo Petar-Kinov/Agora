@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.ChatActivity
-import com.example.agora.data.Messaging.recyclerViewItem.Person
+import com.example.agora.data.messaging.model.EngagedChatChannel
 import com.example.agora.databinding.FragmentChatsBinding
 import com.example.agora.domain.Messaging.ViewModel.ChatsViewModel
 import com.example.agora.util.AppConstants
@@ -32,10 +32,10 @@ class PeopleFragment : Fragment() {
     private lateinit var peopleSection: Section
 
     private val onItemClick = OnItemClickListener { item, view ->
-        if (item is Person) {
+        if (item is EngagedChatChannel) {
             val intent = Intent(requireContext(),ChatActivity::class.java)
-            intent.putExtra(AppConstants.USER_NAME,item.name)
-            intent.putExtra(AppConstants.USER_ID,item.firestoreUserId)
+            intent.putExtra(AppConstants.USER_NAME,item.otherUserId)
+            intent.putExtra(AppConstants.USER_ID,item.otherUserId)
             startActivity(intent)
 
         }
@@ -73,7 +73,7 @@ class PeopleFragment : Fragment() {
         return view
     }
 
-    private fun updateRecyclerView(items : List<Person>){
+    private fun updateRecyclerView(items : List<EngagedChatChannel>){
         fun init(){
             recyclerView?.apply {
                 layoutManager = LinearLayoutManager(this@PeopleFragment.context)
