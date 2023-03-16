@@ -1,7 +1,7 @@
 Agora - An Android App for Buying and Selling Items  
 This is a mobile application developed for Android devices using Kotlin.  
-The reason i started this project was to familiarize myself with Firestore services  
-and Kotlin i general, given that i mainly used Java before that.
+The reason i started this project was to better familiarize myself with Firestore services  
+and Kotlin in general, given that i mainly used Java before that.
 
 Features
 The project includes the following :
