@@ -22,7 +22,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
 import com.example.agora.R
 import com.example.agora.data.authentication.login.LoginViewModelFactory
@@ -31,12 +30,7 @@ import com.example.agora.databinding.FragmentRegisterBinding
 import com.example.agora.domain.auth.viewModel.AuthViewModel
 import com.example.agora.domain.messaging.MyFirebaseMessagingService
 import com.example.agora.util.EmailValidator
-import com.example.agora.util.GlideApp
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 
 
@@ -45,10 +39,7 @@ private const val TAG = "RegisterFragment"
 class RegisterFragment : Fragment() {
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
-    private lateinit var auth: FirebaseAuth
-    private lateinit var fireStoreDB: FirebaseFirestore
     private lateinit var pickMediaActivityResultLauncher: ActivityResultLauncher<String>
-    private lateinit var glideApp : RequestManager
 
     private val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(requireActivity(), LoginViewModelFactory())
@@ -60,28 +51,26 @@ class RegisterFragment : Fragment() {
     private lateinit var passwordET: EditText
     private lateinit var verifyPasswordET: EditText
     private lateinit var signUpBtn: Button
-    private lateinit var avatarUri : Uri
+    private lateinit var avatarUri: Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        auth = FirebaseAuth.getInstance()
-        glideApp = GlideApp.with(this)
 
         val drawableId = R.drawable.avatar
-        avatarUri = Uri.parse("android.resource://" + requireActivity().packageName + "/" + drawableId)
+        avatarUri =
+            Uri.parse("android.resource://" + requireActivity().packageName + "/" + drawableId)
 
-        pickMediaActivityResultLauncher =  registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            if (uri != null) {
-                avatarUri = uri
+        pickMediaActivityResultLauncher =
+            registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+                if (uri != null) {
+                    avatarUri = uri
 
-            val options: RequestOptions = RequestOptions()
-                .circleCrop()
-                .placeholder(R.mipmap.ic_launcher_round)
-                .error(R.mipmap.ic_launcher_round)
+                    val options: RequestOptions = RequestOptions()
+                        .circleCrop()
 
-            Glide.with(this).load(avatarUri).apply(options).into(binding.avatarIV)
-        }
-        }
+                    Glide.with(this).load(avatarUri).apply(options).into(binding.avatarIV)
+                }
+            }
     }
 
     override fun onCreateView(
@@ -91,8 +80,6 @@ class RegisterFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         val view = binding.root
-
-        fireStoreDB = Firebase.firestore
 
         binding.avatarIV.setOnClickListener {
             pickMediaActivityResultLauncher.launch("image/*")
@@ -105,13 +92,22 @@ class RegisterFragment : Fragment() {
         signUpBtn = binding.signUpBtn
 
         setCheckMarkListener(listOf(usernameET, emailET, passwordET, verifyPasswordET))
-        showTooltipOnClick(listOf(binding.usernameInfoBtn,binding.emailInfoBtn,binding.passwordInfoBtn,binding.repeatPasswordInfoBtn))
+        showTooltipOnClick(
+            listOf(
+                binding.usernameInfoBtn,
+                binding.emailInfoBtn,
+                binding.passwordInfoBtn,
+                binding.repeatPasswordInfoBtn
+            )
+        )
 
-        signUpBtn.setOnClickListener {
-            if (usernameET.compoundDrawables[2] != null &&
-                emailET.compoundDrawables[2] != null &&
-                passwordET.compoundDrawables[2] != null &&
-                verifyPasswordET.compoundDrawables[2] != null
+        signUpBtn.setOnClickListener { btnView ->
+            if (listOf(
+                    usernameET,
+                    emailET,
+                    passwordET,
+                    verifyPasswordET
+                ).all { it.compoundDrawables[2] != null }
             ) {
                 val user = User(
                     usernameET.text.toString(),
@@ -121,13 +117,14 @@ class RegisterFragment : Fragment() {
                 )
 
                 val imageView = binding.avatarIV
-                val bitmap = Bitmap.createBitmap(imageView.width, imageView.height, Bitmap.Config.ARGB_8888)
+                val bitmap =
+                    Bitmap.createBitmap(imageView.width, imageView.height, Bitmap.Config.ARGB_8888)
                 val canvas = Canvas(bitmap)
                 imageView.draw(canvas)
 
                 authViewModel.signup(user, bitmap)
             } else {
-                Snackbar.make(it,"Please fill all the fields",Snackbar.LENGTH_LONG).show()
+                Snackbar.make(btnView, "Please fill all the fields", Snackbar.LENGTH_LONG).show()
             }
         }
 
@@ -164,34 +161,10 @@ class RegisterFragment : Fragment() {
 
                 override fun afterTextChanged(text: Editable) {
                     when (editTextView) {
-                        usernameET -> if (text.isNotEmpty()) {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                                0, 0, R.drawable.ic_baseline_check_24, 0
-                            )
-                        } else {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
-                        }
-                        emailET -> if (EmailValidator.isEmailValid(text.toString())) {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                                0, 0, R.drawable.ic_baseline_check_24, 0
-                            )
-                        } else {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
-                        }
-                        passwordET -> if (text.length >= 6) {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                                0, 0, R.drawable.ic_baseline_check_24, 0
-                            )
-                        } else {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
-                        }
-                        verifyPasswordET -> if (text.toString() == binding.editTextTextPassword.text.toString()) {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                                0, 0, R.drawable.ic_baseline_check_24, 0
-                            )
-                        } else {
-                            editTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
-                        }
+                        usernameET -> setCheckMark(editTextView, text.isNotEmpty())
+                        emailET -> setCheckMark(editTextView, EmailValidator.isEmailValid(text.toString()))
+                        passwordET -> setCheckMark(editTextView, text.length >= 6)
+                        verifyPasswordET -> setCheckMark(editTextView, text.toString() == binding.editTextTextPassword.text.toString())
                     }
                 }
             }).also { textWatcher ->
@@ -199,16 +172,26 @@ class RegisterFragment : Fragment() {
                 editTextView.tag = textWatcher
             }
         }
-
     }
 
-    private fun showTooltipOnClick(infoBtns : List<ImageButton>){
-        for(button in infoBtns){
+    private fun setCheckMark(textView: TextView, isConditionMet: Boolean) {
+        if (isConditionMet) {
+            textView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                0, 0, R.drawable.ic_baseline_check_24, 0
+            )
+        } else {
+            textView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
+        }
+    }
+
+    private fun showTooltipOnClick(infoBtns: List<ImageButton>) {
+        for (button in infoBtns) {
             button.setOnClickListener {
                 button.performLongClick()
             }
         }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         authViewModel.signUpIsResult.removeObservers(viewLifecycleOwner)

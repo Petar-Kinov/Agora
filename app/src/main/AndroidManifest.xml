@@ -59,7 +59,8 @@
             android:name=".ChatActivity"
             android:exported="false"
             android:parentActivityName="com.example.agora.MainActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar">
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
+            android:windowSoftInputMode="adjustResize">
 
             <intent-filter>
                 <action android:name="ChatActivity"/>

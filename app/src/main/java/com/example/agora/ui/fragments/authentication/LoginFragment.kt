@@ -208,6 +208,4 @@ class LoginFragment : Fragment() {
         Log.d(TAG, "onDestroy: onDestroy called")
         super.onDestroy()
     }
-
-
 }

@@ -4,7 +4,6 @@ import android.R
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -64,7 +63,13 @@ class ChatActivity : AppCompatActivity() {
         pickMediaActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    sendImageFromStorage(uri)
+                    val selectedImageBmp = ImageDecoder.decodeBitmap(
+                        ImageDecoder.createSource(
+                            this.contentResolver,
+                            uri
+                        )
+                    )
+                    sendImage(selectedImageBmp)
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
@@ -74,7 +79,7 @@ class ChatActivity : AppCompatActivity() {
             ActivityResultContracts.TakePicturePreview()
         ) { bitmap ->
             if (bitmap != null) {
-                sendImageFromCamera(bitmap)
+                sendImage(bitmap)
             } else {
                 Log.d(TAG, "onCreate: No image was taken")
             }
@@ -115,37 +120,21 @@ class ChatActivity : AppCompatActivity() {
             cameraActivityResultLauncher.launch()
         }
 
+        // scrolls the recycler view up when softKeyboard shows up
+        recyclerView!!.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            recyclerView?.scrollToPosition(
+                recyclerView?.adapter?.itemCount?.minus(1) ?: 0
+            )
+        }
+
         this.onBackPressedDispatcher.addCallback(this) {
             goBack()
         }
     }
 
-    private fun sendImageFromCamera(bitmap: Bitmap) {
+    private fun sendImage(bitmap: Bitmap) {
         val outPutStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outPutStream)
-        val selectedImageBytes = outPutStream.toByteArray()
-
-        StorageUtil.uploadMessageImage(selectedImageBytes) {
-            val messageToSend = ImageMessage(
-                imagePath = it,
-                Calendar.getInstance().time,
-                FirebaseAuth.getInstance().currentUser!!.uid,
-                otherUserId,
-                currentUser.username
-            )
-            FirestoreUtil.sendMessage(messageToSend, currentChannelId, otherUserId)
-        }
-    }
-
-    private fun sendImageFromStorage(uri: Uri) {
-        val selectedImageBmp = ImageDecoder.decodeBitmap(
-            ImageDecoder.createSource(
-                this.contentResolver,
-                uri
-            )
-        )
-        val outPutStream = ByteArrayOutputStream()
-        selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 90, outPutStream)
         val selectedImageBytes = outPutStream.toByteArray()
 
         StorageUtil.uploadMessageImage(selectedImageBytes) {
@@ -207,7 +196,7 @@ class ChatActivity : AppCompatActivity() {
         } else {
             updateItems()
         }
-        recyclerView!!.scrollToPosition(recyclerView!!.adapter!!.itemCount.minus(1))
+        recyclerView!!.scrollToPosition(messages.size - 1)
     }
 
     override fun onDestroy() {

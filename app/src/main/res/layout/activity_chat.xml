@@ -56,6 +56,7 @@
             android:id="@+id/textInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:elevation="2dp"
             android:textColorHint="#000000"
             app:boxStrokeWidth="0dp"
