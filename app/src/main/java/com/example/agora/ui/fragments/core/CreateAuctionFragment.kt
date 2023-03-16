@@ -24,10 +24,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.agora.Services.UploadService
 import com.example.agora.data.core.model.Item
 import com.example.agora.databinding.FragmentCreateAuctionBinding
 import com.example.agora.domain.core.viewModel.ItemsViewModel
+import com.example.agora.services.UploadService
 import com.example.agora.ui.adapters.PictureBitmapListAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -43,6 +43,7 @@ import java.time.LocalDateTime
 import kotlin.math.floor
 
 private const val TAG = "CreateAuctionFragment"
+
 class CreateAuctionFragment : Fragment() {
 
     private var _binding: FragmentCreateAuctionBinding? = null
@@ -58,11 +59,11 @@ class CreateAuctionFragment : Fragment() {
 
     private var downloadUrl: Uri? = null
     private var fileUri: Uri? = null
-    private var uriList : MutableList<Uri> = mutableListOf()
+    private var uriList: MutableList<Uri> = mutableListOf()
 
     private lateinit var createBtn: Button
     private lateinit var recyclerView: RecyclerView
-    private val recyclerAdapter = PictureBitmapListAdapter{
+    private val recyclerAdapter = PictureBitmapListAdapter {
         bitmapList.removeAt(it)
         uriList.removeAt(it)
         imagesCount--
@@ -81,35 +82,28 @@ class CreateAuctionFragment : Fragment() {
         storageRef = storage.reference
         bitmapList = arrayListOf()
 
+
         pickMediaActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uriList ->
-                // Callback is invoked after the user selects a media item or closes the
-                // photo picker.
                 if (uriList != null) {
                     imagesCount += uriList.size
                     Log.d(TAG, "onCreate: $imagesCount")
                     for (uri in uriList) {
-
                         this.uriList.add(uri)
-
                         bitmapList.add(getThumbnail(uri, requireContext())!!)
-//                        binding.itemIV.setImageBitmap(bitmap)
-//                        imageName = getFileName(requireActivity().contentResolver, uri)!!
                     }
-
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
                 recyclerAdapter.swapData(bitmapList)
             }
 
-        //TODO fix uploads from camera need to save image locally ot get Uri and name to upload via UploadService
         cameraActivityResultLauncher = registerForActivityResult(
             ActivityResultContracts.TakePicturePreview()
         ) { bitmap ->
             if (bitmap != null) {
                 bitmapList.add(bitmap)
-                imagesCount ++
+                imagesCount++
 
                 // Convert bitmap to JPEG and insert into MediaStore
                 savePicture(bitmap)
@@ -120,7 +114,7 @@ class CreateAuctionFragment : Fragment() {
         }
     }
 
-    private fun savePicture(bitmap: Bitmap){
+    private fun savePicture(bitmap: Bitmap) {
         val resolver = requireContext().contentResolver
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "image.jpg")
@@ -151,8 +145,10 @@ class CreateAuctionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView = binding.imageRecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(requireContext(),
-            LinearLayoutManager.HORIZONTAL , false )
+        recyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL, false
+        )
         recyclerView.adapter = recyclerAdapter
 
         val snapHelper = PagerSnapHelper()
@@ -168,15 +164,15 @@ class CreateAuctionFragment : Fragment() {
 
             if (title.isNotEmpty() && description.isNotEmpty() && price.isNotEmpty()) {
 //               viewModel.sellItem(
-                    val item = Item(
-                        seller = auth.currentUser?.displayName!!,
-                        sellerId = auth.currentUser?.uid.toString(),
-                        title = title,
-                        description = description,
-                        price = price,
-                        storageRef = storageRef,
-                        imagesCount = imagesCount
-                    )
+                val item = Item(
+                    seller = auth.currentUser?.displayName!!,
+                    sellerId = auth.currentUser?.uid.toString(),
+                    title = title,
+                    description = description,
+                    price = price,
+                    storageRef = storageRef,
+                    imagesCount = imagesCount
+                )
 //                , bitmapList = bitmapList
 //                )
 
@@ -232,7 +228,7 @@ class CreateAuctionFragment : Fragment() {
         return if (k == 0) 1 else k
     }
 
-    private fun uploadFromUri(item : Item, uploadUriList: List<Uri>) {
+    private fun uploadFromUri(item: Item, uploadUriList: List<Uri>) {
         Log.d(TAG, "uploadFromUri:src: $uploadUriList")
 
         // Clear the last download, if any
@@ -244,8 +240,9 @@ class CreateAuctionFragment : Fragment() {
         requireActivity().startService(
             Intent(requireContext(), UploadService::class.java)
                 .putParcelableArrayListExtra(UploadService.URI_LIST, ArrayList(uploadUriList))
-                .putExtra(UploadService.ITEM,item)
-                .setAction(UploadService.ACTION_UPLOAD))
+                .putExtra(UploadService.ITEM, item)
+                .setAction(UploadService.ACTION_UPLOAD)
+        )
 
         // Show loading spinner
 //        showProgressBar(getString(R.string.progress_uploading))

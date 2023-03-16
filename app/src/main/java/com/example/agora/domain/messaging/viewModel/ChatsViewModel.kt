@@ -1,4 +1,4 @@
-package com.example.agora.domain.Messaging.ViewModel
+package com.example.agora.domain.messaging.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,13 +8,13 @@ import com.example.agora.data.messaging.model.EngagedChatChannel
 import com.example.agora.data.messaging.repository.ChatsRepository
 import kotlinx.coroutines.launch
 
-class ChatsViewModel(val chatsRepository: ChatsRepository) :ViewModel(){
+class ChatsViewModel(val chatsRepository: ChatsRepository) : ViewModel() {
 
     val chatsList: LiveData<List<EngagedChatChannel>>
-            get() = _chatsList
+        get() = _chatsList
     private val _chatsList = MutableLiveData<List<EngagedChatChannel>>()
 
-    fun getChats() =viewModelScope.launch {
+    fun getChats() = viewModelScope.launch {
         _chatsList.postValue(chatsRepository.getChats())
     }
 

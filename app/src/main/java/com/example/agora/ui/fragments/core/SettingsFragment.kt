@@ -84,7 +84,6 @@ class SettingsFragment : Fragment() {
     private fun loadAvatar(uri : Uri) {
         val options: RequestOptions = RequestOptions()
             .circleCrop()
-
         GlideApp.with(requireContext()).load(uri).apply(options).into(binding.myAvatarIV)
     }
 

@@ -78,20 +78,20 @@
             android:resource="@drawable/bank"
             />
         <service
-            android:name=".domain.Messaging.MyFirebaseMessagingService"
+            android:name=".domain.messaging.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <service android:name=".Services.UploadService"
+        <service android:name=".services.UploadService"
             android:exported="false"/>
 
-        <service android:name=".Services.BaseTaskService"
+        <service android:name=".services.BaseTaskService"
             android:exported="false"/>
 
-        <service android:name=".Services.DeleteItemService"
+        <service android:name=".services.DeleteItemService"
             android:exported="false"/>
 
     </application>

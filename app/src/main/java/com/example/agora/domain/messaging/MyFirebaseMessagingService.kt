@@ -1,4 +1,4 @@
-package com.example.agora.domain.Messaging
+package com.example.agora.domain.messaging
 
 import android.util.Log
 import com.example.agora.util.FirestoreUtil

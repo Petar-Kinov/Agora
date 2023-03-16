@@ -1,4 +1,4 @@
-package com.example.agora.Services
+package com.example.agora.services
 
 import android.content.Intent
 import android.net.Uri

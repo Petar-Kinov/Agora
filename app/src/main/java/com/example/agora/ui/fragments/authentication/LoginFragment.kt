@@ -19,8 +19,8 @@ import com.example.agora.R
 import com.example.agora.data.authentication.login.LoggedInUserView
 import com.example.agora.data.authentication.login.LoginViewModelFactory
 import com.example.agora.databinding.FragmentLoginBinding
-import com.example.agora.domain.Messaging.MyFirebaseMessagingService
 import com.example.agora.domain.auth.viewModel.AuthViewModel
+import com.example.agora.domain.messaging.MyFirebaseMessagingService
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging

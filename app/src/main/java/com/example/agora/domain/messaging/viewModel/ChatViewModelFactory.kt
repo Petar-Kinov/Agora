@@ -1,4 +1,4 @@
-package com.example.agora.domain.Messaging.ViewModel
+package com.example.agora.domain.messaging.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

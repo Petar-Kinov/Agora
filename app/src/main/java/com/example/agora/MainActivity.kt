@@ -51,8 +51,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.loginFragment -> {
                     this@MainActivity.finish()
-                }
-                else -> {
+                } else -> {
                     navController.popBackStack()
                 }
             }

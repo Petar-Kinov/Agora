@@ -2,11 +2,11 @@ package com.example.agora.util
 
 import android.content.Context
 import android.util.Log
+import com.example.agora.data.core.model.User
 import com.example.agora.data.messaging.model.*
 import com.example.agora.data.messaging.recyclerViewItem.ImageMessageItem
 import com.example.agora.data.messaging.recyclerViewItem.MessageItem
 import com.example.agora.data.messaging.recyclerViewItem.TextMessageItem
-import com.example.agora.data.core.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -48,12 +48,22 @@ object FirestoreUtil {
                 newChannel.set(ChatChannel(mutableListOf(currentUserId, otherUserId)))
 
                 currentUserDocRef.collection("engagedChatChannels").document(otherUserId)
-                    .set(mapOf("channelId" to newChannel.id, "otherUserName" to otherUserName, "otherUserId" to otherUserId))
+                    .set(
+                        mapOf(
+                            "channelId" to newChannel.id,
+                            "otherUserName" to otherUserName,
+                            "otherUserId" to otherUserId
+                        )
+                    )
 
                 firestoreInstance.collection("users").document(otherUserId)
                     .collection("engagedChatChannels").document(currentUserId)
                     .set(
-                        mapOf("channelId" to newChannel.id, "otherUserName" to currentUserName, "otherUserId" to currentUserId),
+                        mapOf(
+                            "channelId" to newChannel.id,
+                            "otherUserName" to currentUserName,
+                            "otherUserId" to currentUserId
+                        ),
                         SetOptions.merge()
                     )
 
@@ -61,7 +71,10 @@ object FirestoreUtil {
             }
     }
 
-    fun addUsersListener(context: Context, onListen: (List<EngagedChatChannel>) -> Unit): ListenerRegistration {
+    fun addUsersListener(
+        context: Context,
+        onListen: (List<EngagedChatChannel>) -> Unit
+    ): ListenerRegistration {
         return firestoreInstance.collection("users")
             .document(FirebaseAuth.getInstance().currentUser!!.uid)
             .collection("engagedChatChannels")
@@ -76,13 +89,12 @@ object FirestoreUtil {
                     val chatChannel = it.toObject(EngagedChatChannel::class.java)
 //
                     if (it.id != FirebaseAuth.getInstance().currentUser?.uid)
-                        //not sure about the !!
+                    //not sure about the !!
                         items.add(chatChannel!!)
                 }
                 onListen(items)
             }
     }
-
 
     fun addChatMessageListener(
         channelId: String,
@@ -118,20 +130,22 @@ object FirestoreUtil {
 
         // setting the last message inside each users engagedChatChannels/channel
         // otherwise we have to query again for each person in the contact list to get the message
-        val lastMessage: LastMessage
-        if (message is TextMessage) {
-            lastMessage = LastMessage(message.text, message.time)
+        val lastMessage: LastMessage = if (message is TextMessage) {
+            LastMessage(text = message.text, time = message.time, senderId = message.senderId)
         } else {
-            lastMessage = LastMessage("Photo", message.time)
+            LastMessage(text = "Photo",time =  message.time, senderId = message.senderId)
         }
+        // setting lastMessage in other user doc
         currentUserDocRef.collection("engagedChatChannels").document(otherUserId)
             .set(hashMapOf("lastMessage" to lastMessage), SetOptions.merge())
+
+        // setting lastMessage in current user doc
         firestoreInstance.document("users/$otherUserId").collection("engagedChatChannels")
             .document(FirebaseAuth.getInstance().currentUser!!.uid).set(
-            hashMapOf(
-                "lastMessage" to lastMessage
-            ), SetOptions.merge()
-        )
+                hashMapOf(
+                    "lastMessage" to lastMessage
+                ), SetOptions.merge()
+            )
 
     }
 

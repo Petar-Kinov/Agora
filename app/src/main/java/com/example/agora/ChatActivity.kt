@@ -1,11 +1,14 @@
 package com.example.agora
 
+import android.R
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,6 +32,8 @@ import com.xwray.groupie.Section
 import java.io.ByteArrayOutputStream
 import java.util.*
 
+private const val TAG = "ChatActivity"
+
 class ChatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityChatBinding
@@ -40,7 +45,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var currentChannelId: String
     private lateinit var currentUser: User
     private lateinit var otherUserId: String
-    private lateinit var otherUserName : String
+    private lateinit var otherUserName: String
 
     private lateinit var pickMediaActivityResultLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var cameraActivityResultLauncher: ActivityResultLauncher<Void?>
@@ -59,26 +64,7 @@ class ChatActivity : AppCompatActivity() {
         pickMediaActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    val selectedImageBmp = ImageDecoder.decodeBitmap(
-                        ImageDecoder.createSource(
-                            this.contentResolver,
-                            uri
-                        )
-                    )
-                    val outPutStream = ByteArrayOutputStream()
-                    selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 90, outPutStream)
-                    val selectedImageBytes = outPutStream.toByteArray()
-
-                    StorageUtil.uploadMessageImage(selectedImageBytes) {
-                        val messageToSend = ImageMessage(
-                            imagePath = it,
-                            Calendar.getInstance().time,
-                            FirebaseAuth.getInstance().currentUser!!.uid,
-                            otherUserId,
-                            currentUser.username
-                        )
-                        FirestoreUtil.sendMessage(messageToSend, currentChannelId,otherUserId)
-                    }
+                    sendImageFromStorage(uri)
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
@@ -88,22 +74,9 @@ class ChatActivity : AppCompatActivity() {
             ActivityResultContracts.TakePicturePreview()
         ) { bitmap ->
             if (bitmap != null) {
-                val outPutStream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outPutStream)
-                val selectedImageBytes = outPutStream.toByteArray()
-
-                StorageUtil.uploadMessageImage(selectedImageBytes) {
-                    val messageToSend = ImageMessage(
-                        imagePath = it,
-                        Calendar.getInstance().time,
-                        FirebaseAuth.getInstance().currentUser!!.uid,
-                        otherUserId,
-                        currentUser.username
-                    )
-                    FirestoreUtil.sendMessage(messageToSend, currentChannelId,otherUserId)
-                }
+                sendImageFromCamera(bitmap)
             } else {
-                // No image was taken
+                Log.d(TAG, "onCreate: No image was taken")
             }
         }
 
@@ -111,7 +84,7 @@ class ChatActivity : AppCompatActivity() {
             currentUser = it
         }
 
-        FirestoreUtil.getOrCreateChatChannel(otherUserId,otherUserName) { channelId ->
+        FirestoreUtil.getOrCreateChatChannel(otherUserId, otherUserName) { channelId ->
             currentChannelId = channelId
             messagesListenerRegistration = FirestoreUtil.addChatMessageListener(
                 channelId = channelId,
@@ -130,10 +103,9 @@ class ChatActivity : AppCompatActivity() {
                     currentUser.username
                 )
                 binding.editTextMessage.setText("")
-                FirestoreUtil.sendMessage(messageToSend, currentChannelId,otherUserId)
+                FirestoreUtil.sendMessage(messageToSend, currentChannelId, otherUserId)
             }
         }
-
 
         binding.sendImageFromGaleryBtn.setOnClickListener {
             pickMediaActivityResultLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -142,29 +114,78 @@ class ChatActivity : AppCompatActivity() {
         binding.sendImageFromCameraBtn.setOnClickListener {
             cameraActivityResultLauncher.launch()
         }
+
+        this.onBackPressedDispatcher.addCallback(this) {
+            goBack()
+        }
     }
 
-    //overriding the action bar back button, otherwise it goes to the home destination of the parent activity
+    private fun sendImageFromCamera(bitmap: Bitmap) {
+        val outPutStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outPutStream)
+        val selectedImageBytes = outPutStream.toByteArray()
+
+        StorageUtil.uploadMessageImage(selectedImageBytes) {
+            val messageToSend = ImageMessage(
+                imagePath = it,
+                Calendar.getInstance().time,
+                FirebaseAuth.getInstance().currentUser!!.uid,
+                otherUserId,
+                currentUser.username
+            )
+            FirestoreUtil.sendMessage(messageToSend, currentChannelId, otherUserId)
+        }
+    }
+
+    private fun sendImageFromStorage(uri: Uri) {
+        val selectedImageBmp = ImageDecoder.decodeBitmap(
+            ImageDecoder.createSource(
+                this.contentResolver,
+                uri
+            )
+        )
+        val outPutStream = ByteArrayOutputStream()
+        selectedImageBmp.compress(Bitmap.CompressFormat.JPEG, 90, outPutStream)
+        val selectedImageBytes = outPutStream.toByteArray()
+
+        StorageUtil.uploadMessageImage(selectedImageBytes) {
+            val messageToSend = ImageMessage(
+                imagePath = it,
+                Calendar.getInstance().time,
+                FirebaseAuth.getInstance().currentUser!!.uid,
+                otherUserId,
+                currentUser.username
+            )
+            FirestoreUtil.sendMessage(messageToSend, currentChannelId, otherUserId)
+        }
+    }
+
+    //overriding the actionbar back button, otherwise it goes to the home destination of the parent activity
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            androidx.appcompat.R.id.home -> {
-                val fragmentManager = supportFragmentManager
-                val backStackEntryCount = fragmentManager.backStackEntryCount
-                if (backStackEntryCount > 0) {
-                    // If there are fragments in the back stack, pop the top fragment
-                    fragmentManager.popBackStack()
-                } else {
-                    // If there are no fragments in the back stack, start MainActivity and navigate to MessagesFragment
-                    val mainActivityIntent = Intent(this, MainActivity::class.java)
-                    mainActivityIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    mainActivityIntent.putExtra("navigate_to_messages_fragment", true)
-                    startActivity(mainActivityIntent)
-                    finish()
-                }
+            R.id.home -> {
+                goBack()
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun goBack() {
+        val fragmentManager = supportFragmentManager
+        val backStackEntryCount = fragmentManager.backStackEntryCount
+        if (backStackEntryCount > 0) {
+            // If there are fragments in the back stack, popBackStack
+            fragmentManager.popBackStack()
+        } else {
+            // If there are no fragments in the back stack, start MainActivity and navigate to MessagesFragment
+            val mainActivityIntent = Intent(this, MainActivity::class.java)
+            mainActivityIntent.flags =
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            mainActivityIntent.putExtra("navigate_to_messages_fragment", true)
+            startActivity(mainActivityIntent)
+            finish()
+        }
     }
 
     private fun updateRecyclerView(messages: List<MessageItem<*>>) {
@@ -189,7 +210,6 @@ class ChatActivity : AppCompatActivity() {
         recyclerView!!.scrollToPosition(recyclerView!!.adapter!!.itemCount.minus(1))
     }
 
-    //TODO change onBckPressed to do the same as the action bar back button
     override fun onDestroy() {
         super.onDestroy()
         recyclerView?.adapter = null

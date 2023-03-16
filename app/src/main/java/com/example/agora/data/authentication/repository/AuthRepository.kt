@@ -51,7 +51,7 @@ class AuthRepository(val dataSource: LoginDataSource) {
             Result.Success(result.user!!)
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d(TAG, "login: exception is ${e.toString()}")
+            Log.d(TAG, "login: exception is $e")
             Result.Error(e)
         }
 //            .addOnCompleteListener { task ->

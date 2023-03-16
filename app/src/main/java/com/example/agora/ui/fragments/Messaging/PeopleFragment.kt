@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.agora.ChatActivity
 import com.example.agora.data.messaging.model.EngagedChatChannel
 import com.example.agora.databinding.FragmentChatsBinding
-import com.example.agora.domain.Messaging.ViewModel.ChatsViewModel
+import com.example.agora.domain.messaging.viewModel.ChatsViewModel
 import com.example.agora.util.AppConstants
 import com.example.agora.util.FirestoreUtil
 import com.google.firebase.firestore.ListenerRegistration
@@ -34,10 +34,9 @@ class PeopleFragment : Fragment() {
     private val onItemClick = OnItemClickListener { item, view ->
         if (item is EngagedChatChannel) {
             val intent = Intent(requireContext(),ChatActivity::class.java)
-            intent.putExtra(AppConstants.USER_NAME,item.otherUserId)
+            intent.putExtra(AppConstants.USER_NAME,item.otherUserName)
             intent.putExtra(AppConstants.USER_ID,item.otherUserId)
             startActivity(intent)
-
         }
     }
 
@@ -53,7 +52,7 @@ class PeopleFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentChatsBinding.inflate(inflater ,container,false)
         val view = binding.root

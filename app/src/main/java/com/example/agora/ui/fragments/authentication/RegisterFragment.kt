@@ -28,8 +28,8 @@ import com.example.agora.R
 import com.example.agora.data.authentication.login.LoginViewModelFactory
 import com.example.agora.data.core.model.User
 import com.example.agora.databinding.FragmentRegisterBinding
-import com.example.agora.domain.Messaging.MyFirebaseMessagingService
 import com.example.agora.domain.auth.viewModel.AuthViewModel
+import com.example.agora.domain.messaging.MyFirebaseMessagingService
 import com.example.agora.util.EmailValidator
 import com.example.agora.util.GlideApp
 import com.google.android.material.snackbar.Snackbar

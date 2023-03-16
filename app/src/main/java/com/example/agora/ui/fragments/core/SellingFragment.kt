@@ -13,12 +13,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.agora.Services.DeleteItemService
-import com.example.agora.Services.UploadService
 import com.example.agora.data.core.model.Item
 import com.example.agora.data.core.model.ItemsWithReference
 import com.example.agora.databinding.FragmentSellingBinding
 import com.example.agora.domain.core.viewModel.ItemsViewModel
+import com.example.agora.services.DeleteItemService
+import com.example.agora.services.UploadService
 import com.example.agora.ui.adapters.MyItemsListAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

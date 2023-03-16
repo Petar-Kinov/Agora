@@ -11,7 +11,7 @@ object StorageUtil {
 
     private val currentUserRef: StorageReference
         get() = storageInstance.reference
-            .child(
+            .child("chatImages").child(
                 FirebaseAuth.getInstance().currentUser?.uid
                     ?: throw NullPointerException("UID is null.")
             )
