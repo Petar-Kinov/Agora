@@ -26,6 +26,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.agora.R
 import com.example.agora.data.core.model.Item
 import com.example.agora.databinding.FragmentCreateAuctionBinding
 import com.example.agora.domain.core.viewModel.ItemsViewModel
@@ -196,6 +197,7 @@ class CreateAuctionFragment : Fragment() ,SelectImageSourceDialogFragment.OnImag
                 sellerId = auth.currentUser?.uid.toString(),
                 title = title,
                 description = description,
+                category = args.category,
                 price = price,
                 storageRef = storageRef,
                 imagesCount = imagesCount
@@ -203,7 +205,7 @@ class CreateAuctionFragment : Fragment() ,SelectImageSourceDialogFragment.OnImag
             // Uploads the image to storage
             Log.d(TAG, "onViewCreated: item is $item with ${item.imagesCount} images")
             uploadFromUri(item, uriList)
-            findNavController().popBackStack()
+            findNavController().popBackStack(R.id.homePage, false)
         } else {
             Toast.makeText(
                 requireContext(),

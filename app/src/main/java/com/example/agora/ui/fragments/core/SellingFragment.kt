@@ -110,8 +110,9 @@ class SellFragment : Fragment() {
             val item = Item(
                 seller = auth.currentUser!!.displayName.toString(),
                 sellerId = auth.currentUser!!.uid,
-                title = "some title",
-                description = "some description",
+                title = "test item",
+                description = "test description",
+                category = "test",
                 price = (0..100).random().toString(),
                 storageRef = storageReference,
                 imagesCount = 1

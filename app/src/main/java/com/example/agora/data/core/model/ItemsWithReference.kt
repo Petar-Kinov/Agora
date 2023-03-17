@@ -50,6 +50,8 @@ class ItemsWithReference(val item: Item, val documentReference: DocumentReferenc
         return ItemCardSimplifiedBinding.bind(view)
     }
 
+    override fun getSpanSize(spanCount: Int, position: Int): Int = spanCount / 2
+
     override fun isSameAs(other: com.xwray.groupie.Item<*>): Boolean {
         return item == (other as ItemsWithReference).item
     }

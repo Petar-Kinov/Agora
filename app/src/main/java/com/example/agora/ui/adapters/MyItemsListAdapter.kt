@@ -24,7 +24,6 @@ class MyItemsListAdapter(private val onClickListener: (ItemsWithReference) -> Un
 
     private lateinit var glideApp: RequestManager
 
-
     inner class MyItemViewHolder(binding: MyItemsCardBinding, clickAtPosition: (Int) -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
         val titleTV: TextView

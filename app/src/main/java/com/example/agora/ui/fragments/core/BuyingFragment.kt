@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.agora.data.core.model.HeaderItem
 import com.example.agora.data.core.model.ItemsWithReference
 import com.example.agora.databinding.FragmentBuyingBinding
 import com.example.agora.domain.core.viewModel.ItemsViewModel
@@ -17,8 +18,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import com.xwray.groupie.Section
 
 private const val TAG = "BuyingFragment"
 
@@ -56,6 +59,7 @@ class BuyFragment : Fragment() {
         val view = binding.root
 
         val adapter = GroupAdapter<GroupieViewHolder>().apply {
+            spanCount = 2
             this.setOnItemClickListener { item, view ->
                 // retrieve the document reference of the clicked item from the Item object
                 Log.d(TAG, "bind: item ${(item as ItemsWithReference).item.title} clicked")
@@ -66,12 +70,17 @@ class BuyFragment : Fragment() {
         }
 
         recyclerView = binding.recyclerView
-        recyclerView!!.layoutManager = GridLayoutManager(requireContext(), 2)
+        recyclerView?.apply {
+            layoutManager = GridLayoutManager(requireContext(), adapter.spanCount).apply {
+                spanSizeLookup = adapter.spanSizeLookup
+            }
+        }
+//        recyclerView!!.layoutManager = GridLayoutManager(requireContext(), 1)
 //        recyclerView!!.adapter = recyclerAdapter
 
         viewModel.items.observe(viewLifecycleOwner) {items ->
             if (items != null) {
-                adapter.update(items)
+                categorizeAndDisplayItems(items, adapter)
             }
 //            recyclerAdapter.submitList(it)
         }
@@ -80,10 +89,25 @@ class BuyFragment : Fragment() {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun categorizeAndDisplayItems(items : List<ItemsWithReference> ,adapter: GroupAdapter<GroupieViewHolder>) {
+        val itemsByCategory = items.groupBy { it.item.category }
 
+        itemsByCategory.forEach { (category,items) ->
+            ExpandableGroup(HeaderItem(title = category),true).apply {
+                add(Section(items))
+                adapter.add(this)
+            }
+//            val section = Section(HeaderItem(title = category))
+//            items.forEach { item ->
+//                val sectionAdapter = GroupAdapter<GroupieViewHolder>().apply {
+//                    add(item)
+//                }
+//                section.add(Group(adapter))
+//            }
+//            adapter.add(section)
+        }
 
+//        adapter.update(items)
     }
 
     override fun onDestroyView() {
