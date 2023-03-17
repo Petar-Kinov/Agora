@@ -16,9 +16,13 @@
     </fragment>
     <fragment
         android:id="@+id/createAuctionFragment"
-        android:name="com.example.agora.ui.fragments.core.CreateAuctionFragment"
+        android:name="com.example.agora.ui.fragments.core.sellItem.CreateAuctionFragment"
         android:label="fragment_create_auction"
-        tools:layout="@layout/fragment_create_auction" />
+        tools:layout="@layout/fragment_create_auction" >
+        <argument
+            android:name="category"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/homePage"
         android:name="com.example.agora.ui.fragments.core.HomePage"
@@ -27,9 +31,6 @@
         <action
             android:id="@+id/action_homePage_to_settingsFragment"
             app:destination="@id/settingsFragment" />
-        <action
-            android:id="@+id/action_homePage_to_createAuctionFragment"
-            app:destination="@id/createAuctionFragment" />
         <action
             android:id="@+id/action_homePage_to_itemDetailsFragment"
             app:destination="@id/itemDetailsFragment" />
@@ -43,6 +44,9 @@
         <action
             android:id="@+id/action_homePage_to_chatsFragment"
             app:destination="@id/chatsFragment" />
+        <action
+            android:id="@+id/action_homePage_to_pickCategoryFragment"
+            app:destination="@id/pickCategoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -63,4 +67,13 @@
         android:name="com.example.agora.ui.fragments.Messaging.PeopleFragment"
         android:label="fragment_chats"
         tools:layout="@layout/fragment_chats" />
+    <fragment
+        android:id="@+id/pickCategoryFragment"
+        android:name="com.example.agora.ui.fragments.core.sellItem.PickCategoryFragment"
+        android:label="fragment_pick_category"
+        tools:layout="@layout/fragment_pick_category" >
+        <action
+            android:id="@+id/action_pickCategoryFragment_to_createAuctionFragment"
+            app:destination="@id/createAuctionFragment" />
+    </fragment>
 </navigation>

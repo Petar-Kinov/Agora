@@ -99,7 +99,7 @@ class SellFragment : Fragment() {
 
         binding.sellBtn.setOnClickListener {
             val action =
-                HomePageDirections.actionHomePageToCreateAuctionFragment()
+                HomePageDirections.actionHomePageToPickCategoryFragment()
             findNavController().navigate(action)
         }
 

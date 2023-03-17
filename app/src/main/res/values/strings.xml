@@ -64,6 +64,7 @@
     <string name="progress_uploading">Loading</string>
     <string name="last_message">Last message</string>
     <string name="wed">Wed</string>
+    <string name="category">Category</string>
 
 
 </resources>

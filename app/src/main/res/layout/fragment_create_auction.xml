@@ -5,100 +5,131 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".ui.fragments.core.CreateAuctionFragment">
-
-    <Button
-        android:id="@+id/fromStorageBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="@string/from_storage"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toStartOf="@+id/fromCameraBtn"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageRecyclerView" />
-
-    <Button
-        android:id="@+id/fromCameraBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/from_camera"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/fromStorageBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/fromStorageBtn"
-        app:layout_constraintTop_toTopOf="@+id/fromStorageBtn" />
+    tools:context=".ui.fragments.core.sellItem.CreateAuctionFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/imageRecyclerView"
         android:layout_width="0dp"
         android:layout_height="250dp"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/categoryTV" />
 
     <EditText
         android:id="@+id/titleET"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/black"
+        android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="@string/title"
         android:inputType="textCapSentences"
         android:textColor="@color/black"
         android:textColorHighlight="@color/black"
-        android:textColorHint="@color/hint_color"
-        app:layout_constraintStart_toStartOf="@+id/imageRecyclerView"
-        app:layout_constraintTop_toBottomOf="@+id/fromStorageBtn" />
+        android:textColorHint="@color/black"
+        app:layout_constraintStart_toStartOf="@+id/textView12"
+        app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
     <EditText
         android:id="@+id/descriptionET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/black"
+        android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="@string/description"
         android:inputType="textCapSentences"
         android:textColor="@color/black"
         android:textColorHighlight="@color/black"
-        android:textColorHint="@color/hint_color"
+        android:textColorHint="@color/black"
         app:layout_constraintEnd_toEndOf="@+id/titleET"
-        app:layout_constraintStart_toStartOf="@+id/titleET"
-        app:layout_constraintTop_toBottomOf="@+id/titleET" />
+        app:layout_constraintStart_toStartOf="@+id/textView15"
+        app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
     <EditText
         android:id="@+id/priceET"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:backgroundTint="@color/black"
+        android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="@string/price"
         android:inputType="numberDecimal"
         android:textColor="@color/black"
         android:textColorHighlight="@color/black"
-        android:textColorHint="@color/hint_color"
+        android:textColorHint="@color/black"
         app:layout_constraintEnd_toEndOf="@+id/descriptionET"
-        app:layout_constraintStart_toStartOf="@+id/descriptionET"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionET" />
+        app:layout_constraintStart_toStartOf="@+id/textView16"
+        app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
     <Button
         android:id="@+id/createBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="@color/light_blue"
         android:text="@string/create"
         android:textColor="@color/black"
+        app:cornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/categoryTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/category"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/addImageBtn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/rectangle_outlined"
+        android:gravity="center_horizontal"
+        app:icon="@drawable/plus_image"
+        app:iconGravity="textTop"
+        app:iconSize="120dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageRecyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/imageRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/imageRecyclerView"
+        app:layout_constraintTop_toTopOf="@+id/imageRecyclerView" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="Title:"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/imageRecyclerView"
+        app:layout_constraintTop_toBottomOf="@+id/imageRecyclerView" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Description:"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/titleET"
+        app:layout_constraintTop_toBottomOf="@+id/titleET" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/descriptionET"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionET" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

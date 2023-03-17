@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/imageFromStorageBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/rect_round_primary_color"
+        android:drawableTop="@drawable/storage_ic"
+        android:padding="25dp"
+        android:text="From Storage"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/imageFromCameraBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/rect_round_primary_color"
+        android:drawableTop="@drawable/camera_ic"
+        android:padding="25dp"
+        android:text="Take pickture"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="@+id/imageFromStorageBtn"
+        app:layout_constraintStart_toStartOf="@+id/imageFromStorageBtn"
+        app:layout_constraintTop_toBottomOf="@+id/imageFromStorageBtn" />
+</androidx.constraintlayout.widget.ConstraintLayout>

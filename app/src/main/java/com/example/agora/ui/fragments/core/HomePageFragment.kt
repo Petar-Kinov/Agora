@@ -73,8 +73,8 @@ class HomePage : Fragment() {
         _binding = FragmentHomePageBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        val name = auth.currentUser?.displayName
-        binding.welcomeMsg.text = getString(R.string.welcome_msg, name)
+//        val name = auth.currentUser?.displayName
+//        binding.welcomeMsg.text = getString(R.string.welcome_msg, name)
         return view
     }
 
