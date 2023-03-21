@@ -7,7 +7,7 @@ import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.ExpandableItem
 import com.xwray.groupie.viewbinding.BindableItem
 
-class HeaderItem(private val title: String) : BindableItem<ItemHeaderBinding>(), ExpandableItem {
+class HeaderItem(val title: String) : BindableItem<ItemHeaderBinding>(), ExpandableItem {
 
     private lateinit var expandableGroup: ExpandableGroup
 

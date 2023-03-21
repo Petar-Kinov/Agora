@@ -71,6 +71,7 @@ class Item(
         return result
     }
 
+
     companion object CREATOR : Parcelable.Creator<Item> {
         override fun createFromParcel(parcel: Parcel): Item {
             return Item(parcel)

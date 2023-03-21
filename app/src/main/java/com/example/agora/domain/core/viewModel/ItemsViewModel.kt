@@ -21,6 +21,7 @@ class ItemsViewModel @Inject constructor(private val useCases: UseCases) : ViewM
 
     fun getItems() = viewModelScope.launch {
         useCases.getItems.invoke().collect { response ->
+
             Log.d(TAG, "getItems: $response")
             when (response) {
                 is Response.Loading -> {
@@ -28,6 +29,7 @@ class ItemsViewModel @Inject constructor(private val useCases: UseCases) : ViewM
                 }
                 is Response.Success -> {
                     val data = response.data
+
                     // do something with the data
                     _items.postValue(data)
                 }
